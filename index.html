@@ -1,0 +1,2655 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bicycle World — интерактивный справочник и конструктор велосипедов</title>
+    <meta name="description"
+        content="Энциклопедия типов велосипедов, калькулятор ростовки рамы и конструктор совместимости трансмиссий Shimano, SRAM, Campagnolo и MicroSHIFT. Тёмная тема «Liquid Glass» (глассморфизм).">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Ccircle%20cx='17'%20cy='44'%20r='13'%20fill='none'%20stroke='%233b82f6'%20stroke-width='4'/%3E%3Ccircle%20cx='47'%20cy='44'%20r='13'%20fill='none'%20stroke='%233b82f6'%20stroke-width='4'/%3E%3Cpath%20d='M17%2044L30%2022h11l6%2022M30%2022l-4%2022m15-22L26%2044'%20fill='none'%20stroke='%238b5cf6'%20stroke-width='4'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ==========================================================================
+   BICYCLE WORLD — интерактивный справочник и конструктор велосипедов
+   Дизайн-система: Deep Ambient Sapphire (≈80% синий, ≈20% фиолетовый),
+   Liquid Glass / глассморфизм. Стилистика продолжения Network-Project.
+   Все цвета, отступы и эффекты стекла — в :root (тема меняется парой правок).
+   ========================================================================== */
+
+        :root {
+            /* ===== Фон и поверхности ===== */
+            --bg-primary: #040915;
+            /* глубокий тёмно-синий фон */
+            --bg-glow-blue: rgba(37, 99, 235, .16);
+            /* синее свечение (верх-лево) */
+            --bg-glow-violet: rgba(139, 92, 246, .12);
+            /* фиолетовое свечение (низ-право) */
+            --grid-line: rgba(96, 165, 250, .04);
+            /* чертёжная сетка фона */
+
+            --surface-1: rgba(13, 26, 56, .78);
+            /* основная стеклянная поверхность */
+            --surface-2: rgba(18, 34, 72, .66);
+            /* приподнятая поверхность */
+            --surface-subtle: rgba(10, 20, 44, .5);
+            /* поля ввода / врезки */
+
+            /* ===== Синяя палитра (≈80% интерфейса) ===== */
+            --blue-900: #1e3a8a;
+            --blue-700: #1d4ed8;
+            --blue-primary: #3b82f6;
+            --blue-light: #93c5fd;
+            --blue-electric: #38bdf8;
+
+            /* ===== Фиолетовые акценты (≈20%) ===== */
+            --violet-primary: #8b5cf6;
+            --violet-light: #c4b5fd;
+            --violet-dark: #6d28d9;
+
+            /* ===== Текст ===== */
+            --text-main: #dbeafe;
+            --text-muted: #93c5fd;
+            --text-dim: #60a5fa;
+            --text-white: #ffffff;
+
+            /* ===== Стеклянные границы и эффекты ===== */
+            --border-glass: rgba(147, 197, 253, .2);
+            --border-glass-hover: rgba(96, 165, 250, .5);
+            --glass-blur: blur(22px) saturate(180%);
+            --shadow-glass: 0 18px 42px -16px rgba(2, 6, 23, .7), 0 5px 14px -6px rgba(2, 6, 23, .45);
+            --shadow-neon-blue: 0 0 28px rgba(59, 130, 246, .32);
+            --shadow-neon-violet: 0 0 28px rgba(139, 92, 246, .3);
+            --rim-top: inset 0 1px 0 rgba(255, 255, 255, .28);
+            /* верхняя кромка-блик */
+            --shadow-recess: inset 0 2px 8px rgba(2, 6, 23, .55);
+            /* врезанное поле */
+
+            /* ===== Радиусы ===== */
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-pill: 999px;
+
+            /* ===== Шкала отступов ===== */
+            --sp-xs: .5rem;
+            /* 8px  */
+            --sp-sm: .875rem;
+            /* 14px */
+            --sp-md: 1.25rem;
+            /* 20px */
+            --sp-lg: 1.75rem;
+            /* 28px */
+            --sp-xl: 2.5rem;
+            /* 40px */
+            --sp-2xl: 4rem;
+            /* 64px */
+            --container: 72rem;
+
+            /* ===== Типографика ===== */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', "Cascadia Code", Consolas, monospace;
+
+            /* ===== Переходы ===== */
+            --trans-fast: .2s cubic-bezier(.16, 1, .3, 1);
+            --trans-normal: .32s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        /* ============================ Базовый сброс ============================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            scroll-padding-top: 5.75rem;
+            /* отступ под липкую шапку при якорном скролле */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-main);
+            line-height: 1.65;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            /* Слои атмосферы: два свечения + чертёжная сетка (инженерная эстетика) */
+            background-image:
+                radial-gradient(90rem 60rem at 12% -10%, var(--bg-glow-blue), transparent 60%),
+                radial-gradient(80rem 55rem at 108% 115%, var(--bg-glow-violet), transparent 55%),
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: auto, auto, 44px 44px, 44px 44px;
+            background-attachment: fixed;
+        }
+
+        ::selection {
+            background: rgba(59, 130, 246, .45);
+            color: var(--text-white);
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--blue-700), var(--violet-dark));
+            border-radius: var(--radius-pill);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        img,
+        svg {
+            display: block;
+            max-width: 100%;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--blue-primary);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ============================ Стеклянная карточка ============================ */
+        .glass {
+            position: relative;
+            background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow-glass), var(--rim-top);
+        }
+
+        /* ============================ Шапка ============================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            background: rgba(4, 9, 21, .72);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .header-inner {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: .8rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: var(--sp-md);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+            color: var(--text-white);
+        }
+
+        .logo svg {
+            width: 30px;
+            height: 30px;
+            filter: drop-shadow(0 0 10px rgba(59, 130, 246, .5));
+        }
+
+        .logo b {
+            font-family: var(--font-mono);
+            color: var(--blue-electric);
+            font-weight: 700;
+        }
+
+        .site-nav ul {
+            display: flex;
+            gap: var(--sp-md);
+            list-style: none;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: .45rem 0;
+            font-size: .92rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color var(--trans-fast);
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: .1rem;
+            height: 2px;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(90deg, var(--blue-primary), var(--violet-primary));
+            box-shadow: var(--shadow-neon-blue);
+            opacity: 0;
+            transform: scaleX(.4);
+            transition: opacity var(--trans-fast), transform var(--trans-normal);
+        }
+
+        .nav-link:hover {
+            color: var(--text-white);
+        }
+
+        .nav-link.is-active {
+            color: var(--blue-light);
+        }
+
+        .nav-link.is-active::after,
+        .nav-link:hover::after {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        /* Бургер-кнопка (мобильные) */
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: .6rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .burger span {
+            width: 22px;
+            height: 2px;
+            background: var(--blue-light);
+            border-radius: var(--radius-pill);
+            transition: transform var(--trans-normal), opacity var(--trans-fast);
+        }
+
+        /* ============================ Hero ============================ */
+        .hero {
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: calc(var(--sp-2xl) * .9) 1.25rem var(--sp-xl);
+            text-align: center;
+        }
+
+        .kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-family: var(--font-mono);
+            font-size: .78rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--blue-electric);
+        }
+
+        .kicker::before,
+        .kicker::after {
+            content: "";
+            width: 26px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-primary));
+        }
+
+        .kicker::after {
+            background: linear-gradient(90deg, var(--violet-primary), transparent);
+        }
+
+        .hero h1 {
+            margin-top: var(--sp-sm);
+            font-size: clamp(2.3rem, 5.4vw, 3.9rem);
+            line-height: 1.12;
+            font-weight: 800;
+            letter-spacing: -.01em;
+        }
+
+        .hero h1 .grad {
+            background: linear-gradient(92deg, var(--blue-light) 10%, var(--text-white) 45%, var(--violet-light) 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .lede {
+            margin-top: var(--sp-md);
+            max-width: 46rem;
+            margin-inline: auto;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--sp-sm);
+            margin-top: var(--sp-lg);
+        }
+
+        .stat {
+            padding: .7rem 1.25rem;
+            border-radius: var(--radius-md);
+            background: var(--surface-2);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            display: flex;
+            align-items: baseline;
+            gap: .5rem;
+        }
+
+        .stat b {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            color: var(--blue-electric);
+            text-shadow: 0 0 14px rgba(56, 189, 248, .55);
+        }
+
+        .stat span {
+            font-size: .82rem;
+            color: var(--text-muted);
+        }
+
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            gap: var(--sp-sm);
+            margin-top: var(--sp-lg);
+            flex-wrap: wrap;
+        }
+
+        /* ============================ Кнопки и чипы ============================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .78rem 1.45rem;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            font-size: .93rem;
+            letter-spacing: .01em;
+            transition: transform var(--trans-normal), box-shadow var(--trans-normal), background var(--trans-fast), border-color var(--trans-fast);
+        }
+
+        .btn-primary {
+            color: var(--text-white);
+            background: linear-gradient(135deg, var(--blue-700) 5%, var(--blue-primary) 48%, var(--violet-primary) 120%);
+            box-shadow: var(--shadow-neon-blue), var(--rim-top);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 36px rgba(59, 130, 246, .5), var(--rim-top);
+        }
+
+        .btn-ghost {
+            color: var(--blue-light);
+            border: 1px solid var(--border-glass);
+            background: var(--surface-subtle);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--border-glass-hover);
+            transform: translateY(-2px);
+        }
+
+        .chip {
+            display: inline-block;
+            padding: .28rem .7rem;
+            font-family: var(--font-mono);
+            font-size: .74rem;
+            color: var(--blue-light);
+            background: rgba(59, 130, 246, .12);
+            border: 1px solid rgba(96, 165, 250, .28);
+            border-radius: var(--radius-pill);
+        }
+
+        .chip-violet {
+            color: var(--violet-light);
+            background: rgba(139, 92, 246, .12);
+            border-color: rgba(168, 85, 247, .32);
+        }
+
+        /* ============================ Секции ============================ */
+        .section {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: var(--sp-2xl) 1.25rem var(--sp-xl);
+        }
+
+        .section-head {
+            margin-bottom: var(--sp-lg);
+        }
+
+        /* Отступ между лид-абзацем секции и первым блоком */
+        .section > p.lede {
+            margin-bottom: var(--sp-lg);
+        }
+
+        .section-head h2 {
+            margin-top: 0;
+            font-size: clamp(1.55rem, 3vw, 2.15rem);
+            font-weight: 800;
+            color: var(--text-white);
+            letter-spacing: -.01em;
+        }
+
+        .subhead {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin: var(--sp-xl) 0 var(--sp-md);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .subhead::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-primary), var(--violet-primary));
+            box-shadow: var(--shadow-neon-blue);
+        }
+
+        /* ============================ Справочник: сетка и карточки ============================ */
+        .ref-grid {
+            display: grid;
+            gap: var(--sp-md);
+        }
+
+        .ref-grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .ref-grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .card {
+            padding: var(--sp-md);
+            transition: transform var(--trans-normal), border-color var(--trans-normal), box-shadow var(--trans-normal);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glass-hover);
+            box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            margin-bottom: .65rem;
+        }
+
+        .card-icon {
+            width: 2.1rem;
+            height: 2.1rem;
+            flex-shrink: 0;
+            border-radius: var(--radius-md);
+            background: rgba(59, 130, 246, .14);
+            border: 1px solid rgba(96, 165, 250, .3);
+            font-size: 1.05rem;
+        }
+
+        .card-head h3 {
+            font-size: 1.02rem;
+            color: var(--text-white);
+        }
+
+        .card p {
+            font-size: .88rem;
+            color: var(--text-muted);
+            margin-bottom: .45rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .2rem .6rem;
+            border-radius: var(--radius-pill);
+            background: rgba(139, 92, 246, .14);
+            color: var(--violet-light);
+            font-size: .78rem;
+        }
+
+        /* Таблицы */
+        .tbl-wrap {
+            overflow-x: auto;
+        }
+
+        .tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .9rem;
+        }
+
+        .tbl th,
+        .tbl td {
+            padding: .55rem .65rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tbl thead th {
+            color: var(--blue-electric);
+            font-size: .8rem;
+            letter-spacing: .04em;
+        }
+
+        .tbl tbody tr+tr td,
+        .tbl tbody tr+tr th {
+            border-top: 1px solid rgba(96, 165, 250, .12);
+        }
+
+        /* Терминология */
+        .term-list {
+            list-style: none;
+            display: grid;
+            gap: var(--sp-sm);
+        }
+
+        .term-item {
+            padding: var(--sp-sm) var(--sp-md);
+        }
+
+        .term-item dt {
+            font-weight: 700;
+            color: var(--blue-light);
+            margin-bottom: .2rem;
+        }
+
+        .term-item dd {
+            font-size: .86rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================ Вкладки (конструктор) ============================ */
+        .tabs {
+            display: flex;
+            gap: var(--sp-xs);
+            flex-wrap: wrap;
+            margin-bottom: var(--sp-md);
+        }
+
+        .tab-btn {
+            padding: .55rem 1.05rem;
+            border-radius: var(--radius-pill);
+            font-size: .86rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--surface-subtle);
+            border: 1px solid transparent;
+            transition: all var(--trans-fast);
+        }
+
+        .tab-btn:hover {
+            color: var(--blue-light);
+        }
+
+        .tab-btn.is-active {
+            color: var(--text-white);
+            background: rgba(59, 130, 246, .16);
+            border-color: rgba(96, 165, 250, .45);
+            box-shadow: var(--shadow-neon-blue);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.is-active {
+            display: block;
+            animation: panelIn .35s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ============================ Формы и слайдеры ============================ */
+        .field {
+            margin-bottom: var(--sp-md);
+        }
+
+        .field label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: .5rem;
+            font-size: .86rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: .45rem;
+        }
+
+        .field label output {
+            font-family: var(--font-mono);
+            color: var(--blue-electric);
+            background: rgba(59, 130, 246, .12);
+            padding: .1rem .55rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .field select {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: var(--surface-2);
+            color: var(--text-white);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: .65rem .9rem;
+            font-size: .92rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237dd3fc' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right .9rem center;
+        }
+
+        .field select:focus-visible {
+            outline-offset: 0;
+        }
+
+        /* Range */
+        input[type="range"] {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(90deg, var(--blue-primary) var(--fill, 50%), rgba(255, 255, 255, .1) var(--fill, 50%));
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--blue-electric);
+            border: 2px solid #eaf4ff;
+            box-shadow: 0 0 14px rgba(56, 189, 248, .8);
+            transition: transform var(--trans-fast);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--blue-electric);
+            border: 2px solid #eaf4ff;
+            box-shadow: 0 0 14px rgba(56, 189, 248, .8);
+        }
+
+        /* ============================ Выводы конструктора ============================ */
+        .result {
+            margin-top: var(--sp-lg);
+        }
+
+        .result h3 {
+            font-size: 1.05rem;
+            color: var(--text-white);
+            margin-bottom: .5rem;
+        }
+
+        .result p {
+            font-size: .92rem;
+            color: var(--text-muted);
+            margin-bottom: .6rem;
+        }
+
+        .size-list {
+            list-style: none;
+            display: grid;
+            gap: var(--sp-sm);
+        }
+
+        .size-row {
+            padding: .7rem .95rem;
+            border-radius: var(--radius-md);
+            background: rgba(59, 130, 246, .1);
+            border-left: 3px solid var(--blue-primary);
+        }
+
+        .size-row b {
+            color: var(--text-white);
+            font-size: .98rem;
+        }
+
+        .size-row span {
+            display: block;
+            font-size: .85rem;
+            color: var(--text-muted);
+            margin-top: .15rem;
+        }
+
+        .fit-list {
+            list-style: none;
+        }
+
+        .fit-list li {
+            position: relative;
+            padding: .4rem 0 .4rem 1.6rem;
+            font-size: .92rem;
+        }
+
+        .fit-list li::before {
+            content: "▸";
+            position: absolute;
+            left: .3rem;
+            color: var(--blue-electric);
+        }
+
+        .callout {
+            margin-top: var(--sp-md);
+        }
+
+        .check-grid {
+            display: grid;
+            gap: var(--sp-sm);
+            list-style: none;
+        }
+
+        .check-item {
+            padding: .6rem .85rem;
+            border-radius: var(--radius-md);
+            background: rgba(139, 92, 246, .08);
+            font-size: .87rem;
+        }
+
+        /* ============================ Футер ============================ */
+        .site-footer {
+            margin-top: var(--sp-2xl);
+            padding: var(--sp-xl) 1.25rem;
+            text-align: center;
+            border-top: 1px solid rgba(96, 165, 250, .14);
+            background: linear-gradient(180deg, transparent, rgba(7, 13, 28, .7));
+        }
+
+        .footer-wordmark {
+            font-size: 1.05rem;
+            letter-spacing: .1em;
+            margin-bottom: var(--sp-sm);
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--sp-md);
+            flex-wrap: wrap;
+            margin-bottom: var(--sp-sm);
+        }
+
+        .footer-nav a {
+            color: var(--text-muted);
+            font-size: .86rem;
+            transition: color var(--trans-fast);
+        }
+
+        .footer-nav a:hover {
+            color: var(--blue-light);
+        }
+
+        .site-footer .fineprint {
+            font-size: .75rem;
+            color: #7d90b3;
+            max-width: 42rem;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ============================ Адаптивность ============================ */
+        @media (max-width: 980px) {
+            :root {
+                --header-h: 58px;
+            }
+
+            .site-nav ul {
+                gap: var(--sp-sm);
+            }
+
+            .hero {
+                padding-top: var(--sp-xl);
+            }
+
+            .section,
+            .speed-section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        @media (max-width: 680px) {
+            :root {
+                --header-h: 54px;
+            }
+
+            .brand-tag {
+                display: none;
+            }
+
+            .site-nav ul {
+                gap: var(--sp-xs);
+                font-size: .9rem;
+            }
+
+            /* На узком экране — не «пилюли» вразнобой, а аккуратный список строк */
+            .hero-stats {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stat {
+                justify-content: space-between;
+                text-align: left;
+                padding: .6rem 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* ============================ Доступность ============================ */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ============================ Дополнительные компоненты (развёртка body) ============================ */
+        .brand-tag {
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            letter-spacing: .12em;
+            color: var(--text-dim);
+            border-left: 1px solid rgba(96, 165, 250, .3);
+            padding-left: .6rem;
+        }
+
+        /* Вердикт совместимости */
+        .callout {
+            padding: var(--sp-md) var(--sp-lg);
+        }
+
+        .callout h3 {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            font-size: 1.08rem;
+            margin-bottom: .45rem;
+            color: var(--text-white);
+        }
+
+        .callout p {
+            font-size: .92rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: .65rem;
+            height: .65rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--blue-primary);
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .callout.is-ok {
+            border-color: rgba(52, 211, 153, .45);
+            box-shadow: 0 0 30px rgba(52, 211, 153, .18), var(--shadow-glass), var(--rim-top);
+        }
+
+        .callout.is-ok h3 {
+            color: #6ee7b7;
+        }
+
+        .callout.is-ok .status-dot {
+            background: #34d399;
+            color: #34d399;
+        }
+
+        .callout.is-warn {
+            border-color: rgba(251, 191, 36, .45);
+            box-shadow: 0 0 30px rgba(251, 191, 36, .16), var(--shadow-glass), var(--rim-top);
+        }
+
+        .callout.is-warn h3 {
+            color: #fcd34d;
+        }
+
+        .callout.is-warn .status-dot {
+            background: #fbbf24;
+            color: #fbbf24;
+        }
+
+        .callout.is-bad {
+            border-color: rgba(248, 113, 113, .5);
+            box-shadow: 0 0 30px rgba(248, 113, 113, .16), var(--shadow-glass), var(--rim-top);
+        }
+
+        .callout.is-bad h3 {
+            color: #fca5a5;
+        }
+
+        .callout.is-bad .status-dot {
+            background: #f87171;
+            color: #f87171;
+        }
+
+        /* Калькулятор ростовки */
+        .size-big {
+            font-family: var(--font-mono);
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--blue-electric);
+            text-shadow: 0 0 18px rgba(56, 189, 248, .5);
+        }
+
+        .size-big small {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-shadow: none;
+        }
+
+        /* Таймлайн эволюции */
+        .evo-list {
+            list-style: none;
+            display: grid;
+            gap: .55rem;
+            margin-top: .4rem;
+        }
+
+        .evo-item {
+            padding: .6rem .9rem;
+            border-radius: var(--radius-md);
+            background: rgba(59, 130, 246, .08);
+            border-left: 3px solid var(--violet-primary);
+            font-size: .88rem;
+            color: var(--text-muted);
+        }
+
+        .evo-item b {
+            color: var(--blue-light);
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        /* Мобильное меню (бургер + drawer) */
+        @media (max-width: 680px) {
+            .burger {
+                display: flex;
+            }
+
+            .site-nav {
+                position: absolute;
+                top: calc(var(--header-h, 54px));
+                right: .75rem;
+                left: .75rem;
+                z-index: 55;
+                background: linear-gradient(160deg, rgba(147, 197, 253, .08), var(--surface-1) 40%);
+                border: 1px solid var(--border-glass);
+                border-radius: var(--radius-lg);
+                backdrop-filter: var(--glass-blur);
+                -webkit-backdrop-filter: var(--glass-blur);
+                box-shadow: var(--shadow-glass), var(--rim-top);
+                padding: .5rem .9rem;
+                display: none;
+            }
+
+            .site-nav.is-active {
+                display: block;
+                animation: panelIn .3s cubic-bezier(.16, 1, .3, 1);
+            }
+
+            .site-nav ul {
+                flex-direction: column;
+                gap: .25rem;
+            }
+
+            .nav-link {
+                display: block;
+                padding: .7rem .4rem;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(96, 165, 250, .1);
+            }
+
+            .site-nav li:last-child .nav-link {
+                border-bottom: none;
+            }
+
+            .burger.is-active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+
+            .burger.is-active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .burger.is-active span:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg);
+            }
+        }
+
+        /* ============================ Аккордеон «Исторический разбор» ============================ */
+        .acc {
+            display: grid;
+            gap: var(--sp-sm);
+            margin-top: .6rem;
+        }
+
+        .acc-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow-glass), var(--rim-top);
+        }
+
+        .acc-head {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            transition: background var(--trans-fast), color var(--trans-fast);
+        }
+
+        .acc-head:hover {
+            background: rgba(96, 165, 250, .08);
+            color: var(--text-white);
+        }
+
+        .acc-item.open .acc-head {
+            color: var(--blue-light);
+            border-bottom: 1px solid rgba(147, 197, 253, .14);
+        }
+
+        .acc-ico {
+            width: 2.1rem;
+            height: 2.1rem;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+            border-radius: var(--radius-md);
+            background: rgba(59, 130, 246, .14);
+            border: 1px solid rgba(96, 165, 250, .28);
+        }
+
+        .acc-title {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .acc-title small {
+            display: block;
+            margin-top: .15rem;
+            font-family: var(--font-mono);
+            font-size: .7rem;
+            font-weight: 500;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .acc-chev {
+            flex-shrink: 0;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--blue-light);
+            border-bottom: 2px solid var(--blue-light);
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform var(--trans-normal);
+        }
+
+        .acc-item.open .acc-chev {
+            transform: rotate(225deg) translateY(1px);
+        }
+
+        .acc-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            overflow: hidden;
+            transition: grid-template-rows .5s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .acc-item.open .acc-body {
+            grid-template-rows: 1fr;
+        }
+
+        .acc-inner {
+            min-height: 0;
+            overflow: hidden;
+            padding: 1.1rem 1.4rem 1.3rem;
+            display: grid;
+            gap: var(--sp-md);
+            font-size: .92rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        .acc-inner h4 {
+            margin-bottom: .4rem;
+            font-size: .8rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--blue-electric);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .acc-inner h4::before {
+            content: "";
+            width: 14px;
+            height: 2px;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(90deg, var(--blue-primary), var(--violet-primary));
+        }
+
+        .acc-inner p {
+            margin-bottom: .5rem;
+        }
+
+        .acc-inner ul {
+            list-style: none;
+            display: grid;
+            gap: .45rem;
+        }
+
+        .acc-inner li {
+            position: relative;
+            padding-left: 1.35rem;
+            font-size: .89rem;
+        }
+
+        .acc-inner li::before {
+            content: "▸";
+            position: absolute;
+            left: .2rem;
+            color: var(--blue-electric);
+        }
+
+        .acc-kw {
+            font-family: var(--font-mono);
+            font-size: .78rem;
+            color: var(--violet-light);
+            background: rgba(139, 92, 246, .1);
+            border: 1px solid rgba(168, 85, 247, .3);
+            padding: .05rem .5rem;
+            border-radius: var(--radius-pill);
+        }
+
+        /* Иерархия: легенда уровней (swatch + g-label) */
+        .swatch {
+            display: inline-block;
+            width: .65em;
+            height: .65em;
+            border-radius: 3px;
+            margin-right: .4rem;
+            vertical-align: -2px;
+        }
+
+        .tier-s .swatch,
+        .swatch.s {
+            background: #ffd76a;
+            box-shadow: 0 0 .45rem rgba(255, 215, 106, .3);
+        }
+
+        .tier-a .swatch,
+        .swatch.a {
+            background: #9db8ff;
+        }
+
+        .tier-b .swatch,
+        .swatch.b {
+            background: #6fdcb2;
+        }
+
+        .tier-c .swatch,
+        .swatch.c {
+            background: #7a8aa8;
+        }
+
+        .g-label {
+            font-size: .78rem;
+            color: var(--text-muted);
+            margin-left: .55rem;
+            white-space: nowrap;
+        }
+
+        .swatch-stand {
+            background: #ffd76a;
+            box-shadow: 0 0 .45rem rgba(255, 215, 106, .3);
+        }
+
+        .swatch-reach {
+            background: #9db8ff;
+        }
+
+        .swatch-stack {
+            background: #6fdcb2;
+        }
+
+        /* ============================ Tier-листы и гид по выбору ============================ */
+        .guide-card {
+            margin-bottom: var(--sp-lg);
+            padding: var(--sp-md) var(--sp-lg) var(--sp-md);
+        }
+
+        .guide-card h3 {
+            font-size: 1.05rem;
+            color: var(--text-white);
+            margin-bottom: .4rem;
+        }
+
+        .guide-btns {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
+            margin-top: .2rem;
+        }
+
+        .guide-btn {
+            padding: .6rem 1.15rem;
+            border-radius: var(--radius-pill);
+            font-size: .87rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--surface-subtle);
+            border: 1px solid var(--border-glass);
+            transition: all var(--trans-fast);
+        }
+
+        .guide-btn small {
+            display: block;
+            margin-top: .1rem;
+            font-size: .72rem;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+
+        .guide-btn:hover {
+            border-color: var(--border-glass-hover);
+            color: var(--text-white);
+            transform: translateY(-1px);
+        }
+
+        .guide-btn.is-on {
+            color: var(--text-white);
+            background: linear-gradient(135deg, rgba(29, 78, 216, .4), rgba(139, 92, 246, .3));
+            border-color: rgba(96, 165, 250, .6);
+            box-shadow: var(--shadow-neon-blue);
+        }
+
+        .guide-btn.is-on small {
+            color: var(--blue-light);
+        }
+
+        .guide-hint {
+            margin-top: var(--sp-sm);
+            font-size: .87rem;
+            color: var(--text-muted);
+            min-height: 1.3em;
+        }
+
+        .tier-card h4 {
+            margin: .9rem 0 .45rem;
+            font-size: .78rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--violet-light);
+        }
+
+        .tbl.tiers td:first-child,
+        .tbl.tiers th:first-child {
+            min-width: 210px;
+        }
+
+        .tier-name {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tier-badge {
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            padding: .12rem .5rem;
+            border-radius: var(--radius-pill);
+            background: rgba(96, 165, 250, .14);
+            color: var(--blue-light);
+            border: 1px solid rgba(96, 165, 250, .3);
+        }
+
+        .tier-badge.top {
+            background: rgba(139, 92, 246, .18);
+            color: var(--violet-light);
+            border-color: rgba(168, 85, 247, .42);
+            box-shadow: 0 0 12px rgba(139, 92, 246, .35);
+        }
+
+        .tier-badge.mid {
+            background: rgba(56, 189, 248, .14);
+            color: var(--blue-electric);
+            border-color: rgba(56, 189, 248, .38);
+        }
+
+        #hierarchy .tbl tr.hl-row td {
+            background: linear-gradient(90deg, rgba(52, 211, 153, .12), rgba(52, 211, 153, .03));
+            box-shadow: inset 3px 0 0 #34d399;
+        }
+
+        #hierarchy .tbl tr.hl-row td:first-child {
+            color: #6ee7b7;
+            font-weight: 700;
+        }
+
+        /* ============================ Калькулятор: прозрачность математики ============================ */
+        .formula-box {
+            margin-top: var(--sp-md);
+            padding: .9rem 1.15rem;
+            border-radius: var(--radius-md);
+            background: rgba(2, 6, 23, .45);
+            border: 1px solid rgba(96, 165, 250, .2);
+            font-family: var(--font-mono);
+            font-size: .8rem;
+            line-height: 1.85;
+            color: var(--text-muted);
+        }
+
+        .formula-box h4 {
+            margin-bottom: .35rem;
+            font-family: var(--font-body);
+            font-size: .9rem;
+            letter-spacing: .04em;
+            text-transform: none;
+            color: var(--blue-light);
+        }
+
+        .f-line b {
+            color: var(--blue-electric);
+            font-weight: 700;
+        }
+
+        .f-note {
+            margin-top: .3rem;
+            font-family: var(--font-body);
+            font-size: .82rem;
+            color: #7d90b3;
+            line-height: 1.5;
+        }
+
+        /* Схема Standover / Reach / Stack — без рамки: SVG по центру + легенда под ним */
+        .geom-wrap {
+            display: grid;
+            gap: var(--sp-md);
+            margin-top: var(--sp-lg);
+        }
+
+        .geom-wrap svg {
+            width: 100%;
+            height: auto;
+            max-width: 460px;
+            margin-inline: auto;
+            display: block;
+        }
+
+        .g-legend {
+            list-style: none;
+            display: grid;
+            gap: .35rem;
+            font-size: .84rem;
+            color: var(--text-muted);
+        }
+
+        .g-legend li b {
+            color: var(--blue-electric);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            margin-right: .4rem;
+        }
+
+        /* Анализ пропорций */
+        .ratio-grid {
+            display: grid;
+            gap: var(--sp-sm);
+            list-style: none;
+            margin-top: .3rem;
+        }
+
+        .ratio-card {
+            padding: .65rem .9rem;
+            border-radius: var(--radius-md);
+            background: rgba(139, 92, 246, .08);
+            border-left: 3px solid var(--violet-primary);
+            font-size: .87rem;
+            color: var(--text-muted);
+        }
+
+        .ratio-card b {
+            color: var(--blue-light);
+            display: block;
+            margin-bottom: .15rem;
+        }
+
+        /* ============================ Адаптивность новых блоков ============================ */
+        @media (max-width: 980px) {
+
+            #hierarchy.ref-grid-2,
+            .tiers-grid.ref-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .acc-head {
+                padding: .85rem 1rem;
+                font-size: .93rem;
+            }
+
+            .acc-inner {
+                padding: .95rem 1.05rem 1.1rem;
+            }
+
+            .guide-btn {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="logo" href="#top">
+                <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <circle cx="17" cy="44" r="13" fill="none" stroke="#3b82f6" stroke-width="4" />
+                    <circle cx="47" cy="44" r="13" fill="none" stroke="#3b82f6" stroke-width="4" />
+                    <path d="M17 44L30 22h11l6 22M30 22l-4 22m15-22L26 44" fill="none" stroke="#8b5cf6"
+                        stroke-width="4" />
+                </svg>
+                Bicycle&nbsp;<b>World</b><span class="brand-tag">ref · compat</span>
+            </a>
+            <nav class="site-nav" id="siteNav" aria-label="Основная навигация">
+                <ul>
+                    <li><a class="nav-link" href="#encyclopedia">Справочник</a></li>
+                    <li><a class="nav-link" href="#hierarchy">Компоненты</a></li>
+                    <li><a class="nav-link" href="#sizing">Калькулятор</a></li>
+                    <li><a class="nav-link" href="#compat">Совместимость</a></li>
+                    <li><a class="nav-link" href="#standards">Стандарты</a></li>
+                </ul>
+            </nav>
+            <button class="burger" id="burgerBtn" type="button" aria-label="Открыть меню"
+                aria-controls="siteNav" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <section class="hero" id="top">
+        <p class="kicker">Bicycle Reference &amp; Compatibility</p>
+        <h1>Велосипед — это <span class="grad">инженерная система стандартов</span></h1>
+        <p class="lede">Энциклопедия типов байков, иерархия компонентов Shimano / SRAM / Campagnolo / MicroSHIFT,
+            калькулятор ростовки рамы по inseam и конструктор совместимости трансмиссий: рычажность троса, шаг кассеты и
+            посадка на барабан — в одном интерфейсе.</p>
+        <div class="hero-stats">
+            <span class="stat"><b>4</b><span>типа байков</span></span>
+            <span class="stat"><b>10+</b><span>стандартов оборудования</span></span>
+            <span class="stat"><b>Shimano · SRAM · Campagnolo</b><span>+ MicroSHIFT</span></span>
+        </div>
+        <div class="hero-cta">
+            <a class="btn btn-primary" href="#sizing">Рассчитать размер</a>
+            <a class="btn btn-ghost" href="#encyclopedia">Открыть справочник</a>
+        </div>
+    </section>
+
+    <section class="section" id="encyclopedia">
+        <div class="section-head">
+            <h2>Энциклопедия и Эволюция</h2>
+        </div>
+
+        <p class="lede">Четыре ключевые дисциплины — у каждой свои колёса, геометрия рамы и стандарты оборудования. В
+            карточках — определяющие черты и типичное применение.</p>
+
+        <div class="ref-grid ref-grid-2">
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🚵</span>
+                    <h3>МТБ / Хардтейл</h3>
+                </div>
+                <p>Колёса 29″ (накат, сцепление) и 27.5″ (манёвренность). Прогрессивная геометрия: низкий BB, короткий
+                    задний треугольник. Вилка с ходом 100–140&nbsp;мм, жёсткая рама.</p>
+                <p><span class="chip">XC</span> <span class="chip">Trail</span></p>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🏔️</span>
+                    <h3>Двухподвес (Full-Suspension)</h3>
+                </div>
+                <p>Задняя подвеска с кинематикой — FSR, VPP или DW-Link: держит контакт колеса и эффективность педалирования.
+                    Линки задают траекторию перемещения заднего колеса.</p>
+                <p><span class="chip">Enduro</span> <span class="chip">DH</span></p>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🛤️</span>
+                    <h3>Грэвел (Gravel)</h3>
+                </div>
+                <p>Drops, зазоры под широкую резину 35–47&nbsp;мм, бонки под байкпакинг и багажник. Рамная геометрия —
+                    компромисс между жёсткостью МТБ и посадкой шоссе.</p>
+                <p><span class="chip chip-violet">Adventure</span></p>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🏁</span>
+                    <h3>Шоссе (Road)</h3>
+                </div>
+                <p>Аэродинамика: карбон/сталь, глубокие обода и дорожные покрышки примерно 28–32&nbsp;мм
+                    (фактический диапазон зависит от рамы и ободов). Приоритет — эффективность педалирования и точность
+                    руления на скорости.</p>
+                <p><span class="chip chip-violet">Race</span></p>
+            </article>
+        </div>
+
+        <h3 class="subhead">Эволюция рам и стандартов</h3>
+        <div class="card glass">
+            <ul class="evo-list">
+                <li class="evo-item"><b>1970–80-е</b> — распространение стальных рам и кассетных втулок со свободным
+                    ходом (freehub), постепенно вытесняющих резьбовые трещотки.</li>
+                <li class="evo-item"><b>1990-е</b> — рост популярности МТБ, развитие дисковых тормозов и появление
+                    гоночной группы Shimano XTR (1992); 26″ остаётся основным размером колёс.</li>
+                <li class="evo-item"><b>2000-е</b> — получают распространение каретки PressFit (BB86/PF30), оси
+                    Thru-Axle и 29″ колёса; резьбовая BSA при этом не исчезает.</li>
+                <li class="evo-item"><b>2015–наши дни</b> — эпоха 1×: SRAM XX1 → Eagle (12 скоростей, XD для кассет 10–52T);
+                    Shimano MTB 12s использует MicroSpline, SRAM AXS Road/Gravel — XDR; Boost-расстояния — 15×110 / 12×148.</li>
+            </ul>
+        </div>
+
+        <h3 class="subhead">История и технический разбор дисциплин</h3>
+        <p class="lede">Глубже карточек: откуда взялась каждая дисциплина, какие технологии
+            её определили и на что смотреть при выборе. Клик по заголовку раскрывает раздел.</p>
+
+        <div class="acc">
+            <div class="acc-item" id="acc-mtb">
+                <button type="button" class="acc-head" id="head-mtb" aria-expanded="false" aria-controls="panel-mtb">
+                    <span class="acc-ico" aria-hidden="true">🚵</span>
+                    <span class="acc-title">
+                        <h4>МТБ хардтейл: история и технологии</h4><small>Marin County · 2× → 1× · прогрессивная
+                            геометрия</small>
+                    </span>
+                    <span class="acc-chev" aria-hidden="true"></span>
+                </button>
+                <div class="acc-panel" id="panel-mtb" role="region" aria-labelledby="head-mtb" aria-hidden="true">
+                    <div class="acc-body">
+                        <div class="acc-inner">
+                            <p>Велосипед для гор родился в конце 1970-х на севере Калифорнии: райдеры брали старые
+                                шоссерные и мотостильные рамы, ставили зубастые покрышки и ехали по трейлам округа
+                                Марин. Первые «настоящие» МТБ — стальные рамы с жёсткой вилкой или простой пружинной;
+                                клуб Mountain Bike Club of NorCal стал своего рода колыбелью дисциплины.</p>
+                            <p>Эволюция хардтейлов идёт по трём линиям — <b>подвеска</b>, <b>привод</b> и
+                                <b>колёса/покрышки</b>:</p>
+                            <ul>
+                                <li><b>Вилки:</b> от жёстких (80-е) к пружинным, затем — воздушные: RockShox
+                                    Judy/BoXXer, Fox 32/34. Современные XC — ход 100–120 мм с демпфером
+                                    компрессии/отскока; трэйл — до 140 мм.</li>
+                                <li><b>Привод:</b> эпоха 2×9 и 2×10 уступила место 1× (SRAM XX1, 2012; Shimano Deore XT
+                                    M8000, 2015). Одна передняя звезда и широкий диапазон кассеты (10–46 / 11–51 T) — меньше
+                                    деталей, ниже вес, проще обслуживание.</li>
+                                <li><b>Колёса:</b> от доминировавших 26″ к распространённым 27.5″ и 29″; tubeless-покрышки 2.3–2.6″ с высоким
+                                    сцеплением; Boost-расстояния (15×110 мм) для жёсткости обода.</li>
+                            </ul>
+                            <p><b>Прогрессивная геометрия</b> — визитная карточка современных хардтейлов: угол рулевой
+                                64–66°, BB-drop 9–15 мм, короткий задний треугольник. Стабильность на спусках и живость
+                                в поворотах достигаются одновременно. Главный критерий выбора — соответствие хода вилки
+                                (100/120/140 мм) уровню райдера и характеру трасс.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item" id="acc-fs">
+                <button type="button" class="acc-head" id="head-fs" aria-expanded="false" aria-controls="panel-fs">
+                    <span class="acc-ico" aria-hidden="true">🏔️</span>
+                    <span class="acc-title">
+                        <h4>Двухподвес: кинематика и история</h4><small>FSR · VPP · DW-Link · High Pivot ·
+                            антисквот</small>
+                    </span>
+                    <span class="acc-chev" aria-hidden="true"></span>
+                </button>
+                <div class="acc-panel" id="panel-fs" role="region" aria-labelledby="head-fs" aria-hidden="true">
+                    <div class="acc-body">
+                        <div class="acc-inner">
+                            <p>Серийные горные велосипеды с задней подвеской появились в 1980-х: ранние конструкции,
+                                включая Rocky Mountain Pipeline и модели Klein, были тяжелее и проще современных.
+                                Позже развитие многорычажных схем позволило точнее управлять траекторией колеса,
+                                педалированием и реакцией на торможение. Specialized запатентовал систему
+                                FSR (Horst Link); VPP — отдельная схема с виртуальной точкой вращения, патент на
+                                которую относится к Santa Cruz / Intense, а не к Specialized.</p>
+                            <ul>
+                                <li><b>Разные схемы:</b> FSR (Horst Link) — четырёхрычажная подвеска с шарниром на
+                                    нижнем пере; VPP и DW-Link используют пары коротких линков; High Pivot поднимает
+                                    главный шарнир и обычно требует ролика цепи. Их нельзя сводить к одной кинематике.</li>
+                                <li><b>Линка-соотношение (link ratio):</b> сколько ходит заднее колесо на единицу хода
+                                    амортизатора; влияет на характеристику пружины и работу подвески.</li>
+                                <li><b>Ход:</b> XC обычно 100–120 мм, трейл 120–150 мм, эндуро 150–180 мм, даунхилл
+                                    около 180–200 мм и более. Значения зависят от модели и назначения; амортизатор и
+                                    кинематика должны соответствовать ходу подвески.</li>
+                                <li><b>Тренды:</b> карбоновый задний треугольник (−~25% массы), 1×-привод, Boost-втулки,
+                                    широкие покрышки 2.4–2.6″ как стандарт.</li>
+                            </ul>
+                            <p>Ключевые параметры кинематики — <b>антисквот</b>, описывающий влияние педалирования на
+                                сжатие подвески, и <b>тормозной эффект</b> (brake squat/jack), описывающий её реакцию
+                                при торможении. Их значения зависят от передачи, положения подвески и конкретной рамы:
+                                универсального «оптимального процента» для всех велосипедов нет.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="acc-item" id="acc-road">
+                <button type="button" class="acc-head" id="head-road" aria-expanded="false" aria-controls="panel-road">
+                    <span class="acc-ico" aria-hidden="true">🏁</span>
+                    <span class="acc-title">
+                        <h4>Шоссе: эволюция и геометрия</h4><small>CroMo → алюминий → карбон · компактная
+                            геометрия</small>
+                    </span>
+                    <span class="acc-chev" aria-hidden="true"></span>
+                </button>
+                <div class="acc-panel" id="panel-road" role="region" aria-labelledby="head-road" aria-hidden="true">
+                    <div class="acc-body">
+                        <div class="acc-inner">
+                            <p>Шоссер — старейшая «серьёзная» дисциплина: от стальных safety-bicycles конца XIX века до
+                                современного карбона. Материальная революция шла так: хромоль (CroMo) → алюминий (конец
+                                1980-х, Reynolds/True Temper) → карбон (доминирует с 2000-х), позволивший профилировать
+                                трубы под аэродинамику.</p>
+                            <ul>
+                                <li><b>Компактная геометрия</b> (с 2004–2006): короче шток руля, ниже stack — рамы стали
+                                    «меньше» и проще в подборе. Современная гоночная: угол рулевой ~73°, угол ситовой
+                                    73–74°, BB-drop ~70 мм.</li>
+                                <li><b>Аэродинамика:</b> трубы Kammtail/капля, глубокие обода (50–80 мм) — на скоростях
+                                    выше 40 км/ч дают больше выигрыша, чем экономия массы.</li>
+                                <li><b>Покрышки:</b> от 23 мм к 28–32 мм tubeless — ниже сопротивление качению и выше
+                                    комфорт; глубина обода перестала быть единственным критерием.</li>
+                                <li><b>Приводы:</b> электронные переключатели Di2 / AXS / Ekar (беспроводные),
+                                    105→Dura-Ace 2×12; в эндуранс — 1× или компактная звезда 46/33 T.</li>
+                            </ul>
+                            <p><b>Race vs Endurance:</b> гоночные рамы — длиннее reach, круче ситовая труба и ниже stack
+                                (агрессивная посадка); эндуранс-модели жертвуют частью аэродинамики ради комфорта: выше
+                                stack, меньше fork offset, зазор под более широкую резину.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item" id="acc-gravel">
+                <button type="button" class="acc-head" id="head-gravel" aria-expanded="false" aria-controls="panel-gravel">
+                    <span class="acc-ico" aria-hidden="true">🛤️</span>
+                    <span class="acc-title">
+                        <h4>Грэвел: происхождение и специфика</h4><small>туринг · циклокросс · Unbound Gravel
+                            (2006)</small>
+                    </span>
+                    <span class="acc-chev" aria-hidden="true"></span>
+                </button>
+                <div class="acc-panel" id="panel-gravel" role="region" aria-labelledby="head-gravel" aria-hidden="true">
+                    <div class="acc-body">
+                        <div class="acc-inner">
+                            <p>Грэвел — дисциплина, оформившаяся в 2000-х и 2010-х на стыке туринга, циклокросса и
+                                шоссейных гонок по грунту. Современные гравийные велосипеды сочетают руль-баран,
+                                дисковые тормоза и увеличенный зазор под покрышки; Unbound Gravel проводится с 2006 года
+                                под названием Dirty Kanza.</p>
+                            <ul>
+                                <li><b>Зазоры под резину:</b> часто 35–50 мм, но допустимая ширина зависит от рамы,
+                                    обода и зазора с учётом грязи.</li>
+                                <li><b>Геометрия:</b> обычно между шоссейной и MTB, но заметно различается у гоночных
+                                    и туристических моделей; важны база, trail и высота каретки.</li>
+                                <li><b>Крепления:</b> бонки под фляги, багажник и крылья встречаются часто, но не
+                                    являются обязательными. Материал рамы выбирают по приоритетам, а не только по весу.</li>
+                                <li><b>Привод и втулки:</b> встречаются 1× и 2×, кассеты с широким диапазоном,
+                                    дисковые тормоза и задние оси 12×142 мм; 12×148 мм Boost встречается на отдельных
+                                    моделях и не является универсальным стандартом грэвела.</li>
+                            </ul>
+                            <p>Основное применение — маршруты по грунту, байкпакинг и гравийные гонки. Геометрия
+                                подбирается под задачу: гоночные модели обычно рассчитаны на более динамичную посадку,
+                                туристические — на стабильность и длительный комфорт.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.acc -->
+    </section>
+
+    <section class="section" id="hierarchy">
+        <div class="section-head">
+            <h2>Иерархия компонентов и гид по уровням</h2>
+            <p class="lede">Каждый производитель выстраивает линейку «от верхушки к бюджетной»: чем выше уровень — тем
+                легче, жёстче и точнее группа. Таблицы ниже показывают, для какого стиля езды какой уровень оптимален;
+                кнопки гида подсвечивают подходящие строки во всех таблицах.</p>
+        </div>
+            <div class="card glass" style="margin:0 0 1.4rem">
+                <h3 class="subhead">Гид по задачам</h3>
+                <div class="guide-btns">
+                    <button type="button" class="guide-btn is-on" data-cat="all" aria-pressed="true" aria-controls="tierTables">Все
+                        уровни</button>
+                    <button type="button" class="guide-btn" data-cat="casual" aria-pressed="false" aria-controls="tierTables">Повседневная
+                        езда</button>
+                    <button type="button" class="guide-btn" data-cat="touring" aria-pressed="false" aria-controls="tierTables">Туризм и дальние
+                        маршруты</button>
+                    <button type="button" class="guide-btn" data-cat="intense" aria-pressed="false" aria-controls="tierTables">Интенсивные
+                        тренировки / эндуро</button>
+                    <button type="button" class="guide-btn" data-cat="racing" aria-pressed="false" aria-controls="tierTables">Гонки и
+                        соревнования</button>
+                </div>
+                <p id="tierHint" class="hint-text" style="margin-top:.6rem; font-size:.85rem; color:var(--muted)">
+                    Выберите задачу — подходящие строки таблиц подсветятся. Уровни S/A/B/C сопоставимы между брендами по
+                    цене и назначению, но внутри бренда разница в весе и точности переключения заметнее.</p>
+            </div>
+            <div class="ref-grid tiers-grid ref-grid-2" id="tierTables">
+                <div class="card glass" id="tier-shi-mtb">
+                    <h3 class="subhead">Shimano MTB (Deore–XTR)</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="racing intense">
+                                <td class="tier tier-s">S</td>
+                                <td>XTR M9100 / Deore XT M8100</td>
+                                <td>Гоночный и верхний эндуру-уровень: максимальная точность переключения под нагрузкой,
+                                    лёгкий вес. Для гонок и агрессивных трейлов.</td>
+                            </tr>
+                            <tr data-cat="intense touring">
+                                <td class="tier tier-a">A</td>
+                                <td>Deore M6100 / SLX M7100</td>
+                                <td>Рабочая лошадка для интенсивного трэйла и эндуро: 12-скоростной диапазон, надёжность
+                                    на камнях. Оптимальное соотношение цены и характеристик.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-b">B</td>
+                                <td>Deore M4100 / M5100 (10–11s)</td>
+                                <td>Повседневные выезды, обучение, неспешный кросс-кантри: 9–10 скоростей с запасом на
+                                    любую трассу. Проще и дешевле в обслуживании.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>Altus / Tourney (8–9s)</td>
+                                <td>Город, прогулки, первые велосипеды: минимальный набор функций при минимальной цене.
+                                    Для тренировок и марафонов не подходит.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card glass" id="tier-sram-mtb">
+                    <h3 class="subhead">SRAM MTB (SX–XX1 Eagle / Transmission)</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="racing intense">
+                                <td class="tier tier-s">S</td>
+                                <td>X01 / XX1 Eagle; Transmission (T-Type AXS, 12s)</td>
+                                <td>Флагман: 12-скоростная кассета с диапазоном до 10–52T, максимальная жёсткость под
+                                    нагрузкой. Для гонок и агрессивного эндуро.</td>
+                            </tr>
+                            <tr data-cat="intense touring">
+                                <td class="tier tier-a">A</td>
+                                <td>GX Eagle (12s)</td>
+                                <td>Рабочий уровень: широкий диапазон, надёжная Eagle-кассета. Для регулярных трейловых
+                                    и туристических выездов по грунту.</td>
+                            </tr>
+                            <tr data-cat="casual touring">
+                                <td class="tier tier-b">B</td>
+                                <td>NX Eagle (12s)</td>
+                                <td>Универсальный уровень: кассета 11–50T, честная цена. Подходит для повседневной езды и
+                                    неспешных трейлов.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>SX Eagle (12s)</td>
+                                <td>Бюджетный уровень: базовый 1×-привод для города и прогулок. Для интенсивных нагрузок
+                                    — не лучший выбор.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card glass" id="tier-shi-road">
+                    <h3 class="subhead">Shimano Road / Gravel</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="racing intense">
+                                <td class="tier tier-s">S</td>
+                                <td>Dura-Ace Di2 R9200 / R9170</td>
+                                <td>Гоночный уровень: беспроводной Di2, максимальная лёгкость и точность. Для гонок,
+                                    триатлона и агрессивных тренировок.</td>
+                            </tr>
+                            <tr data-cat="intense racing touring">
+                                <td class="tier tier-a">A</td>
+                                <td>Ultegra Di2 R8100 / GRX 820 1×12s</td>
+                                <td>Рабочий уровень: характеристики близки к Dura-Ace, цена заметно ниже. Гонки уровня
+                                    «любительский элитный», грэвел-приключения.</td>
+                            </tr>
+                            <tr data-cat="casual touring">
+                                <td class="tier tier-b">B</td>
+                                <td>105 R7100 / GRX 600–400 (10–11s)</td>
+                                <td>Дневные тренировки, длинные маршруты, туризм: надёжная механика с запасом хода.
+                                    Лучший выбор по цене для регулярной езды.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>Sora (9s) / Tiagra (10s)</td>
+                                <td>Город, первые шоссеры, редкие выезды: простая механика и минимальная цена. Для гонок
+                                    — нет.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card glass" id="tier-sram-road">
+                    <h3 class="subhead">SRAM Road / Gravel (Apex — XPLR)</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="racing intense">
+                                <td class="tier tier-s">S</td>
+                                <td>RED AXS / XPLR AXS 12s</td>
+                                <td>Флагман: беспроводный AXS, максимальная жёсткость. Для гонок и агрессивных
+                                    тренировок; XPLR — грэвел-гонки.</td>
+                            </tr>
+                            <tr data-cat="intense touring">
+                                <td class="tier tier-a">A</td>
+                                <td>Force AXS 12s</td>
+                                <td>Рабочий уровень: характеристики RED при меньшей цене. Клубные тренировки, длинные
+                                    маршруты по асфальту и грунту.</td>
+                            </tr>
+                            <tr data-cat="touring casual">
+                                <td class="tier tier-b">B</td>
+                                <td>Rival 12s / Rival E1 (gravel)</td>
+                                <td>Дальние туры и повседневные выезды: надёжная механика/AXS, честная цена. Для гонок —
+                                    с оговорками.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>Apex 1×11 / 12s</td>
+                                <td>Город, первый шоссер, редкие маршруты: широкий диапазон 1× и низкая цена. Для
+                                    интенсивных нагрузок — нет.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card glass" id="tier-campy">
+                    <h3 class="subhead">Campagnolo Road / Gravel (Ekar)</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="racing intense">
+                                <td class="tier tier-s">S</td>
+                                <td>Record / Super Record</td>
+                                <td>Верхние шоссейные группы Campagnolo; версии и число скоростей зависят от поколения.</td>
+                            </tr>
+                            <tr data-cat="intense touring">
+                                <td class="tier tier-a">A</td>
+                                <td>Chorus</td>
+                                <td>Шоссейная группа среднего-высокого уровня; проверяйте совместимость компонентов по поколению.</td>
+                            </tr>
+                            <tr data-cat="casual touring">
+                                <td class="tier tier-b">B</td>
+                                <td>Centaur (11s)</td>
+                                <td>Шоссейная механическая группа предыдущих поколений; число скоростей зависит от версии.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>Отдельной актуальной группы начального уровня в этой линейке нет</td>
+                                <td>Для замены или апгрейда сверяйте серию и скорость кассеты конкретных компонентов.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card glass" id="tier-microshift">
+                    <h3 class="subhead">MicroSHIFT (MTB / Gravel)</h3>
+                    <p>Линейка от начального к более специализированному уровню: Mezzo → Marvo → Advent →
+                        Advent X (1×10) → Sword (Gravel 1×10 / 2×10).</p>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Уровень</th>
+                                <th>Группа</th>
+                                <th>Для чего</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-cat="touring casual">
+                                <td class="tier tier-b">B</td>
+                                <td>Advent X (1×10) / Sword (Gravel 1×10 или 2×10)</td>
+                                <td>Доступные решения для MTB и грэвела; проверяйте конкретные кассету, манетку и тип барабана.</td>
+                            </tr>
+                            <tr data-cat="casual">
+                                <td class="tier tier-c">C</td>
+                                <td>Mezzo / Marvo / Advent</td>
+                                <td>Линейки для городских и MTB-велосипедов; комплектации и число скоростей различаются по серии.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="hint-text" style="margin-top:.9rem">Уровни сопоставимы между брендами: S ≈ Dura-Ace / RED /
+                Record / Super Record, A ≈ Ultegra / Force / Chorus, B ≈ 105 / Rival / Centaur, C — бюджетные линейки.
+                Campagnolo Ekar — отдельная гравийная группа 1×13, а не ступень шоссейного ряда. Внутри бренда
+                разница в весе и точности заметнее, чем между уровнями разных производителей.</p>
+    </section>
+
+    <section class="section" id="sizing">
+        <div class="section-head">
+            <h2>Калькулятор ростовки рамы</h2>
+        </div>
+
+        <p class="lede">Основная метрика — inseam (длина от пола до паха). Выберите дисциплину и двигайте ползунки:
+            результат, запас стендовера и ориентировочные Reach/Stack пересчитываются мгновенно.</p>
+
+        <form class="card glass" id="sizingForm" novalidate>
+            <div class="field">
+                <label for="bikeType">Тип велосипеда</label>
+                <select id="bikeType" name="bikeType">
+                    <option value="mtb" selected>Горный MTB — размер в дюймах</option>
+                    <option value="road">Шоссе / Грэвел — размер в сантиметрах</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="height">Рост <output id="heightOut" for="height">175 см</output></label>
+                <input type="range" id="height" name="height" min="150" max="205" step="1" value="175">
+            </div>
+
+            <div class="field">
+                <label for="inseam">Длина ног (Inseam) <output id="inseamOut" for="inseam">80 см</output></label>
+                <input type="range" id="inseam" name="inseam" min="65" max="100" step="1" value="80">
+            </div>
+
+            <div class="result" id="sizingResult" aria-live="polite"></div>
+        </form>
+
+        <div class="geom-wrap">
+            <svg viewBox="0 0 560 320" role="img"
+                aria-label="Схема параметров посадки: standover, reach и stack на боковом профиле рамы">
+                <!-- земля -->
+                <line x1="40" y1="283" x2="520" y2="283" stroke="rgba(147,197,253,.25)" stroke-width="2" />
+                <!-- колёса -->
+                <g fill="none" stroke="rgba(216,227,255,.45)" stroke-width="2.5">
+                    <circle cx="120" cy="235" r="48" />
+                    <circle cx="440" cy="235" r="48" />
+                </g>
+                <!-- рама -->
+                <g fill="none" stroke="#d8e3ff" stroke-width="3.5" stroke-linecap="round">
+                    <path d="M120 235 L265 240" />
+                    <path d="M120 235 L215 95" />
+                    <path d="M265 240 L215 95" />
+                    <path d="M225 105 L385 105" />
+                    <path d="M385 105 L392 142" />
+                    <path d="M265 240 L392 142" />
+                    <path d="M392 142 L440 235" />
+                </g>
+                <!-- седло и каретка -->
+                <line x1="185" y1="92" x2="250" y2="92" stroke="#d8e3ff" stroke-width="6" stroke-linecap="round" />
+                <circle cx="265" cy="240" r="5" fill="#ffd479" />
+                <!-- STANDOVER -->
+                <g stroke="#7aa2ff" fill="none">
+                    <line x1="160" y1="105" x2="160" y2="283" stroke-width="2.5" />
+                    <path d="M154 112 L160 105 L166 112" stroke-width="2" />
+                    <path d="M154 276 L160 283 L166 276" stroke-width="2" />
+                </g>
+                <text x="148" y="198" text-anchor="end" class="g-label" fill="#7aa2ff">STANDOVER</text>
+                <!-- REACH -->
+                <g stroke="#6fe8b0" fill="none">
+                    <line x1="265" y1="40" x2="385" y2="40" stroke-width="2.5" />
+                    <path d="M272 36 L265 40 L272 44" stroke-width="2" />
+                    <path d="M378 36 L385 40 L378 44" stroke-width="2" />
+                    <line x1="265" y1="42" x2="265" y2="238" stroke-dasharray="4 4" opacity=".5" />
+                    <line x1="386" y1="42" x2="387" y2="103" stroke-dasharray="4 4" opacity=".5" />
+                </g>
+                <text x="325" y="28" text-anchor="middle" class="g-label" fill="#6fe8b0">REACH</text>
+                <!-- STACK -->
+                <g stroke="#ffd479" fill="none">
+                    <line x1="500" y1="105" x2="500" y2="240" stroke-width="2.5" />
+                    <path d="M494 112 L500 105 L506 112" stroke-width="2" />
+                    <path d="M494 233 L500 240 L506 233" stroke-width="2" />
+                    <line x1="390" y1="105" x2="498" y2="105" stroke-dasharray="4 4" opacity=".5" />
+                    <line x1="272" y1="240" x2="498" y2="240" stroke-dasharray="4 4" opacity=".5" />
+                </g>
+                <text x="508" y="176" class="g-label" fill="#ffd479">STACK</text>
+            </svg>
+            <ul class="g-legend">
+                <li><span class="swatch swatch-stand"></span><b>Standover</b> — вертикальный запас от верхней трубы до
+                    пола; должен быть ≥ inseam + 1–5 см, иначе при посадке рама «надавливает». Определяет минимально
+                    допустимый размер рамы.</li>
+                <li><span class="swatch swatch-reach"></span><b>Reach</b> — горизонтальное расстояние от каретки (BB) до
+                    верхней части рулевой трубы; вместе с выносом и рулём задаёт «длинность» и агрессивность посадки.
+                </li>
+                <li><span class="swatch swatch-stack"></span><b>Stack</b> — вертикальное расстояние от каретки до
+                    верхней части рулевой трубы; определяет высоту посадки. Соотношение stack/reach показывает,
+                    насколько геометрия «высокая» или «растянутая».</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section" id="compat">
+        <div class="section-head">
+            <h2>Конструктор совместимости трансмиссий (Shimano / SRAM / Campagnolo / MicroSHIFT)</h2>
+        </div>
+
+        <p class="lede">Выберите манетку, задний переключатель и стандарт барабана — включая кросс-брендовые сочетания
+            (Campagnolo, MicroSHIFT). Система проверит рычажность троса, шаг кассеты и посадку на барабан — и выдаст
+            вердикт с деталями.</p>
+
+        <form class="card glass" id="compatForm" novalidate>
+            <div class="field">
+                <label for="shifterOpt">Манетка / шифтер</label>
+                <select id="shifterOpt"></select>
+            </div>
+
+            <div class="field">
+                <label for="derailleurOpt">Задний переключатель</label>
+                <select id="derailleurOpt"></select>
+            </div>
+
+            <div class="field">
+                <label for="freehubOpt">Стандарт барабана втулки</label>
+                <select id="freehubOpt"></select>
+            </div>
+
+            <div class="field">
+                <label for="crossBrandOpt">Кросс-брендовое сочетание (опционально)</label>
+                <select id="crossBrandOpt"></select>
+            </div>
+
+            <div class="callout glass" id="compatCallout" aria-live="polite"></div>
+        </form>
+    </section>
+
+    <section class="section" id="standards">
+        <div class="section-head">
+            <h2>Матрица стандартов оборудования</h2>
+        </div>
+
+        <p class="lede">Три группы стандартов, которые чаще всего ломают совместимость при апгрейде: размер колес,
+            каретка и оси втулок.</p>
+
+        <div class="ref-grid ref-grid-3">
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">⚙️</span>
+                    <h3>Колёса: 26″ / 27.5″ / 29″</h3>
+                </div>
+                <div class="tbl-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Характеристика</th>
+                                <th>26″</th>
+                                <th>27.5″</th>
+                                <th>29″</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Диаметр обода</td>
+                                <td>559 мм</td>
+                                <td>584 мм</td>
+                                <td>609 мм</td>
+                            </tr>
+                            <tr>
+                                <td>Угол атаки (преодоление)</td>
+                                <td>высокий — «перепрыгивает» мелкие кочки</td>
+                                <td>средний</td>
+                                <td>низкий — «катится через» препятствие</td>
+                            </tr>
+                            <tr>
+                                <td>Накат и скорость</td>
+                                <td>ниже всего</td>
+                                <td>выше среднего</td>
+                                <td>максимум</td>
+                            </tr>
+                            <tr>
+                                <td>Вес колеса (при равной резине)</td>
+                                <td>минимальный</td>
+                                <td>средний</td>
+                                <td>больший</td>
+                            </tr>
+                            <tr>
+                                <td>Манёвренность в крутых поворотах</td>
+                                <td>максимум</td>
+                                <td>выше среднего</td>
+                                <td>ниже (длинная база)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🔩</span>
+                    <h3>Каретки: резьбовые vs PressFit</h3>
+                </div>
+                <div class="tbl-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Резьбовая (BSA)</th>
+                                <th>PressFit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Стакан</td>
+                                <td>68 мм (MTB) / 73 мм (Road)</td>
+                                <td>BB86 (68 мм, MTB) / PF30 (65 мм)</td>
+                            </tr>
+                            <tr>
+                                <td>Монтаж</td>
+                                <td>резьба — жёсткая фиксация</td>
+                                <td>пресование в стакан рамы</td>
+                            </tr>
+                            <tr>
+                                <td>Плюсы</td>
+                                <td>не гуляет, легко снимается</td>
+                                <td>жесткость выше (широкий контакт), дешевле</td>
+                            </tr>
+                            <tr>
+                                <td>Минусы</td>
+                                <td>узкий стакан — тоньше стенки рамы</td>
+                                <td>скрип/гуляние без прокладок; нужен точный диаметр стакана</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">📐</span>
+                    <h3>Оси: QR vs Thru-Axle Boost</h3>
+                </div>
+                <div class="tbl-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Стандарт</th>
+                                <th>Формат</th>
+                                <th>Жесткость</th>
+                                <th>Применение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Quick-Release</td>
+                                <td>9×100 (перед) / 10×135 (зад)</td>
+                                <td>ниже — ось тонкая, «гуляет» в дропаутах</td>
+                                <td>классика, шоссер, бюджетные рамы</td>
+                            </tr>
+                            <tr>
+                                <td>Thru-Axle 15×100 / 12×142</td>
+                                <td>сквозная ось, фиксация контргайкой/шестигранником</td>
+                                <td>выше — жёсткая посадка в дропаутах</td>
+                                <td>MTB, дисковые тормоза, карбоновые рамы</td>
+                            </tr>
+                            <tr>
+                                <td>Boost 15×110 / 12×148</td>
+                                <td>удлинённое расстояние между ступицей и дропаутами</td>
+                                <td>максимум — шире база, жёстче обод</td>
+                                <td>современный MTB/Грэвел; не совместим с QR-втулками</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-wordmark">Bicycle&nbsp;<b>World</b></div>
+        <nav class="footer-nav" aria-label="Навигация в подвале">
+            <a href="#encyclopedia">Справочник</a>
+            <a href="#hierarchy">Иерархия компонентов</a>
+            <a href="#sizing">Калькулятор ростовки</a>
+            <a href="#compat">Совместимость</a>
+            <a href="#standards">Стандарты</a>
+        </nav>
+        <p class="fineprint">Независимый образовательный проект. Все названия брендов (Shimano, SRAM, RockShox) и
+            логотипы являются зарегистрированными торговыми марками их правообладателей.</p>
+    </footer>
+
+    <script id="app-script">
+        "use strict";
+        /* Bicycle World — приложение (нативный ES6, без фреймворков). Модули: Burger, SizingCalc, CompatBuilder, Accordion, TierGuide, ScrollSpy. */
+
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+        /* ============================ Мобильное меню (бургер) ============================ */
+        (() => {
+            const btn = $('#burgerBtn'), nav = $('#siteNav');
+            if (!btn || !nav) return;
+            const close = () => {
+                btn.classList.remove('is-active');
+                nav.classList.remove('is-active');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.setAttribute('aria-label', 'Открыть меню');
+            };
+            btn.addEventListener('click', () => {
+                const open = !nav.classList.contains('is-active');
+                btn.classList.toggle('is-active', open);
+                nav.classList.toggle('is-active', open);
+                btn.setAttribute('aria-expanded', String(open));
+                btn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+            });
+            btn.addEventListener('keydown', event => {
+                if (event.key === 'Escape') close();
+            });
+            $$('.site-nav .nav-link, .footer-nav a').forEach(a => a.addEventListener('click', close));
+        })();
+
+        /* ============================ SizingCalc — калькулятор ростовки ============================ */
+        (() => {
+            const form = $('#sizingForm');
+            if (!form) return;
+            const typeSel = $('#bikeType'), heightIn = $('#height'), inseamIn = $('#inseam');
+            const heightOut = $('#heightOut'), inseamOut = $('#inseamOut'), resultBox = $('#sizingResult');
+
+            /* Ориентиры шоссе: size → {reach, stack}, мм (стандартная геометрия) */
+            const ROAD_TABLE = [50, 378, 526]; // базовая точка; step по 1 см: reach +3 мм, stack +4 мм
+
+            const mtbLetter = sizeIn => sizeIn <= 16 ? 'S' : sizeIn <= 18 ? 'M' : sizeIn <= 20 ? 'L' : 'XL';
+            const roadRS = cm => ({ reach: Math.round(ROAD_TABLE[1] + (cm - ROAD_TABLE[0]) * 3), stack: Math.round(ROAD_TABLE[2] + (cm - ROAD_TABLE[0]) * 4) });
+
+            const setFill = el => {
+                const min = +el.min, max = +el.max;
+                el.style.setProperty('--fill', (((+el.value - min) / (max - min)) * 100).toFixed(1) + '%');
+            };
+
+            function render() {
+                const type = typeSel.value;
+                const height = +heightIn.value, inseam = +inseamIn.value;
+                heightOut.textContent = height + ' см';
+                inseamOut.textContent = inseam + ' см';
+                setFill(heightIn); setFill(inseamIn);
+
+                let html = '';
+                if (type === 'mtb') {
+                    const rawIn = (inseam * 0.57) / 2.54;            /* дюймы */
+                    const sizeIn = Math.round(rawIn);                /* округление к целому дюйму */
+                    const frameCm = sizeIn * 2.54;
+                    /* высота верхней трубы над землёй (при горизонтальном велосипеде): BB ≈ 32 см + вертикальный подъём ШТ (~cos 19°) */
+                    const topTubeH = 32 + frameCm * Math.cos(19 * Math.PI / 180);
+                    const standover = inseam - topTubeH;            /* запас стендовера, см */
+                    html += '<h3>Результат: горный MTB</h3>';
+                    html += `<p class="size-big">${rawIn.toFixed(1)}<small>" → ${sizeIn}" · ${mtbLetter(sizeIn)}</small></p>`;
+                    html += '<ul class="size-list">';
+                    html += `<li class="size-row"><b>Размер рамы ≈ ${sizeIn}" (${mtbLetter(sizeIn)})</b><span>формула: Inseam × 0.57 / 2.54</span></li>`;
+                    html += `<li class="size-row"><b>Запас стендовера ≈ ${standover > 0 ? standover.toFixed(1) + ' см' : 'отрицательный!'}</b><span>высота верхней трубы над пахом при полном откидании ног</span></li>`;
+                    html += '</ul>';
+                    html += '<div class="formula-box"><h4>Формула — шаг за шагом</h4>' +
+                        `<ol style="margin:0 0 .2rem; padding-left:1.15rem">` +
+                        `<li>Inseam = ${inseam} см</li>` +
+                        `<li>raw = Inseam × 0.57 / 2.54 = ${(inseam * 0.57).toFixed(1)} / 2.54 ≈ ${rawIn.toFixed(2)}"</li>` +
+                        `<li>size = round(raw) = ${sizeIn}" → буква ${mtbLetter(sizeIn)}</li>` +
+                        `<li>высота ШТ над землёй ≈ BB (32 см) + L·cos 19° = 32 + ${frameCm.toFixed(2)} × ${(Math.cos(19 * Math.PI / 180)).toFixed(4)} ≈ ${topTubeH.toFixed(1)} см</li>` +
+                        `<li>standover = Inseam − высота ШТ = ${inseam} − ${topTubeH.toFixed(1)} ≈ ${standover.toFixed(1)} см (норма 1–5 см)</li></ol></div>`;
+                } else {
+                    const rawCm = inseam * 0.67;                     /* сантиметры */
+                    const sizeCm = Math.round(rawCm);
+                    const rs = roadRS(sizeCm);
+                    html += '<h3>Результат: шоссе / грэвел</h3>';
+                    html += `<p class="size-big">${rawCm.toFixed(1)}<small>см → ${sizeCm} см</small></p>`;
+                    html += '<ul class="size-list">';
+                    html += `<li class="size-row"><b>Размер рамы ≈ ${sizeCm} см</b><span>формула: Inseam × 0.67</span></li>`;
+                    html += `<li class="size-row"><b>Reach ≈ ${rs.reach} мм · Stack ≈ ${rs.stack} мм</b><span>ориентир по стандартной (некомпактной) геометрии — сверяйтесь с размерной таблицей бренда</span></li>`;
+                    html += '</ul>';
+                    html += '<div class="formula-box"><h4>Формула — шаг за шагом</h4>' +
+                        `<ol style="margin:0 0 .2rem; padding-left:1.15rem">` +
+                        `<li>Inseam = ${inseam} см</li>` +
+                        `<li>raw = Inseam × 0.67 ≈ ${rawCm.toFixed(1)} см → size = round(raw) = ${sizeCm} см</li>` +
+                        `<li>Reach = 378 + (${sizeCm} − 50) × 3 = ${rs.reach} мм (ориентир некомпактной геометрии)</li>` +
+                        `<li>Stack = 526 + (${sizeCm} − 50) × 4 = ${rs.stack} мм</li></ol></div>`;
+                }
+
+                /* Рекомендации по посадке */
+                const tips = [];
+                const ratio = inseam / height;
+                if (ratio < 0.43 || ratio > 0.55) tips.push(`Соотношение Inseam/рост ${ratio.toFixed(2)} выглядит нетипичным — проверьте замер длины ног.`);
+                if (type === 'mtb') {
+                    const sov = inseam - (32 + Math.round((inseam * 0.57) / 2.54) * 2.54 * Math.cos(19 * Math.PI / 180));
+                    if (sov < 1) tips.push('Запас стендовера минимальный: рассмотрите размер меньше или поднимите руль, чтобы свободно ставить ноги на землю.');
+                    else if (sov > 5.5) tips.push('Запас стендовера щедрый — можно взять размер больше для манёвренности и контроля над рамой.');
+                }
+                if (type === 'road' && inseam < 78) tips.push('Небольшая длина ног: присмотритесь к компактной геометрии (низкий Stack, короткий Reach).');
+                if (type === 'road' && inseam > 92) tips.push('Большая длина ног: ищите раму с длинным Reach / высоким Stack.');
+                tips.push('Финальная посадка — по тест-драйву: колени чуть согнуты в нижней точке хода педали, спина без излома.');
+                html += '<h3 style="margin-top:.9rem">Рекомендации по посадке</h3><ul class="fit-list">' + tips.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>';
+
+                resultBox.innerHTML = html;
+            }
+
+            typeSel.addEventListener('change', render);
+            heightIn.addEventListener('input', render);
+            inseamIn.addEventListener('input', render);
+            render();
+        })();
+
+        /* ============================ CompatBuilder — совместимость трансмиссий ============================ */
+        (() => {
+            const form = $('#compatForm');
+            if (!form) return;
+            const shifterSel = $('#shifterOpt'), derailleurSel = $('#derailleurOpt'), freehubSel = $('#freehubOpt');
+            const callout = $('#compatCallout');
+
+            /* Cable Pull проверяется по семейству: численные значения зависят от поколения и модели. */
+            const ACT = {
+                'shi-mtb': { label: 'Shimano MTB (Dyna-Sys)' },
+                'sram-mtb': { label: 'SRAM X-Actuation / Eagle' },
+                'shi-road': { label: 'Shimano Road (SLR-EV)' },
+                'sram-road': { label: 'SRAM Road' },
+                'campy-road': { label: 'Campagnolo Road 12s' },
+                'campy-ekar': { label: 'Campagnolo Ekar 13s' },
+                'microshift-adventx': { label: 'MicroSHIFT Advent X' }
+            };
+
+            const famOf = d => d.family;
+            const mk = (id, brand, disc, spd, family, series) => ({
+                id,
+                label: `${brand} · ${series} · ${spd} spd`,
+                brand,
+                disc,
+                spd,
+                family
+            });
+
+            /* База приводов: манетки/переключатели */
+            const DRIVES = [
+                mk('shi-mtb-9', 'Shimano', 'mtb', 9, 'shi-mtb', 'MTB'),
+                mk('shi-mtb-10', 'Shimano', 'mtb', 10, 'shi-mtb', 'MTB'),
+                mk('shi-mtb-11', 'Shimano', 'mtb', 11, 'shi-mtb', 'MTB'),
+                mk('shi-mtb-12', 'Shimano', 'mtb', 12, 'shi-mtb', 'MTB'),
+                mk('sram-mtb-10', 'SRAM', 'mtb', 10, 'sram-mtb', 'MTB'),
+                mk('sram-mtb-11', 'SRAM', 'mtb', 11, 'sram-mtb', 'MTB'),
+                mk('sram-mtb-12', 'SRAM', 'mtb', 12, 'sram-mtb', 'Eagle'),
+                mk('shi-road-10', 'Shimano', 'road', 10, 'shi-road', 'Road'),
+                mk('shi-road-11', 'Shimano', 'road', 11, 'shi-road', 'Road'),
+                mk('shi-road-12', 'Shimano', 'road', 12, 'shi-road', 'Road'),
+                mk('sram-road-11', 'SRAM', 'road', 11, 'sram-road', 'Road'),
+                mk('sram-road-12', 'SRAM', 'road', 12, 'sram-road', 'AXS Road/Gravel'),
+                mk('campy-road-12', 'Campagnolo', 'road', 12, 'campy-road', 'Road'),
+                mk('campy-ekar-13', 'Campagnolo', 'gravel', 13, 'campy-ekar', 'Ekar Gravel'),
+                mk('microshift-adventx-10', 'MicroSHIFT', 'mtb', 10, 'microshift-adventx', 'Advent X MTB')
+            ];
+
+            const HUBS = [
+                { id: 'hg', label: 'HG — Shimano/SRAM 8–11s' },
+                { id: 'xd', label: 'SRAM XD — MTB Eagle 10–52T' },
+                { id: 'xdr', label: 'SRAM XDR — Road/Gravel AXS' },
+                { id: 'ms', label: 'Shimano MicroSpline — MTB 12s' },
+                { id: 'n3w', label: 'Campagnolo N3W — Ekar 13s' }
+            ];
+
+            /* Проверка посадки кассеты на барабан (по манетке — считаем, что кассета под неё) */
+            function hubCheck(sh, hubId) {
+                const fam = famOf(sh);
+                if (fam === 'sram-mtb' && sh.spd === 12) {
+                    if (hubId === 'xd') return { s: 'ok', t: 'Кассета SRAM Eagle 10–52T устанавливается на барабан XD.' };
+                    return { s: 'bad', t: `Для выбранной кассеты SRAM Eagle 10–52T нужен XD; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'shi-mtb' && sh.spd === 12) {
+                    if (hubId === 'ms') return { s: 'ok', t: 'Кассета Shimano MTB 12s устанавливается на MicroSpline.' };
+                    return { s: 'bad', t: `Для Shimano MTB 12s нужен MicroSpline; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'shi-mtb' && sh.spd <= 11) {
+                    if (hubId === 'hg') return { s: 'ok', t: `Shimano MTB ${sh.spd}s совместима с HG.` };
+                    return { s: 'bad', t: `Для Shimano MTB ${sh.spd}s в этой конфигурации нужен HG; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'microshift-adventx') {
+                    if (hubId === 'hg') return { s: 'ok', t: 'Кассета MicroSHIFT Advent X 10s устанавливается на HG.' };
+                    return { s: 'bad', t: `Для MicroSHIFT Advent X 10s нужен HG; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'sram-mtb' && sh.spd < 12) {
+                    if (hubId === 'hg') return { s: 'warn', t: 'Многие кассеты SRAM MTB 10/11s совместимы с HG; для некоторых моделей нужен XD — проверьте кассету.' };
+                    if (hubId === 'xd') return { s: 'warn', t: 'XD применяется с совместимыми кассетами SRAM MTB; проверьте конкретную модель и число скоростей.' };
+                    return { s: 'bad', t: `Для этой кассеты SRAM MTB 10/11s не подходит ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'sram-road' && sh.spd === 12) {
+                    if (hubId === 'xdr') return { s: 'ok', t: 'Кассета SRAM AXS Road/Gravel 12s устанавливается на XDR.' };
+                    return { s: 'bad', t: `Для SRAM AXS Road/Gravel 12s нужен XDR; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'sram-road' && sh.spd === 11) {
+                    if (hubId === 'hg') return { s: 'ok', t: 'SRAM Road 11s совместима с HG.' };
+                    return { s: 'bad', t: `Для SRAM Road 11s нужен HG; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'campy-ekar') {
+                    if (hubId === 'n3w') return { s: 'ok', t: 'Кассета Campagnolo Ekar 13s устанавливается на N3W.' };
+                    return { s: 'bad', t: `Для Campagnolo Ekar 13s нужен N3W; выбран ${hubId.toUpperCase()}.` };
+                }
+                if (fam === 'campy-road') {
+                    if (hubId === 'n3w') return { s: 'warn', t: 'Кассета Campagnolo Road 12s может устанавливаться на N3W с 4,4-мм адаптером; проверьте исполнение кассеты.' };
+                    return { s: 'bad', t: `Для Campagnolo Road 12s нужен совместимый барабан Campagnolo; в этой базе указан N3W с адаптером, выбран ${hubId.toUpperCase()}.` };
+                }
+                if (hubId === 'hg') return { s: 'ok', t: `Shimano Road ${sh.spd}s совместима с HG.` };
+                return { s: 'bad', t: `Для Shimano Road ${sh.spd}s нужен HG; выбран ${hubId.toUpperCase()}.` };
+            }
+
+            /* Проверка рычажности троса манетка ↔ переключатель */
+            function chainCheck(sh, d) {
+                const aS = ACT[famOf(sh)], aD = ACT[famOf(d)];
+                if (famOf(sh) === famOf(d)) {
+                    if (sh.spd === d.spd) return { s: 'ok', t: `Рычажность совпадает точно (${aS.label}, ${sh.spd} spd).` };
+                    return { s: 'warn', t: `Одна семья рычажности, но разные скорости (${sh.spd} vs ${d.spd}): проверьте диапазон звёзд и шаг кассеты — обычно работает, но не гарантировано.` };
+                }
+                return { s: 'bad', t: `Семейства Cable Pull различаются: ${aS.label} и ${aD.label}. Манетка не будет точно индексировать этот переключатель.` };
+            }
+
+            const fill = (sel, list) => { sel.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.label)}</option>`).join(''); };
+            fill(shifterSel, DRIVES);
+            fill(derailleurSel, DRIVES);
+            fill(freehubSel, HUBS);
+
+            /* Кросс-брендовые пресеты (манетка → переключатель) */
+            const CROSSES = [
+                { id: 'x-shi12-sram12-mtb',   sh: 'shi-mtb-12', d: 'sram-mtb-12' },
+                { id: 'x-sram12-shi12-mtb',   sh: 'sram-mtb-12', d: 'shi-mtb-12' },
+                { id: 'x-shi-road-sram-road', sh: 'shi-road-11', d: 'sram-road-11' }
+            ];
+            const crossSel = $('#crossBrandOpt');
+            if (crossSel) {
+                const lbl = id => DRIVES.find(x => x.id === id).label;
+                crossSel.innerHTML = '<option value="">— без кросс-брендовой пары —</option>' +
+                    CROSSES.map(o => `<option value="${o.id}">${esc(lbl(o.sh))} → ${esc(lbl(o.d))}</option>`).join('');
+            }
+
+            function syncCross() {
+                if (!crossSel) return;
+                const hit = CROSSES.find(o => o.sh === shifterSel.value && o.d === derailleurSel.value);
+                crossSel.value = hit ? hit.id : '';
+            }
+
+            function evaluate() {
+                const sh = DRIVES.find(o => o.id === shifterSel.value) || DRIVES[0];
+                const d = DRIVES.find(o => o.id === derailleurSel.value) || DRIVES[0];
+                const hub = HUBS.find(o => o.id === freehubSel.value) || HUBS[0];
+
+                const checks = [
+                    { name: 'Ход троса (Cable Pull Ratio)', ...chainCheck(sh, d) },
+                    { name: 'Барабан и кассета', ...hubCheck(sh, hub.id) }
+                ];
+                const worst = ['ok', 'warn', 'bad'].reduce((w, c) => checks.some(x => x.s === c) && ['ok', 'warn', 'bad'].indexOf(c) > ['ok', 'warn', 'bad'].indexOf(w) ? c : w, 'ok');
+                const title = { ok: 'Совместимо', warn: 'Требуется проверка / адаптер', bad: 'Несовместимо' }[worst];
+
+                callout.className = `callout glass is-${worst}`;
+                callout.innerHTML =
+                    `<h3><span class="status-dot"></span>${title}</h3>` +
+                    `<p>Пара: ${esc(sh.label)} → ${esc(d.label)} · барабан: ${esc(hub.label)}</p>` +
+                    `<ul class="check-grid">${checks.map(c => `<li class="check-item"><b>${c.name}:</b> ${esc(c.t)}</li>`).join('')}</ul>` +
+                    (crossSel && crossSel.value ? '<p style="margin-top:.6rem; font-size:.82rem; color:var(--text-dim)">Кросс-брендовая пара применена из пресетов — проверка рычажности и барабана учтена выше.</p>' : '');
+            }
+
+            [shifterSel, derailleurSel, freehubSel].forEach(sel => sel.addEventListener('change', () => { syncCross(); evaluate(); }));
+            if (crossSel) crossSel.addEventListener('change', () => {
+                const p = CROSSES.find(o => o.id === crossSel.value);
+                if (p) { shifterSel.value = p.sh; derailleurSel.value = p.d; }
+                syncCross(); evaluate();
+            });
+            shifterSel.value = 'shi-mtb-12';
+            derailleurSel.value = 'shi-mtb-12';
+            freehubSel.value = 'ms';
+            evaluate();
+        })();
+
+        /* ============================ Accordion — аккордеон в энциклопедии ============================ */
+        (() => {
+            const heads = $$('.acc .acc-head');
+            if (!heads.length) return;
+            heads.forEach(head => head.addEventListener('click', () => {
+                const item = head.closest('.acc-item');
+                if (!item) return;
+                const open = !item.classList.contains('open');
+                item.classList.toggle('open', open);
+                head.setAttribute('aria-expanded', String(open));
+                const panel = document.getElementById(head.getAttribute('aria-controls'));
+                if (panel) panel.setAttribute('aria-hidden', String(!open));
+            }));
+        })();
+
+        /* ============================ TierGuide — гид по уровням ============================ */
+        (() => {
+            const btns = $$('#hierarchy .guide-btn[data-cat]');
+            if (!btns.length) return;
+            const rows = $$('#hierarchy .tbl tbody tr[data-cat]');
+            const hint = $('#tierHint');
+
+            const HINTS = {
+                all: 'Выберите задачу — подходящие строки таблиц подсветятся. Уровни S/A/B/C сопоставимы между брендами по цене и назначению, но внутри бренда разница в весе и точности переключения заметнее.',
+                casual: 'Оптимум для повседневной езды — уровни B–C (Deore M4100/M5100, SX/NX Eagle, 105/Sora, Centaur, Mezzo/Marvo): надёжная механика без переплаты. A и S тоже подойдут, но могут быть избыточны по цене.',
+                touring: 'Оптимум для туризма — уровни A–B (Deore/SLX, GX Eagle, Ultegra/GRX 820, Force AXS, Chorus, Advent X/Sword): ресурс и подходящий диапазон на длинных дистанциях; C допустим для неспешных поездок.',
+                intense: 'Оптимум для интенсивных тренировок — уровни S–A (XTR/Deore XT, XX1/X01 Eagle, Dura-Ace/Ultegra Di2, Record/Super Record): точное переключение и уровень компонентов для высоких нагрузок.',
+                racing: 'Для гонок — верх уровня S (XTR, XX1/X01 Eagle, Dura-Ace Di2, RED AXS, Record/Super Record); A-уровни — проверенный выбор для любительской элиты.'
+            };
+
+            function apply(cat) {
+                btns.forEach(b => {
+                    const on = b.dataset.cat === cat;
+                    b.classList.toggle('is-on', on);
+                    b.setAttribute('aria-pressed', String(on));
+                });
+                rows.forEach(r => r.classList.toggle('hl-row', cat !== 'all' && (r.dataset.cat || '').split(' ').includes(cat)));
+                if (hint) hint.textContent = HINTS[cat] || HINTS.all;
+            }
+
+            btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.cat)));
+        })();
+
+        /* ============================ ScrollSpy / Smooth Scroll ============================ */
+        (() => {
+            const links = $$('.site-nav .nav-link');
+            if (!links.length) return;
+            const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+            const sections = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+
+            let ticking = false;
+            const update = () => {
+                ticking = false;
+                const y = window.scrollY + 140; /* зона срабатывания под липкой шапкой */
+                let current = null;
+                for (const s of sections) if (s.offsetTop <= y) current = s.id;
+                links.forEach(a => a.classList.toggle('is-active', a === byId.get(current)));
+            };
+            addEventListener('scroll', () => {
+                if (!ticking) { ticking = true; requestAnimationFrame(update); }
+            }, { passive: true });
+            update();
+        })();
+    </script>
+</body>
+
+</html>
