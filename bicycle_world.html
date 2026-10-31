@@ -17,8 +17,6 @@
     <style>
         /* ==========================================================================
    BICYCLE WORLD — интерактивный справочник и конструктор велосипедов
-   Дизайн-система: Deep Ambient Sapphire (≈80% синий, ≈20% фиолетовый),
-   Liquid Glass / глассморфизм.
    ========================================================================== */
 
         :root {
@@ -28,14 +26,14 @@
             --surface-2: rgba(18, 34, 72, .66);
             --surface-subtle: rgba(10, 20, 44, .5);
 
-            /* ===== Синяя палитра (≈80% интерфейса) ===== */
+            /* ===== Синяя палитра ===== */
             --blue-900: #1e3a8a;
             --blue-700: #1d4ed8;
             --blue-primary: #3b82f6;
             --blue-light: #93c5fd;
             --blue-electric: #38bdf8;
 
-            /* ===== Фиолетовые акценты (≈20%) ===== */
+            /* ===== Фиолетовые акценты ===== */
             --violet-primary: #8b5cf6;
             --violet-light: #c4b5fd;
             --violet-dark: #6d28d9;
@@ -79,7 +77,6 @@
             --trans-normal: .32s cubic-bezier(.16, 1, .3, 1);
         }
 
-        /* ============================ Базовый сброс ============================ */
         *,
         *::before,
         *::after {
@@ -95,7 +92,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ФАЗА 1.1: Динамический переливающийся анимированный градиент (80% синего / 20% фиолетового) */
         body {
             font-family: var(--font-sans);
             color: var(--text-main);
@@ -127,9 +123,11 @@
             0% {
                 transform: translate(0, 0) scale(1);
             }
+
             50% {
                 transform: translate(-3%, 2.5%) scale(1.04);
             }
+
             100% {
                 transform: translate(2.5%, -3%) scale(0.97);
             }
@@ -179,7 +177,6 @@
             border-radius: var(--radius-sm);
         }
 
-        /* ============================ Стеклянная карточка ============================ */
         .glass {
             position: relative;
             background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
@@ -190,7 +187,7 @@
             box-shadow: var(--shadow-glass), var(--rim-top);
         }
 
-        /* ============================ Шапка ============================ */
+        /* Шапка */
         .site-header {
             position: sticky;
             top: 0;
@@ -275,7 +272,6 @@
             transform: scaleX(1);
         }
 
-        /* Бургер-кнопка (мобильные) */
         .burger {
             display: none;
             flex-direction: column;
@@ -292,7 +288,7 @@
             transition: transform var(--trans-normal), opacity var(--trans-fast);
         }
 
-        /* ============================ Hero ============================ */
+        /* Hero */
         .hero {
             max-width: 64rem;
             margin: 0 auto;
@@ -386,7 +382,7 @@
             flex-wrap: wrap;
         }
 
-        /* ============================ Кнопки и чипы ============================ */
+        /* Кнопки и чипы */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -438,7 +434,7 @@
             border-color: rgba(168, 85, 247, .32);
         }
 
-        /* ============================ Секции ============================ */
+        /* Секции */
         .section {
             max-width: var(--container);
             margin: 0 auto;
@@ -449,7 +445,7 @@
             margin-bottom: var(--sp-lg);
         }
 
-        .section > p.lede {
+        .section>p.lede {
             margin-bottom: var(--sp-lg);
         }
 
@@ -480,7 +476,7 @@
             box-shadow: var(--shadow-neon-blue);
         }
 
-        /* ============================ Справочник: сетка и карточки ============================ */
+        /* Сетĸа ĸарточеĸ */
         .ref-grid {
             display: grid;
             gap: var(--sp-md);
@@ -501,7 +497,6 @@
             box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
         }
 
-        /* ФАЗА 1.3: Очищенные икон-блоки без рамок */
         .card-head {
             display: flex;
             align-items: center;
@@ -516,8 +511,8 @@
             justify-content: center;
             width: auto;
             height: auto;
-            background: none !important;
-            border: none !important;
+            background: none;
+            border: none;
             font-size: 1.35rem;
             flex-shrink: 0;
             padding: 0;
@@ -534,7 +529,7 @@
             margin-bottom: .45rem;
         }
 
-        /* ФАЗА 1.4: Адаптивные обёртки таблиц */
+        /* Таблицы */
         .tbl-wrap {
             width: 100%;
             overflow-x: auto;
@@ -566,7 +561,7 @@
             border-top: 1px solid rgba(96, 165, 250, .12);
         }
 
-        /* ============================ Формы и слайдеры ============================ */
+        /* Формы */
         .field {
             margin-bottom: var(--sp-md);
         }
@@ -590,7 +585,8 @@
             border-radius: var(--radius-sm);
         }
 
-        .field select {
+        .field select,
+        .num-input {
             width: 100%;
             appearance: none;
             -webkit-appearance: none;
@@ -600,15 +596,24 @@
             border-radius: var(--radius-md);
             padding: .65rem .9rem;
             font-size: .92rem;
+            font-family: var(--font-sans);
+        }
+
+        .field select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237dd3fc' fill='none' stroke-width='2'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right .9rem center;
         }
 
+        .num-input:focus {
+            border-color: var(--blue-electric);
+            outline: none;
+            box-shadow: var(--shadow-neon-blue);
+        }
+
         input[type="range"] {
             width: 100%;
             appearance: none;
-            -webkit-appearance: none;
             height: 6px;
             border-radius: var(--radius-pill);
             background: linear-gradient(90deg, var(--blue-primary) var(--fill, 50%), rgba(255, 255, 255, .1) var(--fill, 50%));
@@ -631,7 +636,7 @@
             transform: scale(1.15);
         }
 
-        /* ============================ Выводы конструктора ============================ */
+        /* Выводы */
         .result {
             margin-top: var(--sp-lg);
         }
@@ -640,12 +645,6 @@
             font-size: 1.05rem;
             color: var(--text-white);
             margin-bottom: .5rem;
-        }
-
-        .result p {
-            font-size: .92rem;
-            color: var(--text-muted);
-            margin-bottom: .6rem;
         }
 
         .size-list {
@@ -671,23 +670,6 @@
             font-size: .85rem;
             color: var(--text-muted);
             margin-top: .15rem;
-        }
-
-        .fit-list {
-            list-style: none;
-        }
-
-        .fit-list li {
-            position: relative;
-            padding: .4rem 0 .4rem 1.6rem;
-            font-size: .92rem;
-        }
-
-        .fit-list li::before {
-            content: "▸";
-            position: absolute;
-            left: .3rem;
-            color: var(--blue-electric);
         }
 
         .callout {
@@ -723,24 +705,42 @@
             box-shadow: 0 0 30px rgba(52, 211, 153, .18), var(--shadow-glass), var(--rim-top);
         }
 
-        .callout.is-ok h3 { color: #6ee7b7; }
-        .callout.is-ok .status-dot { background: #34d399; color: #34d399; }
+        .callout.is-ok h3 {
+            color: #6ee7b7;
+        }
+
+        .callout.is-ok .status-dot {
+            background: #34d399;
+            color: #34d399;
+        }
 
         .callout.is-warn {
             border-color: rgba(251, 191, 36, .45);
             box-shadow: 0 0 30px rgba(251, 191, 36, .16), var(--shadow-glass), var(--rim-top);
         }
 
-        .callout.is-warn h3 { color: #fcd34d; }
-        .callout.is-warn .status-dot { background: #fbbf24; color: #fbbf24; }
+        .callout.is-warn h3 {
+            color: #fcd34d;
+        }
+
+        .callout.is-warn .status-dot {
+            background: #fbbf24;
+            color: #fbbf24;
+        }
 
         .callout.is-bad {
             border-color: rgba(248, 113, 113, .5);
             box-shadow: 0 0 30px rgba(248, 113, 113, .16), var(--shadow-glass), var(--rim-top);
         }
 
-        .callout.is-bad h3 { color: #fca5a5; }
-        .callout.is-bad .status-dot { background: #f87171; color: #f87171; }
+        .callout.is-bad h3 {
+            color: #fca5a5;
+        }
+
+        .callout.is-bad .status-dot {
+            background: #f87171;
+            color: #f87171;
+        }
 
         .check-grid {
             display: grid;
@@ -756,7 +756,6 @@
             font-size: .87rem;
         }
 
-        /* Калькулятор ростовки */
         .size-big {
             font-family: var(--font-mono);
             font-size: 2.4rem;
@@ -795,7 +794,7 @@
             font-weight: 700;
         }
 
-        /* ФАЗА 1.2: Исправление вертикальных отступов Аккордеона */
+        /* Аккордеон */
         .acc {
             display: grid;
             gap: var(--sp-sm);
@@ -809,7 +808,6 @@
             background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
             border: 1px solid var(--border-glass);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             box-shadow: var(--shadow-glass), var(--rim-top);
         }
 
@@ -818,7 +816,7 @@
             display: flex;
             align-items: center;
             gap: .8rem;
-            padding: 1.15rem 1.25rem; /* Увеличен отступ */
+            padding: 1.15rem 1.25rem;
             text-align: left;
             font-size: 1rem;
             font-weight: 700;
@@ -853,7 +851,6 @@
 
         .acc-title small {
             display: block;
-            margin-top: 0;
             font-family: var(--font-mono);
             font-size: .72rem;
             font-weight: 500;
@@ -941,7 +938,7 @@
             color: var(--blue-electric);
         }
 
-        /* Иерархия: цветные плашки уровней */
+        /* Иерархия */
         .tier {
             font-family: var(--font-mono);
             font-weight: 800;
@@ -949,12 +946,23 @@
             width: 32px;
         }
 
-        .tier-s { color: #ffd76a; text-shadow: 0 0 10px rgba(255, 215, 106, 0.4); }
-        .tier-a { color: #9db8ff; }
-        .tier-b { color: #6fdcb2; }
-        .tier-c { color: #7a8aa8; }
+        .tier-s {
+            color: #ffd76a;
+            text-shadow: 0 0 10px rgba(255, 215, 106, 0.4);
+        }
 
-        /* Кнопки фильтра гида */
+        .tier-a {
+            color: #9db8ff;
+        }
+
+        .tier-b {
+            color: #6fdcb2;
+        }
+
+        .tier-c {
+            color: #7a8aa8;
+        }
+
         .guide-btns {
             display: flex;
             gap: .6rem;
@@ -996,25 +1004,7 @@
             font-weight: 800;
         }
 
-        /* Формулы и Схема */
-        .formula-box {
-            margin-top: var(--sp-md);
-            padding: .9rem 1.15rem;
-            border-radius: var(--radius-md);
-            background: rgba(2, 6, 23, .45);
-            border: 1px solid rgba(96, 165, 250, .2);
-            font-family: var(--font-mono);
-            font-size: .8rem;
-            line-height: 1.85;
-            color: var(--text-muted);
-        }
-
-        .formula-box h4 {
-            margin-bottom: .35rem;
-            font-size: .9rem;
-            color: var(--blue-light);
-        }
-
+        /* Схема SVG */
         .geom-wrap {
             display: grid;
             gap: var(--sp-md);
@@ -1051,9 +1041,18 @@
             border-radius: 3px;
             margin-right: .4rem;
         }
-        .swatch-stand { background: #ffd76a; }
-        .swatch-reach { background: #6fe8b0; }
-        .swatch-stack { background: #38bdf8; }
+
+        .swatch-stand {
+            background: #ffd76a;
+        }
+
+        .swatch-reach {
+            background: #6fe8b0;
+        }
+
+        .swatch-stack {
+            background: #38bdf8;
+        }
 
         .brand-tag {
             font-family: var(--font-mono);
@@ -1070,6 +1069,14 @@
             margin-bottom: var(--sp-sm);
         }
 
+        .site-footer {
+            margin-top: var(--sp-2xl);
+            padding: var(--sp-xl) 1.25rem;
+            text-align: center;
+            border-top: 1px solid rgba(96, 165, 250, .14);
+            background: linear-gradient(180deg, transparent, rgba(7, 13, 28, .8));
+        }
+
         .footer-nav {
             display: flex;
             justify-content: center;
@@ -1084,14 +1091,8 @@
             transition: color var(--trans-fast);
         }
 
-        .footer-nav a:hover { color: var(--blue-light); }
-
-        .site-footer {
-            margin-top: var(--sp-2xl);
-            padding: var(--sp-xl) 1.25rem;
-            text-align: center;
-            border-top: 1px solid rgba(96, 165, 250, .14);
-            background: linear-gradient(180deg, transparent, rgba(7, 13, 28, .8));
+        .footer-nav a:hover {
+            color: var(--blue-light);
         }
 
         .site-footer .fineprint {
@@ -1102,27 +1103,83 @@
             line-height: 1.6;
         }
 
-        /* ============================ Мобильная Адаптивность ============================ */
+        /* Кнопка наверх */
+        .scroll-top {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 99;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            background: linear-gradient(135deg, var(--blue-700), var(--violet-dark));
+            border: 1px solid var(--border-glass-hover);
+            color: var(--text-white);
+            box-shadow: var(--shadow-neon-blue);
+            transition: all var(--trans-normal);
+        }
+
+        .scroll-top.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 30px rgba(139, 92, 246, .6);
+        }
+
         @media (max-width: 680px) {
-            .brand-tag { display: none; }
-            .hero-stats { flex-direction: column; align-items: stretch; }
-            .stat { justify-content: space-between; }
-            .btn { width: 100%; justify-content: center; }
-            .hero-cta { flex-direction: column; }
-            
+            .brand-tag {
+                display: none;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stat {
+                justify-content: space-between;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
             .guide-btns {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
                 gap: .5rem;
             }
-            .guide-btn { width: 100%; text-align: center; }
 
-            .tbl { min-width: 580px; } /* Мобильный скролл таблиц */
-            
-            .burger { display: flex; }
+            .guide-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .tbl {
+                min-width: 580px;
+            }
+
+            .burger {
+                display: flex;
+            }
+
             .site-nav {
                 position: absolute;
-                top: calc(var(--header-h, 54px));
+                top: 62px;
                 right: .75rem;
                 left: .75rem;
                 z-index: 55;
@@ -1130,13 +1187,29 @@
                 border: 1px solid var(--border-glass);
                 border-radius: var(--radius-lg);
                 backdrop-filter: var(--glass-blur);
-                -webkit-backdrop-filter: var(--glass-blur);
                 padding: .5rem .9rem;
                 display: none;
             }
-            .site-nav.is-active { display: block; }
-            .site-nav ul { flex-direction: column; gap: .25rem; }
-            .nav-link { display: block; padding: .7rem .4rem; border-bottom: 1px solid rgba(96, 165, 250, .1); }
+
+            .site-nav.is-active {
+                display: block;
+            }
+
+            .site-nav ul {
+                flex-direction: column;
+                gap: .25rem;
+            }
+
+            .nav-link {
+                display: block;
+                padding: .7rem .4rem;
+                border-bottom: 1px solid rgba(96, 165, 250, .1);
+            }
+
+            .scroll-top {
+                bottom: 1rem;
+                right: 1rem;
+            }
         }
     </style>
 </head>
@@ -1162,8 +1235,8 @@
                     <li><a class="nav-link" href="#standards">Стандарты</a></li>
                 </ul>
             </nav>
-            <button class="burger" id="burgerBtn" type="button" aria-label="Открыть меню"
-                aria-controls="siteNav" aria-expanded="false"><span></span><span></span><span></span></button>
+            <button class="burger" id="burgerBtn" type="button" aria-label="Открыть меню" aria-controls="siteNav"
+                aria-expanded="false"><span></span><span></span><span></span></button>
         </div>
     </header>
 
@@ -1183,12 +1256,10 @@
         </div>
     </section>
 
-    <!-- ФАЗА 3.1: Mullet-сетапы и подбор оборудования -->
     <section class="section" id="encyclopedia">
         <div class="section-head">
             <h2>Энциклопедия и Эволюция</h2>
         </div>
-
         <p class="lede">Четыре ключевые дисциплины — у каждой свои колёса, геометрия рамы и стандарты оборудования.</p>
 
         <div class="ref-grid ref-grid-2">
@@ -1196,7 +1267,8 @@
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🚵</span>
                     <h3>МТБ / Хардтейл</h3>
                 </div>
-                <p>Колёса 29″ (накат) или 27.5″ (манёвренность). Всё чаще встречаются сетапы <b>Mullet (29″ спереди / 27.5″ сзади)</b>. Прогрессивная геометрия (HTA 64–66°), вилка 100–140 мм.</p>
+                <p>Колёса 29″ (накат) или 27.5″ (манёвренность). Всё чаще встречаются сетапы <b>Mullet (29″ спереди /
+                        27.5″ сзади)</b>. Прогрессивная геометрия (HTA 64–66°), вилка 100–140 мм.</p>
                 <p><span class="chip">XC</span> <span class="chip">Trail</span> <span class="chip">Mullet</span></p>
             </article>
 
@@ -1204,7 +1276,8 @@
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🏔️</span>
                     <h3>Двухподвес (Full-Suspension)</h3>
                 </div>
-                <p>Задняя подвеска (FSR, VPP, DW-Link). В эндуро и DH доминирует конфигурация <b>Mullet</b> для совмещения сцепления переднего 29″ колеса и зазора 27.5″ сзади на крутых спусках.</p>
+                <p>Задняя подвеска (FSR, VPP, DW-Link). В эндуро и DH доминирует конфигурация <b>Mullet</b> для
+                    совмещения сцепления переднего 29″ колеса и зазора 27.5″ сзади на крутых спусках.</p>
                 <p><span class="chip">Enduro</span> <span class="chip">DH</span> <span class="chip">Mullet</span></p>
             </article>
 
@@ -1212,15 +1285,18 @@
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🛤️</span>
                     <h3>Грэвел (Gravel)</h3>
                 </div>
-                <p>Drops, зазоры под резину 35–50 мм, бонки под байкпакинг. Появляются грэвелы с Mullet-трансмиссиями (шоссейные дуалы + МТБ задний переключатель/кассета 10–52T).</p>
-                <p><span class="chip chip-violet">Adventure</span> <span class="chip chip-violet">Mullet Drivetrain</span></p>
+                <p>Drops, зазоры под резину 35–50 мм, бонки под байкпакинг. Появляются грэвелы с Mullet-трансмиссиями
+                    (шоссейные дуалы + МТБ задний переключатель/кассета 10–52T).</p>
+                <p><span class="chip chip-violet">Adventure</span> <span class="chip chip-violet">Mullet
+                        Drivetrain</span></p>
             </article>
 
             <article class="card glass">
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🏁</span>
                     <h3>Шоссе (Road)</h3>
                 </div>
-                <p>Аэродинамика, глубокие карбоновые обода, покрышки 28–32 мм tubeless. Высокая жёсткость кареточного узла, крутой угол рулевой (HTA ~73°) и бескомпромиссный накат.</p>
+                <p>Аэродинамика, глубокие карбоновые обода, покрышки 28–32 мм tubeless. Высокая жёсткость кареточного
+                    узла, крутой угол рулевой (HTA ~73°) и бескомпромиссный накат.</p>
                 <p><span class="chip chip-violet">Race</span> <span class="chip chip-violet">Endurance</span></p>
             </article>
         </div>
@@ -1228,18 +1304,23 @@
         <h3 class="subhead">Эволюция рам и стандартов</h3>
         <div class="card glass">
             <ul class="evo-list">
-                <li class="evo-item"><b>1970–80-е</b> — Стальные рамы, появление кассетных втулок (freehub) вместо резьбовых трещоток.</li>
-                <li class="evo-item"><b>1990-е</b> — Эра 26″ МТБ, зарождение дисковых тормозов, первая гоночная группа Shimano XTR (1992).</li>
-                <li class="evo-item"><b>2000–2010-е</b> — Переход на 29″ и 27.5″ колёса, PressFit каретки, оси Thru-Axle (15×100 / 12×142), 1× трансмиссии (SRAM Eagle 12s).</li>
-                <li class="evo-item"><b>2020-е–наши дни</b> — Эра UDH (Universal Hanger) и SRAM T-Type Transmission (безпетуховое крепление), резьбовые широкие каретки T47, беспроводной электронный переключатель Di2/AXS.</li>
+                <li class="evo-item"><b>1970–80-е</b> — Стальные рамы, появление кассетных втулок (freehub) вместо
+                    резьбовых трещоток.</li>
+                <li class="evo-item"><b>1990-е</b> — Эра 26″ МТБ, зарождение дисковых тормозов, первая гоночная группа
+                    Shimano XTR (1992).</li>
+                <li class="evo-item"><b>2000–2010-е</b> — Переход на 29″ и 27.5″ колёса, PressFit каретки, оси Thru-Axle
+                    (15×100 / 12×142), 1× трансмиссии (SRAM Eagle 12s).</li>
+                <li class="evo-item"><b>2020-е–наши дни</b> — Эра UDH (Universal Hanger) и SRAM T-Type Transmission
+                    (безпетуховое крепление), резьбовые широкие каретки T47, беспроводной электронный переключатель
+                    Di2/AXS.</li>
             </ul>
         </div>
 
         <h3 class="subhead">История и технический разбор дисциплин</h3>
         <p class="lede">Клик по заголовку раскрывает подробный технический разбор дисциплины.</p>
 
-        <!-- ФАЗА 1.2: Обновлённые отступы аккордеона -->
         <div class="acc">
+            <!-- 1. МТБ -->
             <div class="acc-item" id="acc-mtb">
                 <button type="button" class="acc-head" id="head-mtb" aria-expanded="false" aria-controls="panel-mtb">
                     <span class="acc-ico" aria-hidden="true">🚵</span>
@@ -1252,13 +1333,17 @@
                 <div class="acc-panel" id="panel-mtb" role="region" aria-labelledby="head-mtb" aria-hidden="true">
                     <div class="acc-body">
                         <div class="acc-inner">
-                            <p>Велосипед для гор родился в конце 1970-х на севере Калифорнии (округ Марин). Современные хардтейлы совмещают воздушные вилки (100–140 мм), 1×-приводы с кассетами 10–52T и геометрию с заваленным углом рулевой (HTA 64–66°) для контроля над крутыми спусками.</p>
-                            <p><b>Mullet-конфигурация:</b> комбинация 29″ переднего колеса и 27.5″ заднего даёт отличный угол атаки на препятствиях спереди и маневренность на техничных секциях.</p>
+                            <p>Велосипед для гор родился в конце 1970-х на севере Калифорнии (округ Марин). Современные
+                                хардтейлы совмещают воздушные вилки (100–140 мм), 1×-приводы с кассетами 10–52T и
+                                геометрию с заваленным углом рулевой (HTA 64–66°) для контроля над крутыми спусками.</p>
+                            <p><b>Mullet-конфигурация:</b> комбинация 29″ переднего колеса и 27.5″ заднего даёт отличный
+                                угол атаки на препятствиях спереди и маневренность на техничных секциях.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 2. Двухподвес -->
             <div class="acc-item" id="acc-fs">
                 <button type="button" class="acc-head" id="head-fs" aria-expanded="false" aria-controls="panel-fs">
                     <span class="acc-ico" aria-hidden="true">🏔️</span>
@@ -1271,12 +1356,15 @@
                 <div class="acc-panel" id="panel-fs" role="region" aria-labelledby="head-fs" aria-hidden="true">
                     <div class="acc-body">
                         <div class="acc-inner">
-                            <p>Развитие многорычажных схем (FSR, VPP, DW-Link) позволило точнее управлять траекторией колеса, антисквотом (противодействием раскачке при педалировании) и реакцией на торможение.</p>
+                            <p>Развитие многорычажных схем (FSR, VPP, DW-Link) позволило точнее управлять траекторией
+                                колеса, антисквотом (противодействием раскачке при педалировании) и реакцией на
+                                торможение.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 3. Шоссе -->
             <div class="acc-item" id="acc-road">
                 <button type="button" class="acc-head" id="head-road" aria-expanded="false" aria-controls="panel-road">
                     <span class="acc-ico" aria-hidden="true">🏁</span>
@@ -1289,14 +1377,17 @@
                 <div class="acc-panel" id="panel-road" role="region" aria-labelledby="head-road" aria-hidden="true">
                     <div class="acc-body">
                         <div class="acc-inner">
-                            <p>Современное шоссе — это карбоновые монококовые рамы, аэродинамические профили Kammtail, электронные беспроводные группы 2×12 и дисковые тормоза Flat Mount.</p>
+                            <p>Современное шоссе — это карбоновые монококовые рамы, аэродинамические профили Kammtail,
+                                электронные беспроводные группы 2×12 и дисковые тормоза Flat Mount.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 4. Грэвел -->
             <div class="acc-item" id="acc-gravel">
-                <button type="button" class="acc-head" id="head-gravel" aria-expanded="false" aria-controls="panel-gravel">
+                <button type="button" class="acc-head" id="head-gravel" aria-expanded="false"
+                    aria-controls="panel-gravel">
                     <span class="acc-ico" aria-hidden="true">🛤️</span>
                     <span class="acc-title">
                         <h4>Грэвел: происхождение и Mullet-приводы</h4>
@@ -1307,7 +1398,9 @@
                 <div class="acc-panel" id="panel-gravel" role="region" aria-labelledby="head-gravel" aria-hidden="true">
                     <div class="acc-body">
                         <div class="acc-inner">
-                            <p>Грэвел объединяет руль-баран с зазорами под широкие покрышки (до 50 мм). В тренде «Mullet Drivetrain» — связка шоссейных пистолетов SRAM AXS или Shimano GRX с задним МТБ-переключателем и супер-широкой МТБ-кассетой.</p>
+                            <p>Грэвел объединяет руль-баран с зазорами под широкие покрышки (до 50 мм). В тренде «Mullet
+                                Drivetrain» — связка шоссейных пистолетов SRAM AXS или Shimano GRX с задним
+                                МТБ-переключателем и супер-широкой МТБ-кассетой.</p>
                         </div>
                     </div>
                 </div>
@@ -1315,7 +1408,6 @@
         </div>
     </section>
 
-    <!-- ФАЗА 2: Объединённые Сводные Матрицы Иерархии Компонентов -->
     <section class="section" id="hierarchy">
         <div class="section-head">
             <h2>Иерархия компонентов и гид по уровням</h2>
@@ -1323,21 +1415,22 @@
         </div>
 
         <div class="card glass" style="margin-bottom: var(--sp-lg);">
-            <h3 class="subhead">Гид по задачам</h3>
+            <h3 class="subhead" style="margin-top:0;">Гид по задачам</h3>
             <div class="guide-btns">
                 <button type="button" class="guide-btn is-on" data-cat="all" aria-pressed="true">Все уровни</button>
-                <button type="button" class="guide-btn" data-cat="casual" aria-pressed="false">Повседневная езда</button>
-                <button type="button" class="guide-btn" data-cat="touring" aria-pressed="false">Туризм / Дальние туры</button>
-                <button type="button" class="guide-btn" data-cat="intense" aria-pressed="false">Интенсивный трейл / Эндуро</button>
-                <button type="button" class="guide-btn" data-cat="racing" aria-pressed="false">Гонки и соревновательный спорт</button>
+                <button type="button" class="guide-btn" data-cat="casual" aria-pressed="false">Повседневная
+                    езда</button>
+                <button type="button" class="guide-btn" data-cat="touring" aria-pressed="false">Туризм / Дальние
+                    туры</button>
+                <button type="button" class="guide-btn" data-cat="intense" aria-pressed="false">Трейл / Эндуро</button>
+                <button type="button" class="guide-btn" data-cat="racing" aria-pressed="false">Гонки / Спорт</button>
             </div>
             <p id="tierHint" class="hint-text" style="margin-top:.6rem; font-size:.85rem; color:var(--text-muted)">
                 Выберите задачу — подходящие строки таблиц подсветятся зелёным индикатором.</p>
         </div>
 
-        <!-- ФАЗА 2.1: Сводная Таблица 1 — MTB -->
         <div class="card glass" style="margin-bottom: var(--sp-lg);">
-            <h3 class="subhead">1. Горные трансмиссии (MTB)</h3>
+            <h3 class="subhead" style="margin-top:0;">1. Горные трансмиссии (MTB)</h3>
             <div class="tbl-wrap">
                 <table class="tbl">
                     <thead>
@@ -1355,37 +1448,40 @@
                             <td>XTR M9100 / Deore XT M8100 (12s)</td>
                             <td>XX1 / X01 Eagle; Transmission (T-Type AXS)</td>
                             <td>—</td>
-                            <td>Флагманский уровень: минимальный вес, гипер-точный шаг Hyperglide+ / T-Type под максимальной нагрузкой.</td>
+                            <td>Флагманский уровень: минимальный вес, гипер-точный шаг Hyperglide+ / T-Type под
+                                максимальной нагрузкой.</td>
                         </tr>
                         <tr data-cat="intense touring">
                             <td class="tier tier-a">A</td>
                             <td>SLX M7100 / Deore M6100 (12s)</td>
                             <td>GX Eagle / GX Transmission (12s)</td>
                             <td>—</td>
-                            <td>Рабочая лошадка для агрессивного трейла и эндуро: оптимальный ресурс, широкие кассеты 10–51/52T.</td>
+                            <td>Рабочая лошадка для агрессивного трейла и эндуро: оптимальный ресурс, широкие кассеты
+                                10–51/52T.</td>
                         </tr>
                         <tr data-cat="casual touring">
                             <td class="tier tier-b">B</td>
                             <td>Deore M5100 / M4100 (10–11s)</td>
                             <td>NX Eagle (12s)</td>
                             <td>Advent X (1×10s)</td>
-                            <td>Надёжные решения для регулярных выездов и туризма: установка на обычный HG-барабан, невысокая стоимость расходников.</td>
+                            <td>Надёжные решения для регулярных выездов и туризма: установка на обычный HG-барабан,
+                                невысокая стоимость расходников.</td>
                         </tr>
                         <tr data-cat="casual">
                             <td class="tier tier-c">C</td>
                             <td>Altus / Acera / Tourney (8–9s)</td>
                             <td>SX Eagle (12s)</td>
                             <td>Mezzo / Marvo / Advent</td>
-                            <td>Начальный уровень для городских прогулок и лёгкого паркового катания. Не рассчитан на гоночные нагрузки.</td>
+                            <td>Начальный уровень для городских прогулок и лёгкого паркового катания. Не рассчитан на
+                                гоночные нагрузки.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ФАЗА 2.2: Сводная Таблица 2 — Road & Gravel -->
         <div class="card glass">
-            <h3 class="subhead">2. Шоссейные и Грэвел трансмиссии (Road & Gravel)</h3>
+            <h3 class="subhead" style="margin-top:0;">2. Шоссейные и Грэвел трансмиссии (Road & Gravel)</h3>
             <div class="tbl-wrap">
                 <table class="tbl">
                     <thead>
@@ -1403,21 +1499,24 @@
                             <td>Dura-Ace Di2 R9200 (2×12)</td>
                             <td>RED AXS / XPLR AXS (12s)</td>
                             <td>Super Record Wireless / Ekar (1×13)</td>
-                            <td>Бескомпромиссные гоночные группы: беспроводное электро-переключение, карбоновые шатуны, минимальное аэро-сопротивление.</td>
+                            <td>Бескомпромиссные гоночные группы: беспроводное электро-переключение, карбоновые шатуны,
+                                минимальное аэро-сопротивление.</td>
                         </tr>
                         <tr data-cat="intense racing touring">
                             <td class="tier tier-a">A</td>
                             <td>Ultegra Di2 R8100 / GRX 820 (12s)</td>
                             <td>Force AXS / Force XPLR</td>
                             <td>Chorus (12s)</td>
-                            <td>Выбор любителей-спортсменов и грэвел-рейсеров: функционал флагманов при сниженной стоимости.</td>
+                            <td>Выбор любителей-спортсменов и грэвел-рейсеров: функционал флагманов при сниженной
+                                стоимости.</td>
                         </tr>
                         <tr data-cat="casual touring">
                             <td class="tier tier-b">B</td>
                             <td>105 R7100 / GRX 600–400 (10–11s)</td>
                             <td>Rival AXS / Rival E1</td>
                             <td>Centaur (11s)</td>
-                            <td>Эталон надежности для тренировок, эндуранса и байкпакинга: долговечные звёзды, гидравлические тормоза.</td>
+                            <td>Эталон надежности для тренировок, эндуранса и байкпакинга: долговечные звёзды,
+                                гидравлические тормоза.</td>
                         </tr>
                         <tr data-cat="casual">
                             <td class="tier tier-c">C</td>
@@ -1432,13 +1531,12 @@
         </div>
     </section>
 
-    <!-- ФАЗА 4.2: Динамический Калькулятор Геометрии с реактивным SVG -->
     <section class="section" id="sizing">
         <div class="section-head">
             <h2>Калькулятор геометрии и ростовки рамы</h2>
         </div>
-
-        <p class="lede">Введите свои параметры: система мгновенно пересчитает размер рамы, запас Standover и ориентиры Reach/Stack.</p>
+        <p class="lede">Введите свои параметры: система мгновенно пересчитает размер рамы, запас Standover и ориентиры
+            Reach/Stack.</p>
 
         <form class="card glass" id="sizingForm" novalidate>
             <div class="field">
@@ -1448,17 +1546,14 @@
                     <option value="road">Шоссе / Грэвел — размер в сантиметрах</option>
                 </select>
             </div>
-
             <div class="field">
                 <label for="height">Рост <output id="heightOut" for="height">175 см</output></label>
                 <input type="range" id="height" name="height" min="150" max="205" step="1" value="175">
             </div>
-
             <div class="field">
                 <label for="inseam">Длина ног (Inseam) <output id="inseamOut" for="inseam">80 см</output></label>
                 <input type="range" id="inseam" name="inseam" min="65" max="100" step="1" value="80">
             </div>
-
             <div class="result" id="sizingResult" aria-live="polite"></div>
         </form>
 
@@ -1466,7 +1561,6 @@
             <svg id="bikeSvg" viewBox="0 0 560 320" role="img" aria-label="Схема геометрии велосипеда">
                 <!-- Земля -->
                 <line x1="30" y1="270" x2="530" y2="270" stroke="rgba(147,197,253,.25)" stroke-width="2" />
-                
                 <!-- Колёса -->
                 <g fill="none" stroke="rgba(147,197,253,.5)" stroke-width="2.5">
                     <circle cx="110" cy="215" r="50" />
@@ -1474,98 +1568,114 @@
                     <circle cx="110" cy="215" r="4" fill="#38bdf8" />
                     <circle cx="430" cy="215" r="4" fill="#38bdf8" />
                 </g>
-                
                 <!-- Рама велосипеда -->
                 <g fill="none" stroke="#dbeafe" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-                    <!-- Задний треугольник -->
                     <path d="M110 215 L250 220 M110 215 L200 100 M250 220 L200 100" />
-                    <!-- Передний треугольник -->
                     <path id="svgTopTube" d="M200 100 L370 105" />
                     <path d="M250 220 L378 135" />
-                    <!-- Рулевой стакан и вилка -->
                     <path d="M370 105 L378 135 M378 135 L430 215" />
-                    <!-- Седло и вынос -->
                     <path d="M200 100 L195 75 M175 75 L215 75 M370 105 L385 85 L405 85" stroke-width="4" />
                 </g>
                 <circle cx="250" cy="220" r="6" fill="#ffd76a" />
 
                 <!-- Выносная линия: STANDOVER -->
                 <g stroke="#ffd76a">
-                    <line id="lineStandover" x1="160" y1="102" x2="160" y2="270" stroke-width="2" stroke-dasharray="3 3" />
-                    <text id="txtStandover" x="150" y="190" text-anchor="end" fill="#ffd76a" font-size="12" font-family="monospace">STANDOVER: 74 см</text>
+                    <line id="lineStandover" x1="160" y1="102" x2="160" y2="270" stroke-width="2"
+                        stroke-dasharray="3 3" />
+                    <text id="txtStandover" x="150" y="190" text-anchor="end" fill="#ffd76a" font-size="12"
+                        font-family="var(--font-mono, monospace)">STANDOVER: 74 см</text>
                 </g>
-
                 <!-- Выносная линия: REACH -->
                 <g stroke="#6fe8b0">
                     <line id="lineReach" x1="250" y1="50" x2="370" y2="50" stroke-width="2" />
                     <line x1="250" y1="45" x2="250" y2="220" stroke-width="1" stroke-dasharray="3 3" opacity=".5" />
                     <line x1="370" y1="45" x2="370" y2="105" stroke-width="1" stroke-dasharray="3 3" opacity=".5" />
-                    <text id="txtReach" x="310" y="42" text-anchor="middle" fill="#6fe8b0" font-size="12" font-family="monospace">REACH: 430 мм</text>
+                    <text id="txtReach" x="310" y="42" text-anchor="middle" fill="#6fe8b0" font-size="12"
+                        font-family="var(--font-mono, monospace)">REACH: 430 мм</text>
                 </g>
-
                 <!-- Выносная линия: STACK -->
                 <g stroke="#38bdf8">
                     <line id="lineStack" x1="490" y1="105" x2="490" y2="220" stroke-width="2" />
                     <line x1="370" y1="105" x2="495" y2="105" stroke-width="1" stroke-dasharray="3 3" opacity=".5" />
                     <line x1="250" y1="220" x2="495" y2="220" stroke-width="1" stroke-dasharray="3 3" opacity=".5" />
-                    <text id="txtStack" x="500" y="165" fill="#38bdf8" font-size="12" font-family="monospace">STACK: 595 мм</text>
+                    <text id="txtStack" x="500" y="165" fill="#38bdf8" font-size="12"
+                        font-family="var(--font-mono, monospace)">STACK: 595 мм</text>
                 </g>
             </svg>
 
-            <!-- ФАЗА 3.2: Пояснение углов HTA и STA -->
             <ul class="g-legend card glass" style="padding: 1.2rem;">
-                <li><span class="swatch swatch-stand"></span><b>Standover</b> — вертикальный клиренс рамы над пахом (норма 2–6 см). Определяет безопасность при соскакивании с седла.</li>
-                <li><span class="swatch swatch-reach"></span><b>Reach</b> — горизонтальное расстояние от каретки до верха рулевого стакана. Задаёт длинность рамы в стойке.</li>
-                <li><span class="swatch swatch-stack"></span><b>Stack</b> — вертикальное расстояние от каретки до верха рулевого стакана. Определяет высоту руля.</li>
+                <li><span class="swatch swatch-stand"></span><b>Standover</b> — вертикальный клиренс рамы над пахом
+                    (норма 2–6 см). Определяет безопасность при соскакивании с седла.</li>
+                <li><span class="swatch swatch-reach"></span><b>Reach</b> — горизонтальное расстояние от каретки до
+                    верха рулевого стакана. Задаёт длинность рамы в стойке.</li>
+                <li><span class="swatch swatch-stack"></span><b>Stack</b> — вертикальное расстояние от каретки до верха
+                    рулевого стакана. Определяет высоту руля.</li>
                 <li style="border-top: 1px solid rgba(96,165,250,.15); padding-top: .6rem; margin-top: .2rem;">
-                    <b>HTA (Head Tube Angle):</b> Угол рулевого стакана. Острый угол (64–66°) даёт стабильность на крутых даунхилл-спусках; крутой угол (71–73°) даёт острую управляемость на шоссе.
+                    <b>HTA (Head Tube Angle):</b> Угол рулевого стакана. Острый угол (64–66°) даёт стабильность на
+                    крутых даунхилл-спусках; крутой угол (71–73°) даёт острую управляемость на шоссе.
                 </li>
                 <li>
-                    <b>STA (Seat Tube Angle):</b> Угол подседельной трубы (73–76°). Определяет позицию таза над педалями при кручении в крутые подъёмы.
+                    <b>STA (Seat Tube Angle):</b> Угол подседельной трубы (73–76°). Определяет позицию таза над педалями
+                    при кручении в крутые подъёмы.
                 </li>
             </ul>
         </div>
     </section>
 
-    <!-- ФАЗА 4.1: Конструктор совместимости с исправленным Кросс-брендингом -->
     <section class="section" id="compat">
         <div class="section-head">
             <h2>Конструктор совместимости трансмиссий</h2>
         </div>
-
-        <p class="lede">Выберите элементы привода — система проверит Cable Pull Ratio, шаг кассеты и стандарт барабана втулки.</p>
+        <p class="lede">Выберите элементы привода — система проверит Cable Pull Ratio, шаг кассеты и стандарт барабана
+            втулки.</p>
 
         <form class="card glass" id="compatForm" novalidate>
             <div class="field">
                 <label for="shifterOpt">Манетка / дуал-пистолет</label>
                 <select id="shifterOpt"></select>
             </div>
-
             <div class="field">
                 <label for="derailleurOpt">Задний переключатель</label>
                 <select id="derailleurOpt"></select>
             </div>
-
             <div class="field">
                 <label for="freehubOpt">Стандарт барабана втулки</label>
                 <select id="freehubOpt"></select>
             </div>
-
             <div class="field">
                 <label for="crossBrandOpt">Кросс-брендовые пары (готовые пресеты)</label>
                 <select id="crossBrandOpt"></select>
             </div>
-
             <div class="callout glass" id="compatCallout" aria-live="polite"></div>
+        </form>
+
+        <form class="card glass" id="gearForm" novalidate style="margin-top: var(--sp-md);">
+            <h3 class="subhead" style="margin-top: 0;">Калькулятор диапазона (Gear Range)</h3>
+            <p style="font-size: .88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Рассчитайте итоговый диапазон кассеты. Для примера: SRAM Eagle 10-52T даёт 520%, Shimano 12s 10-51T —
+                510%, а грэвел-кассета 11-42T — 381%.
+            </p>
+            <div class="ref-grid ref-grid-2">
+                <div class="field">
+                    <label for="minCog">Малая звезда кассеты (зубьев)</label>
+                    <input type="number" id="minCog" class="num-input" value="10" min="9" max="14">
+                </div>
+                <div class="field">
+                    <label for="maxCog">Большая звезда кассеты (зубьев)</label>
+                    <input type="number" id="maxCog" class="num-input" value="52" min="25" max="52">
+                </div>
+            </div>
+            <div class="size-row" style="margin-top: .5rem;">
+                <b>Итоговый диапазон: <span id="gearResultOut"
+                        style="display:inline; color: var(--blue-electric); font-size:1.1rem;">520%</span></b>
+            </div>
         </form>
     </section>
 
-    <!-- ФАЗА 3.3: Расширенная Матрица стандартов (T47, UDH, Mounts) -->
     <section class="section" id="standards">
         <div class="section-head">
             <h2>Матрица инженерных стандартов</h2>
         </div>
-
         <p class="lede">Ключевые стандарты узлов, определяющие совместимость компонентов при сборке или апгрейде.</p>
 
         <div class="ref-grid ref-grid-2">
@@ -1587,27 +1697,62 @@
                             <tr>
                                 <td>29″ (700c)</td>
                                 <td>622 мм</td>
-                                <td>Максимальный накат, низкий угол атаки на препятствиях.</td>
+                                <td>Максимальный накат, низкий угол атаки.</td>
                             </tr>
                             <tr>
                                 <td>27.5″ (650b)</td>
                                 <td>584 мм</td>
-                                <td>Высокая жёсткость колеса, динамичный разгон и маневренность.</td>
+                                <td>Динамичный разгон и маневренность.</td>
                             </tr>
                             <tr>
-                                <td>Mullet (Mixed)</td>
+                                <td>Mullet</td>
                                 <td>29″ / 27.5″</td>
-                                <td>Комбинированный сетап: 29″ спереди катится через камни, 27.5″ сзади даёт зазор и манёвренность.</td>
+                                <td>29″ спереди катится через камни, 27.5″ сзади даёт зазор.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </article>
 
-            <!-- Таблица 2: Каретки с T47 -->
+            <!-- Таблица 2: ETRTO -->
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">📏</span>
+                    <h3>Ширина обода и покрышки (ETRTO)</h3>
+                </div>
+                <div class="tbl-wrap">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Внутренняя ширина обода</th>
+                                <th>Рекомендуемая покрышка</th>
+                                <th>Hookless ограничения</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>19 – 21 мм</td>
+                                <td>25 мм – 32 мм (Шоссе)</td>
+                                <td>Только Tubeless-совместимые покрышки.</td>
+                            </tr>
+                            <tr>
+                                <td>23 – 25 мм</td>
+                                <td>35 мм – 50 мм (Грэвел)</td>
+                                <td>Макс. давление ~72 PSI (5 Bar).</td>
+                            </tr>
+                            <tr>
+                                <td>28 – 30+ мм</td>
+                                <td>2.2″ – 2.6″ (MTB)</td>
+                                <td>Сниженное давление для трейла.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <!-- Таблица 3: Каретки -->
             <article class="card glass">
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🔩</span>
-                    <h3>Кареточные узлы: BSA vs PressFit vs T47</h3>
+                    <h3>Кареточные узлы (BSA vs T47)</h3>
                 </div>
                 <div class="tbl-wrap">
                     <table class="tbl">
@@ -1615,34 +1760,34 @@
                             <tr>
                                 <th>Стандарт</th>
                                 <th>Тип монтажа</th>
-                                <th>Плюсы и минусы</th>
+                                <th>Плюсы / Минусы</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>BSA (Threaded)</td>
-                                <td>Резьба (68/73 мм)</td>
-                                <td>+ Отсутствие скрипов, легкая замена. − Узкий стакан.</td>
+                                <td>Резьба 68/73 мм</td>
+                                <td>+ Без скрипов. − Узкий стакан.</td>
                             </tr>
                             <tr>
-                                <td>PressFit (PF30/BB86)</td>
-                                <td>Запрессовка в раму</td>
-                                <td>+ Широкая каретка, высокая жесткость. − Риск скрипа при износе.</td>
+                                <td>PressFit (PF30)</td>
+                                <td>Запрессовка</td>
+                                <td>+ Широкая каретка. − Риск скрипа.</td>
                             </tr>
                             <tr>
-                                <td>T47 (Современный)</td>
+                                <td>T47</td>
                                 <td>Резьба M47 × 1.0</td>
-                                <td>+ Сочетает резьбу BSA (без скрипов) и широкий стакан PressFit (под 30-мм валы).</td>
+                                <td>+ Без скрипов + под 30-мм валы.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </article>
 
-            <!-- Таблица 3: Петухи UDH & T-Type -->
+            <!-- Таблица 4: Петухи -->
             <article class="card glass">
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🛠️</span>
-                    <h3>Крепление переключателя: Петухи vs UDH vs T-Type</h3>
+                    <h3>Петухи: UDH vs T-Type</h3>
                 </div>
                 <div class="tbl-wrap">
                     <table class="tbl">
@@ -1656,28 +1801,28 @@
                         <tbody>
                             <tr>
                                 <td>Standard Hanger</td>
-                                <td>Сменный алюминиевый петух под раму</td>
-                                <td>Индивидуален для каждой модели рамы.</td>
+                                <td>Алюминиевый петух</td>
+                                <td>Индивидуален для каждой рамы.</td>
                             </tr>
                             <tr>
                                 <td>SRAM UDH</td>
-                                <td>Универсальный петух с проворотом цепи</td>
-                                <td>Единый стандарт для большинства современных рам с 2020 года.</td>
+                                <td>Универсальный петух</td>
+                                <td>Единый стандарт для новых рам (с 2020г).</td>
                             </tr>
                             <tr>
-                                <td>T-Type Transmission</td>
-                                <td>Прямой монтаж на ось без петуха</td>
-                                <td>Крепится прямо за ось рамы UDH. Исключает необходимость регулировки винтов L/H.</td>
+                                <td>T-Type Trans.</td>
+                                <td>Без петуха</td>
+                                <td>Крепится прямо за ось рамы UDH.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </article>
 
-            <!-- Таблица 4: Тормоза PM vs FM -->
+            <!-- Таблица 5: Тормоза -->
             <article class="card glass">
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🛑</span>
-                    <h3>Крепление дисковых тормозов: PM vs Flat Mount</h3>
+                    <h3>Тормоза: PM vs Flat Mount</h3>
                 </div>
                 <div class="tbl-wrap">
                     <table class="tbl">
@@ -1691,13 +1836,13 @@
                         <tbody>
                             <tr>
                                 <td>Post Mount (PM)</td>
-                                <td>Болты вкручиваются перпендикулярно оси колеса.</td>
-                                <td>Стандарт для MTB и агрессивного катания. Легко адаптируется под роторы 180–203 мм.</td>
+                                <td>Болты перпендикулярно оси.</td>
+                                <td>MTB. Под роторы 180–203 мм.</td>
                             </tr>
                             <tr>
                                 <td>Flat Mount (FM)</td>
-                                <td>Компактное болтовое прижатие плоскостью к перу.</td>
-                                <td>Стандарт для Шоссе и Грэвела под роторы 140–160 мм. Чистый аэро-профиль.</td>
+                                <td>Компактное болтовое прижатие.</td>
+                                <td>Шоссе и Грэвел под роторы 140–160 мм.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1715,8 +1860,12 @@
             <a href="#compat">Совместимость</a>
             <a href="#standards">Стандарты</a>
         </nav>
-        <p class="fineprint">Независимый образовательный инженерный справочник. Торговые марки Shimano, SRAM, Campagnolo и MicroSHIFT принадлежат их правообладателям.</p>
+        <p class="fineprint">Независимый образовательный инженерный справочник. Торговые марки Shimano, SRAM, Campagnolo
+            и MicroSHIFT принадлежат их правообладателям.</p>
     </footer>
+
+    <!-- Плавающая кнопка "Наверх" -->
+    <button id="scrollTop" class="scroll-top" aria-label="Вернуться наверх">↑</button>
 
     <script id="app-script">
         "use strict";
@@ -1725,105 +1874,62 @@
         const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
         const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-        /* ============================ Мобильное меню ============================ */
+        /* Мобильное меню */
         (() => {
             const btn = $('#burgerBtn'), nav = $('#siteNav');
             if (!btn || !nav) return;
-            const close = () => {
-                btn.classList.remove('is-active');
-                nav.classList.remove('is-active');
-                btn.setAttribute('aria-expanded', 'false');
-            };
+            const close = () => { btn.classList.remove('is-active'); nav.classList.remove('is-active'); btn.setAttribute('aria-expanded', 'false'); };
             btn.addEventListener('click', () => {
                 const open = !nav.classList.contains('is-active');
-                btn.classList.toggle('is-active', open);
-                nav.classList.toggle('is-active', open);
-                btn.setAttribute('aria-expanded', String(open));
+                btn.classList.toggle('is-active', open); nav.classList.toggle('is-active', open); btn.setAttribute('aria-expanded', String(open));
             });
             $$('.site-nav .nav-link, .footer-nav a').forEach(a => a.addEventListener('click', close));
         })();
 
-        /* ============================ Реактивный Калькулятор + SVG ============================ */
+        /* Реактивный Калькулятор + SVG */
         (() => {
-            const form = $('#sizingForm');
-            if (!form) return;
             const typeSel = $('#bikeType'), heightIn = $('#height'), inseamIn = $('#inseam');
             const heightOut = $('#heightOut'), inseamOut = $('#inseamOut'), resultBox = $('#sizingResult');
-
             const txtStandover = $('#txtStandover'), txtReach = $('#txtReach'), txtStack = $('#txtStack');
-            const lineReach = $('#lineReach'), lineStack = $('#lineStack'), lineStandover = $('#lineStandover');
+            const lineReach = $('#lineReach');
 
             const ROAD_TABLE = [50, 378, 526];
             const mtbLetter = sizeIn => sizeIn <= 16 ? 'S' : sizeIn <= 18 ? 'M' : sizeIn <= 20 ? 'L' : 'XL';
             const roadRS = cm => ({ reach: Math.round(ROAD_TABLE[1] + (cm - ROAD_TABLE[0]) * 3), stack: Math.round(ROAD_TABLE[2] + (cm - ROAD_TABLE[0]) * 4) });
-
-            const setFill = el => {
-                const min = +el.min, max = +el.max;
-                el.style.setProperty('--fill', (((+el.value - min) / (max - min)) * 100).toFixed(1) + '%');
-            };
+            const setFill = el => el.style.setProperty('--fill', (((+el.value - +el.min) / (+el.max - +el.min)) * 100).toFixed(1) + '%');
 
             function render() {
-                const type = typeSel.value;
-                const height = +heightIn.value, inseam = +inseamIn.value;
-                heightOut.textContent = height + ' см';
-                inseamOut.textContent = inseam + ' см';
+                const type = typeSel.value, height = +heightIn.value, inseam = +inseamIn.value;
+                heightOut.textContent = height + ' см'; inseamOut.textContent = inseam + ' см';
                 setFill(heightIn); setFill(inseamIn);
 
-                let reachVal = 0, stackVal = 0, standoverVal = 0;
-
-                let html = '';
+                let reachVal = 0, stackVal = 0, standoverVal = 0, html = '';
                 if (type === 'mtb') {
                     const rawIn = (inseam * 0.57) / 2.54;
                     const sizeIn = Math.round(rawIn);
-                    const frameCm = sizeIn * 2.54;
-                    const topTubeH = 32 + frameCm * Math.cos(19 * Math.PI / 180);
-                    standoverVal = Math.round(inseam - topTubeH);
-                    reachVal = Math.round(390 + (sizeIn - 15) * 12);
-                    stackVal = Math.round(570 + (sizeIn - 15) * 10);
-
-                    html += '<h3>Результат: горный MTB</h3>';
-                    html += `<p class="size-big">${rawIn.toFixed(1)}<small>" → ${sizeIn}" · ${mtbLetter(sizeIn)}</small></p>`;
-                    html += '<ul class="size-list">';
+                    standoverVal = Math.round(inseam - (32 + (sizeIn * 2.54) * Math.cos(19 * Math.PI / 180)));
+                    reachVal = Math.round(390 + (sizeIn - 15) * 12); stackVal = Math.round(570 + (sizeIn - 15) * 10);
+                    html += `<h3>Результат: горный MTB</h3><p class="size-big">${rawIn.toFixed(1)}<small>" → ${sizeIn}" · ${mtbLetter(sizeIn)}</small></p><ul class="size-list">`;
                     html += `<li class="size-row"><b>Размер рамы ≈ ${sizeIn}" (${mtbLetter(sizeIn)})</b><span>формула: Inseam × 0.57 / 2.54</span></li>`;
-                    html += `<li class="size-row"><b>Запас стендовера ≈ ${standoverVal} см</b><span>клиренс рамы над пахом</span></li>`;
-                    html += '</ul>';
+                    html += `<li class="size-row"><b>Запас стендовера ≈ ${standoverVal} см</b><span>клиренс рамы над пахом</span></li></ul>`;
                 } else {
-                    const rawCm = inseam * 0.67;
-                    const sizeCm = Math.round(rawCm);
-                    const rs = roadRS(sizeCm);
-                    reachVal = rs.reach;
-                    stackVal = rs.stack;
-                    standoverVal = Math.round(inseam - 72);
-
-                    html += '<h3>Результат: шоссе / грэвел</h3>';
-                    html += `<p class="size-big">${rawCm.toFixed(1)}<small>см → ${sizeCm} см</small></p>`;
-                    html += '<ul class="size-list">';
+                    const rawCm = inseam * 0.67, sizeCm = Math.round(rawCm), rs = roadRS(sizeCm);
+                    reachVal = rs.reach; stackVal = rs.stack; standoverVal = Math.round(inseam - 72);
+                    html += `<h3>Результат: шоссе / грэвел</h3><p class="size-big">${rawCm.toFixed(1)}<small>см → ${sizeCm} см</small></p><ul class="size-list">`;
                     html += `<li class="size-row"><b>Размер рамы ≈ ${sizeCm} см</b><span>формула: Inseam × 0.67</span></li>`;
-                    html += `<li class="size-row"><b>Reach ≈ ${reachVal} мм · Stack ≈ ${stackVal} мм</b><span>ориентир геометрии</span></li>`;
-                    html += '</ul>';
+                    html += `<li class="size-row"><b>Reach ≈ ${reachVal} мм · Stack ≈ ${stackVal} мм</b><span>ориентир геометрии</span></li></ul>`;
                 }
-
                 resultBox.innerHTML = html;
-
-                /* ФАЗА 4.2: Реактивное обновление текстовых меток внутри SVG */
                 if (txtReach) txtReach.textContent = `REACH: ${reachVal} мм`;
                 if (txtStack) txtStack.textContent = `STACK: ${stackVal} мм`;
                 if (txtStandover) txtStandover.textContent = `STANDOVER: ${standoverVal} см`;
-
-                /* Динамическая анимированная сдвижка выносных линий SVG */
-                const reachPx = Math.min(Math.max((reachVal - 350) * 0.8, 40), 160);
-                if (lineReach) {
-                    lineReach.setAttribute('x2', String(250 + reachPx));
-                }
+                if (lineReach) lineReach.setAttribute('x2', String(250 + Math.min(Math.max((reachVal - 350) * 0.8, 40), 160)));
             }
-
-            typeSel.addEventListener('change', render);
-            heightIn.addEventListener('input', render);
-            inseamIn.addEventListener('input', render);
-            render();
+            [typeSel, heightIn, inseamIn].forEach(el => el?.addEventListener('input', render));
+            if (typeSel) render();
         })();
 
-        /* ============================ CompatBuilder (Исправленный Кросс-брендинг) ============================ */
+        /* Конструктор совместимости (CompatBuilder) */
         (() => {
             const shifterSel = $('#shifterOpt'), derailleurSel = $('#derailleurOpt'), freehubSel = $('#freehubOpt');
             const crossSel = $('#crossBrandOpt'), callout = $('#compatCallout');
@@ -1862,19 +1968,16 @@
             ];
 
             const CROSSES = [
-                { id: 'x-shi12-sram12-mtb', sh: 'shi-mtb-12', d: 'sram-mtb-12', note: 'Кросс-брендовая пара (Shimano 12s манетка + SRAM 12s переключатель): шаг кассет 12s практически идентичен, сетап активно используется в МТБ.' },
-                { id: 'x-sram12-shi12-mtb', sh: 'sram-mtb-12', d: 'shi-mtb-12', note: 'Кросс-брендовая пара (SRAM 12s манетка + Shimano 12s переключатель): отлично работает с 12s кассетами Shimano Hyperglide+.' },
+                { id: 'x-shi12-sram12-mtb', sh: 'shi-mtb-12', d: 'sram-mtb-12', note: 'Кросс-брендовая пара (Shimano 12s манетка + SRAM 12s переключатель): шаг кассет 12s идентичен, сетап активно используется.' },
+                { id: 'x-sram12-shi12-mtb', sh: 'sram-mtb-12', d: 'shi-mtb-12', note: 'Кросс-брендовая пара (SRAM 12s манетка + Shimano 12s переключатель): отлично работает с 12s кассетами Shimano.' },
                 { id: 'x-shi-road-sram-road', sh: 'shi-road-11', d: 'sram-road-12', note: 'Кросс-пара для грэвела.' }
             ];
 
             const fill = (sel, list) => { sel.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.label)}</option>`).join(''); };
-            fill(shifterSel, DRIVES);
-            fill(derailleurSel, DRIVES);
-            fill(freehubSel, HUBS);
+            fill(shifterSel, DRIVES); fill(derailleurSel, DRIVES); fill(freehubSel, HUBS);
 
             if (crossSel) {
-                crossSel.innerHTML = '<option value="">— Выберите пресет —</option>' +
-                    CROSSES.map(o => `<option value="${o.id}">${esc(o.note.slice(0, 60))}...</option>`).join('');
+                crossSel.innerHTML = '<option value="">— Выберите пресет —</option>' + CROSSES.map(o => `<option value="${o.id}">${esc(o.note.slice(0, 60))}...</option>`).join('');
             }
 
             function chainCheck(sh, d) {
@@ -1898,26 +2001,19 @@
                 const d = DRIVES.find(o => o.id === derailleurSel.value) || DRIVES[0];
                 const hub = HUBS.find(o => o.id === freehubSel.value) || HUBS[0];
 
-                /* ФАЗА 4.1: Проверка Кросс-брендинга */
                 const crossHit = CROSSES.find(o => o.sh === sh.id && o.d === d.id);
-                
                 let cRes = chainCheck(sh, d);
-                if (crossHit) {
-                    cRes = { s: 'ok', t: crossHit.note };
-                }
+                if (crossHit) cRes = { s: 'ok', t: crossHit.note };
 
                 const hRes = hubCheck(sh, hub.id);
                 const worst = (cRes.s === 'bad' || hRes.s === 'bad') ? 'bad' : (cRes.s === 'warn' || hRes.s === 'warn') ? 'warn' : 'ok';
-                const title = { ok: 'Совместимо', warn: 'Требуется проверка адаптера', bad: 'Несовместимо' }[worst];
+                const title = { ok: 'Совместимо', warn: 'Требуется проверка', bad: 'Несовместимо' }[worst];
 
                 callout.className = `callout glass is-${worst}`;
                 callout.innerHTML =
                     `<h3><span class="status-dot"></span>${title}</h3>` +
                     `<p>Пара: ${esc(sh.label)} → ${esc(d.label)} · Барабан: ${esc(hub.label)}</p>` +
-                    `<ul class="check-grid">` +
-                    `<li class="check-item"><b>Совместимость манетки и переключателя:</b> ${esc(cRes.t)}</li>` +
-                    `<li class="check-item"><b>Барабан втулки:</b> ${esc(hRes.t)}</li>` +
-                    `</ul>`;
+                    `<ul class="check-grid"><li class="check-item"><b>Совместимость:</b> ${esc(cRes.t)}</li><li class="check-item"><b>Барабан:</b> ${esc(hRes.t)}</li></ul>`;
             }
 
             [shifterSel, derailleurSel, freehubSel].forEach(s => s.addEventListener('change', evaluate));
@@ -1927,29 +2023,35 @@
                 evaluate();
             });
 
-            shifterSel.value = 'shi-mtb-12';
-            derailleurSel.value = 'shi-mtb-12';
-            freehubSel.value = 'ms';
+            shifterSel.value = 'shi-mtb-12'; derailleurSel.value = 'shi-mtb-12'; freehubSel.value = 'ms';
             evaluate();
         })();
 
-        /* ============================ Аккордеон ============================ */
+        /* Калькулятор диапазона (Gear Range) */
+        (() => {
+            const minIn = $('#minCog'), maxIn = $('#maxCog'), resOut = $('#gearResultOut');
+            if (!minIn || !maxIn || !resOut) return;
+            const calcRange = () => {
+                const min = Math.max(9, +minIn.value || 10), max = Math.max(min, +maxIn.value || 52);
+                resOut.textContent = ((max / min) * 100).toFixed(0) + '%';
+            };
+            minIn.addEventListener('input', calcRange); maxIn.addEventListener('input', calcRange);
+        })();
+
+        /* Аккордеон */
         (() => {
             $$('.acc .acc-head').forEach(head => head.addEventListener('click', () => {
-                const item = head.closest('.acc-item');
-                if (!item) return;
+                const item = head.closest('.acc-item'); if (!item) return;
                 const open = !item.classList.contains('open');
-                item.classList.toggle('open', open);
-                head.setAttribute('aria-expanded', String(open));
+                item.classList.toggle('open', open); head.setAttribute('aria-expanded', String(open));
             }));
         })();
 
-        /* ============================ TierGuide — Гид по уровням ============================ */
+        /* TierGuide — Гид по уровням */
         (() => {
             const btns = $$('#hierarchy .guide-btn[data-cat]');
             const rows = $$('#hierarchy .tbl tbody tr[data-cat]');
             const hint = $('#tierHint');
-
             const HINTS = {
                 all: 'Выберите задачу — подходящие строки таблиц подсветятся зелёным индикатором.',
                 casual: 'Повседневное катание: рекомендуются группы уровней B–C (Deore, NX Eagle, 105, Advent X).',
@@ -1960,28 +2062,24 @@
 
             btns.forEach(b => b.addEventListener('click', () => {
                 const cat = b.dataset.cat;
-                btns.forEach(x => {
-                    const active = x === b;
-                    x.classList.toggle('is-on', active);
-                    x.setAttribute('aria-pressed', String(active));
-                });
+                btns.forEach(x => { const active = x === b; x.classList.toggle('is-on', active); x.setAttribute('aria-pressed', String(active)); });
                 rows.forEach(r => r.classList.toggle('hl-row', cat !== 'all' && r.dataset.cat.includes(cat)));
                 if (hint) hint.textContent = HINTS[cat] || HINTS.all;
             }));
         })();
 
-        /* ============================ ScrollSpy ============================ */
+        /* ScrollSpy и кнопка Наверх */
         (() => {
-            const links = $$('.site-nav .nav-link');
+            const links = $$('.site-nav .nav-link'), btnTop = $('#scrollTop');
             const sections = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
-
             const update = () => {
-                const y = window.scrollY + 140;
-                let current = null;
-                sections.forEach(s => { if (s.offsetTop <= y) current = s.id; });
+                const y = window.scrollY; let current = null;
+                sections.forEach(s => { if (s.offsetTop <= y + 140) current = s.id; });
                 links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + current));
+                if (btnTop) btnTop.classList.toggle('is-visible', y > 500);
             };
             addEventListener('scroll', update, { passive: true });
+            if (btnTop) btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
             update();
         })();
     </script>
