@@ -14,1649 +14,11 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
-    <style>
-        /* ==========================================================================
-   BICYCLE WORLD — интерактивный справочник и конструктор велосипедов
-   Дизайн-система: Deep Ambient Sapphire (≈80% синий, ≈20% фиолетовый),
-   Liquid Glass / глассморфизм. Стилистика продолжения Network-Project.
-   Все цвета, отступы и эффекты стекла — в :root (тема меняется парой правок).
-   ========================================================================== */
-
-        :root {
-            /* ===== Фон и поверхности ===== */
-            --bg-primary: #040915;
-            /* глубокий тёмно-синий фон */
-            --bg-glow-blue: rgba(37, 99, 235, .16);
-            /* синее свечение (верх-лево) */
-            --bg-glow-violet: rgba(139, 92, 246, .12);
-            /* фиолетовое свечение (низ-право) */
-            --grid-line: rgba(96, 165, 250, .04);
-            /* чертёжная сетка фона */
-
-            --surface-1: rgba(13, 26, 56, .78);
-            /* основная стеклянная поверхность */
-            --surface-2: rgba(18, 34, 72, .66);
-            /* приподнятая поверхность */
-            --surface-subtle: rgba(10, 20, 44, .5);
-            /* поля ввода / врезки */
-
-            /* ===== Синяя палитра (≈80% интерфейса) ===== */
-            --blue-900: #1e3a8a;
-            --blue-700: #1d4ed8;
-            --blue-primary: #3b82f6;
-            --blue-light: #93c5fd;
-            --blue-electric: #38bdf8;
-
-            /* ===== Фиолетовые акценты (≈20%) ===== */
-            --violet-primary: #8b5cf6;
-            --violet-light: #c4b5fd;
-            --violet-dark: #6d28d9;
-
-            /* ===== Текст ===== */
-            --text-main: #dbeafe;
-            --text-muted: #93c5fd;
-            --text-dim: #60a5fa;
-            --text-white: #ffffff;
-
-            /* ===== Стеклянные границы и эффекты ===== */
-            --border-glass: rgba(147, 197, 253, .2);
-            --border-glass-hover: rgba(96, 165, 250, .5);
-            --glass-blur: blur(22px) saturate(180%);
-            --shadow-glass: 0 18px 42px -16px rgba(2, 6, 23, .7), 0 5px 14px -6px rgba(2, 6, 23, .45);
-            --glass-highlight: rgba(219, 234, 254, .22);
-            --glass-blue-sheen: rgba(59, 130, 246, .1);
-            --shadow-neon-blue: 0 0 28px rgba(59, 130, 246, .32);
-            --shadow-neon-violet: 0 0 28px rgba(139, 92, 246, .3);
-            --rim-top: inset 0 1px 0 rgba(255, 255, 255, .28);
-            /* верхняя кромка-блик */
-            --shadow-recess: inset 0 2px 8px rgba(2, 6, 23, .55);
-            /* врезанное поле */
-
-            /* ===== Радиусы ===== */
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --radius-pill: 999px;
-
-            /* ===== Шкала отступов ===== */
-            --sp-xs: .5rem;
-            /* 8px  */
-            --sp-sm: .875rem;
-            /* 14px */
-            --sp-md: 1.25rem;
-            /* 20px */
-            --sp-lg: 1.75rem;
-            /* 28px */
-            --sp-xl: 2.5rem;
-            /* 40px */
-            --sp-2xl: 4rem;
-            /* 64px */
-            --container: 72rem;
-
-            /* ===== Типографика ===== */
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            --font-mono: 'JetBrains Mono', "Cascadia Code", Consolas, monospace;
-
-            /* ===== Переходы ===== */
-            --trans-fast: .2s cubic-bezier(.16, 1, .3, 1);
-            --trans-normal: .32s cubic-bezier(.16, 1, .3, 1);
-        }
-
-        /* ============================ Базовый сброс ============================ */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-            scroll-padding-top: 5.75rem;
-            /* отступ под липкую шапку при якорном скролле */
-            -webkit-font-smoothing: antialiased;
-        }
-
-        body {
-            font-family: var(--font-sans);
-            color: var(--text-main);
-            line-height: 1.65;
-            min-height: 100vh;
-            isolation: isolate;
-            background-color: var(--bg-primary);
-            /* Старый фон для быстрого отката:
-            background-image:
-                radial-gradient(90rem 60rem at 12% -10%, var(--bg-glow-blue), transparent 60%),
-                radial-gradient(80rem 55rem at 108% 115%, var(--bg-glow-violet), transparent 55%),
-                linear-gradient(var(--grid-line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-            background-size: auto, auto, 44px 44px, 44px 44px;
-            background-attachment: fixed;
-            */
-        }
-
-        .bike-wallpaper {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: .24;
-            filter: blur(2px) drop-shadow(0 3px 8px rgba(37, 99, 235, .28));
-        }
-
-        ::selection {
-            background: rgba(59, 130, 246, .45);
-            color: var(--text-white);
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--blue-700), var(--violet-dark));
-            border-radius: var(--radius-pill);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button {
-            font: inherit;
-            color: inherit;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        img,
-        svg {
-            display: block;
-            max-width: 100%;
-        }
-
-        :focus-visible {
-            outline: 2px solid var(--blue-primary);
-            outline-offset: 2px;
-            border-radius: var(--radius-sm);
-        }
-
-        /* ============================ Стеклянная карточка ============================ */
-        .glass {
-            position: relative;
-            background:
-                radial-gradient(120% 90% at 0% 0%, rgba(147, 197, 253, .14), transparent 58%),
-                radial-gradient(90% 80% at 100% 100%, var(--glass-blue-sheen), transparent 62%),
-                linear-gradient(155deg, rgba(147, 197, 253, .07), var(--surface-1) 44%);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-lg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow-glass), var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .12);
-        }
-
-        /* ============================ Шапка ============================ */
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 60;
-            background:
-                linear-gradient(110deg, rgba(147, 197, 253, .08), transparent 38%),
-                rgba(4, 9, 21, .78);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid rgba(191, 219, 254, .24);
-            box-shadow: 0 8px 28px rgba(2, 6, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .08);
-        }
-
-        .header-inner {
-            max-width: var(--container);
-            margin: 0 auto;
-            padding: .8rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: var(--sp-md);
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: .6rem;
-            font-weight: 800;
-            letter-spacing: .02em;
-            color: var(--text-white);
-        }
-
-        .logo svg {
-            width: 30px;
-            height: 30px;
-            filter: drop-shadow(0 0 10px rgba(59, 130, 246, .5));
-        }
-
-        .logo b {
-            font-family: var(--font-mono);
-            color: var(--blue-electric);
-            font-weight: 700;
-        }
-
-        .site-nav ul {
-            display: flex;
-            gap: var(--sp-md);
-            list-style: none;
-        }
-
-        .nav-link {
-            position: relative;
-            padding: .45rem 0;
-            font-size: .92rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            transition: color var(--trans-fast);
-        }
-
-        .nav-link::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: .1rem;
-            height: 2px;
-            border-radius: var(--radius-pill);
-            background: linear-gradient(90deg, var(--blue-primary), var(--violet-primary));
-            box-shadow: var(--shadow-neon-blue);
-            opacity: 0;
-            transform: scaleX(.4);
-            transition: opacity var(--trans-fast), transform var(--trans-normal);
-        }
-
-        .nav-link:hover {
-            color: var(--text-white);
-        }
-
-        .nav-link.is-active {
-            color: var(--blue-light);
-        }
-
-        .nav-link.is-active::after,
-        .nav-link:hover::after {
-            opacity: 1;
-            transform: scaleX(1);
-        }
-
-        /* Бургер-кнопка (мобильные) */
-        .burger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            padding: .6rem;
-            border-radius: var(--radius-sm);
-        }
-
-        .burger span {
-            width: 22px;
-            height: 2px;
-            background: var(--blue-light);
-            border-radius: var(--radius-pill);
-            transition: transform var(--trans-normal), opacity var(--trans-fast);
-        }
-
-        /* ============================ Hero ============================ */
-        .hero {
-            max-width: 64rem;
-            margin: 0 auto;
-            padding: calc(var(--sp-2xl) * .9) 1.25rem var(--sp-xl);
-            text-align: center;
-        }
-
-        .kicker {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            font-family: var(--font-mono);
-            font-size: .78rem;
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            color: var(--blue-electric);
-        }
-
-        .kicker::before,
-        .kicker::after {
-            content: "";
-            width: 26px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--blue-primary));
-        }
-
-        .kicker::after {
-            background: linear-gradient(90deg, var(--violet-primary), transparent);
-        }
-
-        .hero h1 {
-            margin-top: var(--sp-sm);
-            font-size: clamp(2.3rem, 5.4vw, 3.9rem);
-            line-height: 1.12;
-            font-weight: 800;
-            letter-spacing: -.01em;
-        }
-
-        .hero h1 .grad {
-            background: linear-gradient(92deg, var(--blue-light) 10%, var(--text-white) 45%, var(--violet-light) 90%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .lede {
-            margin-top: var(--sp-md);
-            max-width: 46rem;
-            margin-inline: auto;
-            font-size: 1.05rem;
-            color: var(--text-muted);
-        }
-
-        .hero-stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--sp-sm);
-            margin-top: var(--sp-lg);
-        }
-
-        .stat {
-            padding: .7rem 1.25rem;
-            border-radius: var(--radius-md);
-            background:
-                radial-gradient(120% 100% at 0% 0%, rgba(147, 197, 253, .14), transparent 65%),
-                linear-gradient(145deg, rgba(18, 34, 72, .68), rgba(10, 20, 44, .7));
-            border: 1px solid var(--border-glass);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .1);
-            display: flex;
-            align-items: baseline;
-            gap: .5rem;
-        }
-
-        .stat b {
-            font-family: var(--font-mono);
-            font-size: 1.25rem;
-            color: var(--blue-electric);
-            text-shadow: 0 0 14px rgba(56, 189, 248, .55);
-        }
-
-        .stat span {
-            font-size: .82rem;
-            color: var(--text-muted);
-        }
-
-        .hero-cta {
-            display: flex;
-            justify-content: center;
-            gap: var(--sp-sm);
-            margin-top: var(--sp-lg);
-            flex-wrap: wrap;
-        }
-
-        /* ============================ Кнопки и чипы ============================ */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            padding: .78rem 1.45rem;
-            border-radius: var(--radius-pill);
-            font-weight: 700;
-            font-size: .93rem;
-            letter-spacing: .01em;
-            transition: transform var(--trans-normal), box-shadow var(--trans-normal), background var(--trans-fast), border-color var(--trans-fast);
-        }
-
-        .btn-primary {
-            color: var(--text-white);
-            background: linear-gradient(135deg, var(--blue-700) 5%, var(--blue-primary) 48%, var(--violet-primary) 120%);
-            box-shadow: var(--shadow-neon-blue), var(--rim-top);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 36px rgba(59, 130, 246, .5), var(--rim-top);
-        }
-
-        .btn-ghost {
-            color: var(--blue-light);
-            border: 1px solid var(--border-glass);
-            background: linear-gradient(145deg, rgba(147, 197, 253, .12), var(--surface-subtle) 76%);
-            backdrop-filter: blur(14px) saturate(170%);
-            -webkit-backdrop-filter: blur(14px) saturate(170%);
-            box-shadow: var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .1);
-        }
-
-        .btn-ghost:hover {
-            border-color: var(--border-glass-hover);
-            transform: translateY(-2px);
-        }
-
-        .chip {
-            display: inline-block;
-            padding: .28rem .7rem;
-            font-family: var(--font-mono);
-            font-size: .74rem;
-            color: var(--blue-light);
-            background: rgba(59, 130, 246, .12);
-            border: 1px solid rgba(96, 165, 250, .28);
-            border-radius: var(--radius-pill);
-        }
-
-        .chip-violet {
-            color: var(--violet-light);
-            background: rgba(139, 92, 246, .12);
-            border-color: rgba(168, 85, 247, .32);
-        }
-
-        /* ============================ Секции ============================ */
-        .section {
-            max-width: var(--container);
-            margin: 0 auto;
-            padding: var(--sp-2xl) 1.25rem var(--sp-xl);
-        }
-
-        .section-head {
-            margin-bottom: var(--sp-lg);
-        }
-
-        /* Отступ между лид-абзацем секции и первым блоком */
-        .section > p.lede {
-            margin-bottom: var(--sp-lg);
-        }
-
-        .section-head h2 {
-            margin-top: 0;
-            font-size: clamp(1.55rem, 3vw, 2.15rem);
-            font-weight: 800;
-            color: var(--text-white);
-            letter-spacing: -.01em;
-        }
-
-        .subhead {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            margin: var(--sp-xl) 0 var(--sp-md);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-white);
-        }
-
-        .subhead::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--blue-primary), var(--violet-primary));
-            box-shadow: var(--shadow-neon-blue);
-        }
-
-        /* ============================ Справочник: сетка и карточки ============================ */
-        .ref-grid {
-            display: grid;
-            gap: var(--sp-md);
-        }
-
-        .ref-grid > * {
-            min-width: 0;
-        }
-
-        .ref-grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        }
-
-        .ref-grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        }
-
-        #standards .ref-grid-3 {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .card {
-            padding: var(--sp-md);
-            transition: transform var(--trans-normal), border-color var(--trans-normal), box-shadow var(--trans-normal);
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-glass-hover);
-            box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
-        }
-
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-            margin-bottom: .65rem;
-        }
-
-        .card-icon {
-            display: grid;
-            place-items: center;
-            width: 2.1rem;
-            height: 2.1rem;
-            flex-shrink: 0;
-            border-radius: var(--radius-md);
-            background: rgba(59, 130, 246, .14);
-            border: 1px solid rgba(96, 165, 250, .3);
-            font-size: 1.05rem;
-            line-height: 1;
-        }
-
-        .card-head h3 {
-            font-size: 1.02rem;
-            color: var(--text-white);
-        }
-
-        .card p {
-            font-size: .88rem;
-            color: var(--text-muted);
-            margin-bottom: .45rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: .2rem .6rem;
-            border-radius: var(--radius-pill);
-            background: rgba(139, 92, 246, .14);
-            color: var(--violet-light);
-            font-size: .78rem;
-        }
-
-        /* Таблицы */
-        .tbl-wrap {
-            min-width: 0;
-            max-width: 100%;
-            overflow-x: auto;
-            overscroll-behavior-x: contain;
-        }
-
-        .tbl {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .9rem;
-        }
-
-        .tbl th,
-        .tbl td {
-            padding: .55rem .65rem;
-            text-align: left;
-            vertical-align: top;
-        }
-
-        .tbl thead th {
-            color: var(--blue-electric);
-            font-size: .8rem;
-            letter-spacing: .04em;
-        }
-
-        .tbl tbody tr+tr td,
-        .tbl tbody tr+tr th {
-            border-top: 1px solid rgba(96, 165, 250, .12);
-        }
-
-        /* Терминология */
-        .term-list {
-            list-style: none;
-            display: grid;
-            gap: var(--sp-sm);
-        }
-
-        .term-item {
-            padding: var(--sp-sm) var(--sp-md);
-        }
-
-        .term-item dt {
-            font-weight: 700;
-            color: var(--blue-light);
-            margin-bottom: .2rem;
-        }
-
-        .term-item dd {
-            font-size: .86rem;
-            color: var(--text-muted);
-        }
-
-        /* ============================ Вкладки (конструктор) ============================ */
-        .tabs {
-            display: flex;
-            gap: var(--sp-xs);
-            flex-wrap: wrap;
-            margin-bottom: var(--sp-md);
-        }
-
-        .tab-btn {
-            padding: .55rem 1.05rem;
-            border-radius: var(--radius-pill);
-            font-size: .86rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            background: var(--surface-subtle);
-            border: 1px solid transparent;
-            transition: all var(--trans-fast);
-        }
-
-        .tab-btn:hover {
-            color: var(--blue-light);
-        }
-
-        .tab-btn.is-active {
-            color: var(--text-white);
-            background: rgba(59, 130, 246, .16);
-            border-color: rgba(96, 165, 250, .45);
-            box-shadow: var(--shadow-neon-blue);
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.is-active {
-            display: block;
-            animation: panelIn .35s cubic-bezier(.16, 1, .3, 1);
-        }
-
-        @keyframes panelIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: none;
-            }
-        }
-
-        /* ============================ Формы и слайдеры ============================ */
-        .field {
-            margin-bottom: var(--sp-md);
-        }
-
-        .field label {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: .5rem;
-            font-size: .86rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: .45rem;
-        }
-
-        .field label output {
-            font-family: var(--font-mono);
-            color: var(--blue-electric);
-            background: rgba(59, 130, 246, .12);
-            padding: .1rem .55rem;
-            border-radius: var(--radius-sm);
-        }
-
-        .field select {
-            width: 100%;
-            appearance: none;
-            -webkit-appearance: none;
-            background-color: var(--surface-2);
-            color: var(--text-white);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: .65rem .9rem;
-            font-size: .92rem;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237dd3fc' fill='none' stroke-width='2'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right .9rem center;
-        }
-
-        .field select:focus-visible {
-            outline-offset: 0;
-        }
-
-        .field input[type="number"] {
-            width: 100%;
-            background-color: var(--surface-2);
-            color: var(--text-white);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: .65rem .9rem;
-            font: inherit;
-            font-size: .92rem;
-        }
-
-        /* Range */
-        input[type="range"] {
-            width: 100%;
-            appearance: none;
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: var(--radius-pill);
-            background: linear-gradient(90deg, var(--blue-primary) var(--fill, 50%), rgba(255, 255, 255, .1) var(--fill, 50%));
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--blue-electric);
-            border: 2px solid #eaf4ff;
-            box-shadow: 0 0 14px rgba(56, 189, 248, .8);
-            transition: transform var(--trans-fast);
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--blue-electric);
-            border: 2px solid #eaf4ff;
-            box-shadow: 0 0 14px rgba(56, 189, 248, .8);
-        }
-
-        /* ============================ Выводы конструктора ============================ */
-        .result {
-            margin-top: var(--sp-lg);
-        }
-
-        #gearForm {
-            margin-top: var(--sp-md);
-        }
-
-        .result h3 {
-            font-size: 1.05rem;
-            color: var(--text-white);
-            margin-bottom: .5rem;
-        }
-
-        .result p {
-            font-size: .92rem;
-            color: var(--text-muted);
-            margin-bottom: .6rem;
-        }
-
-        .size-list {
-            list-style: none;
-            display: grid;
-            gap: var(--sp-sm);
-        }
-
-        .size-row {
-            padding: .7rem .95rem;
-            border-radius: var(--radius-md);
-            background: rgba(59, 130, 246, .1);
-            border-left: 3px solid var(--blue-primary);
-        }
-
-        .size-row b {
-            color: var(--text-white);
-            font-size: .98rem;
-        }
-
-        .size-row span {
-            display: block;
-            font-size: .85rem;
-            color: var(--text-muted);
-            margin-top: .15rem;
-        }
-
-        .fit-list {
-            list-style: none;
-        }
-
-        .fit-list li {
-            position: relative;
-            padding: .4rem 0 .4rem 1.6rem;
-            font-size: .92rem;
-        }
-
-        .fit-list li::before {
-            content: "▸";
-            position: absolute;
-            left: .3rem;
-            color: var(--blue-electric);
-        }
-
-        .callout {
-            margin-top: var(--sp-md);
-        }
-
-        .check-grid {
-            display: grid;
-            gap: var(--sp-sm);
-            list-style: none;
-        }
-
-        .check-item {
-            padding: .6rem .85rem;
-            border-radius: var(--radius-md);
-            background: rgba(139, 92, 246, .08);
-            font-size: .87rem;
-        }
-
-        /* ============================ Футер ============================ */
-        .site-footer {
-            margin-top: var(--sp-2xl);
-            padding: var(--sp-xl) 1.25rem;
-            text-align: center;
-            border-top: 1px solid rgba(96, 165, 250, .14);
-            background: linear-gradient(180deg, transparent, rgba(7, 13, 28, .7));
-        }
-
-        .footer-wordmark {
-            font-size: 1.05rem;
-            letter-spacing: .1em;
-            margin-bottom: var(--sp-sm);
-        }
-
-        .footer-nav {
-            display: flex;
-            justify-content: center;
-            gap: var(--sp-md);
-            flex-wrap: wrap;
-            margin-bottom: var(--sp-sm);
-        }
-
-        .footer-nav a {
-            color: var(--text-muted);
-            font-size: .86rem;
-            transition: color var(--trans-fast);
-        }
-
-        .footer-nav a:hover {
-            color: var(--blue-light);
-        }
-
-        .site-footer .fineprint {
-            font-size: .75rem;
-            color: #7d90b3;
-            max-width: 42rem;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* ============================ Адаптивность ============================ */
-        @media (max-width: 980px) {
-            :root {
-                --header-h: 58px;
-            }
-
-            .site-nav ul {
-                gap: var(--sp-sm);
-            }
-
-            .hero {
-                padding-top: var(--sp-xl);
-            }
-
-            .section,
-            .speed-section {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-        }
-
-        @media (max-width: 680px) {
-            :root {
-                --header-h: 54px;
-            }
-
-            .brand-tag {
-                display: none;
-            }
-
-            .site-nav ul {
-                gap: var(--sp-xs);
-                font-size: .9rem;
-            }
-
-            /* На узком экране — не «пилюли» вразнобой, а аккуратный список строк */
-            .hero-stats {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .stat {
-                justify-content: space-between;
-                text-align: left;
-                padding: .6rem 1rem;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-                align-items: stretch;
-            }
-        }
-
-        /* ============================ Доступность ============================ */
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                animation-duration: .01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: .01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        /* ============================ Дополнительные компоненты (развёртка body) ============================ */
-        .brand-tag {
-            font-family: var(--font-mono);
-            font-size: .68rem;
-            letter-spacing: .12em;
-            color: var(--text-dim);
-            border-left: 1px solid rgba(96, 165, 250, .3);
-            padding-left: .6rem;
-        }
-
-        /* Вердикт совместимости */
-        .callout {
-            padding: var(--sp-md) var(--sp-lg);
-        }
-
-        .callout h3 {
-            display: flex;
-            align-items: center;
-            gap: .55rem;
-            font-size: 1.08rem;
-            margin-bottom: .45rem;
-            color: var(--text-white);
-        }
-
-        .callout p {
-            font-size: .92rem;
-            color: var(--text-muted);
-        }
-
-        .status-dot {
-            width: .65rem;
-            height: .65rem;
-            border-radius: 50%;
-            flex-shrink: 0;
-            background: var(--blue-primary);
-            box-shadow: 0 0 12px currentColor;
-        }
-
-        .callout.is-ok {
-            border-color: rgba(52, 211, 153, .45);
-            box-shadow: 0 0 30px rgba(52, 211, 153, .18), var(--shadow-glass), var(--rim-top);
-        }
-
-        .callout.is-ok h3 {
-            color: #6ee7b7;
-        }
-
-        .callout.is-ok .status-dot {
-            background: #34d399;
-            color: #34d399;
-        }
-
-        .callout.is-warn {
-            border-color: rgba(251, 191, 36, .45);
-            box-shadow: 0 0 30px rgba(251, 191, 36, .16), var(--shadow-glass), var(--rim-top);
-        }
-
-        .callout.is-warn h3 {
-            color: #fcd34d;
-        }
-
-        .callout.is-warn .status-dot {
-            background: #fbbf24;
-            color: #fbbf24;
-        }
-
-        .callout.is-bad {
-            border-color: rgba(248, 113, 113, .5);
-            box-shadow: 0 0 30px rgba(248, 113, 113, .16), var(--shadow-glass), var(--rim-top);
-        }
-
-        .callout.is-bad h3 {
-            color: #fca5a5;
-        }
-
-        .callout.is-bad .status-dot {
-            background: #f87171;
-            color: #f87171;
-        }
-
-        /* Калькулятор ростовки */
-        .size-big {
-            font-family: var(--font-mono);
-            font-size: 2.4rem;
-            font-weight: 800;
-            line-height: 1.1;
-            color: var(--blue-electric);
-            text-shadow: 0 0 18px rgba(56, 189, 248, .5);
-        }
-
-        .size-big small {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            text-shadow: none;
-        }
-
-        /* Таймлайн эволюции */
-        .evo-list {
-            list-style: none;
-            display: grid;
-            gap: .55rem;
-            margin-top: .4rem;
-        }
-
-        .evo-item {
-            padding: .6rem .9rem;
-            border-radius: var(--radius-md);
-            background: rgba(59, 130, 246, .08);
-            border-left: 3px solid var(--violet-primary);
-            font-size: .88rem;
-            color: var(--text-muted);
-        }
-
-        .evo-item b {
-            color: var(--blue-light);
-            font-family: var(--font-mono);
-            font-weight: 700;
-        }
-
-        /* Мобильное меню (бургер + drawer) */
-        @media (max-width: 840px) {
-            .burger {
-                display: flex;
-                margin-left: auto;
-                flex-shrink: 0;
-            }
-
-            .site-nav {
-                position: absolute;
-                top: calc(100% + .4rem);
-                right: .75rem;
-                left: .75rem;
-                z-index: 65;
-                background-color: var(--bg-primary);
-                background-image:
-                    radial-gradient(130% 90% at 0% 0%, rgba(147, 197, 253, .18), transparent 58%),
-                    radial-gradient(100% 100% at 100% 100%, rgba(59, 130, 246, .12), transparent 62%),
-                    linear-gradient(160deg, rgba(18, 34, 72, .97), rgba(4, 9, 21, .97));
-                border: 1px solid rgba(191, 219, 254, .34);
-                border-radius: var(--radius-lg);
-                backdrop-filter: blur(30px) saturate(200%);
-                -webkit-backdrop-filter: blur(30px) saturate(200%);
-                box-shadow: 0 24px 64px rgba(2, 6, 23, .62), var(--rim-top),
-                    inset 0 -1px 0 rgba(59, 130, 246, .16);
-                padding: .5rem .9rem;
-                display: none;
-            }
-
-            .site-nav.is-active {
-                display: block;
-                animation: panelIn .3s cubic-bezier(.16, 1, .3, 1);
-            }
-
-            .site-nav ul {
-                flex-direction: column;
-                gap: .25rem;
-            }
-
-            .nav-link {
-                display: block;
-                padding: .7rem .4rem;
-                font-size: 1rem;
-                border-bottom: 1px solid rgba(96, 165, 250, .1);
-            }
-
-            .site-nav li:last-child .nav-link {
-                border-bottom: none;
-            }
-
-            .burger.is-active span:nth-child(1) {
-                transform: translateY(7px) rotate(45deg);
-            }
-
-            .burger.is-active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .burger.is-active span:nth-child(3) {
-                transform: translateY(-7px) rotate(-45deg);
-            }
-        }
-
-        /* ============================ Аккордеон «Исторический разбор» ============================ */
-        .acc {
-            display: grid;
-            gap: var(--sp-sm);
-            margin-top: .6rem;
-        }
-
-        .acc-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
-            border: 1px solid var(--border-glass);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow-glass), var(--rim-top);
-        }
-
-        .acc-head {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: .8rem;
-            padding: 1rem 1.25rem;
-            text-align: left;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            transition: background var(--trans-fast), color var(--trans-fast);
-        }
-
-        .acc-head:hover {
-            background: rgba(96, 165, 250, .08);
-            color: var(--text-white);
-        }
-
-        .acc-item.open .acc-head {
-            color: var(--blue-light);
-            border-bottom: 1px solid rgba(147, 197, 253, .14);
-        }
-
-        .acc-ico {
-            width: 2.1rem;
-            height: 2.1rem;
-            flex-shrink: 0;
-            display: grid;
-            place-items: center;
-            font-size: 1.1rem;
-            border-radius: var(--radius-md);
-            background: rgba(59, 130, 246, .14);
-            border: 1px solid rgba(96, 165, 250, .28);
-        }
-
-        .acc-title {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .acc-title small {
-            display: block;
-            margin-top: .15rem;
-            font-family: var(--font-mono);
-            font-size: .7rem;
-            font-weight: 500;
-            letter-spacing: .14em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
-
-        .acc-chev {
-            flex-shrink: 0;
-            width: 10px;
-            height: 10px;
-            border-right: 2px solid var(--blue-light);
-            border-bottom: 2px solid var(--blue-light);
-            transform: rotate(45deg) translateY(-2px);
-            transition: transform var(--trans-normal);
-        }
-
-        .acc-item.open .acc-chev {
-            transform: rotate(225deg) translateY(1px);
-        }
-
-        .acc-body {
-            display: grid;
-            grid-template-rows: 0fr;
-            overflow: hidden;
-            transition: grid-template-rows .5s cubic-bezier(.16, 1, .3, 1);
-        }
-
-        .acc-item.open .acc-body {
-            grid-template-rows: 1fr;
-        }
-
-        .acc-inner {
-            min-height: 0;
-            overflow: hidden;
-            padding: 0 1.4rem;
-            display: grid;
-            gap: var(--sp-md);
-            font-size: .92rem;
-            color: var(--text-muted);
-            line-height: 1.65;
-            transition: padding var(--trans-normal);
-        }
-
-        .acc-item.open .acc-inner {
-            padding: 1.1rem 1.4rem 1.3rem;
-        }
-
-        .acc-inner h4 {
-            margin-bottom: .4rem;
-            font-size: .8rem;
-            letter-spacing: .16em;
-            text-transform: uppercase;
-            color: var(--blue-electric);
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-
-        .acc-inner h4::before {
-            content: "";
-            width: 14px;
-            height: 2px;
-            border-radius: var(--radius-pill);
-            background: linear-gradient(90deg, var(--blue-primary), var(--violet-primary));
-        }
-
-        .acc-inner p {
-            margin-bottom: .5rem;
-        }
-
-        .acc-inner ul {
-            list-style: none;
-            display: grid;
-            gap: .45rem;
-        }
-
-        .acc-inner li {
-            position: relative;
-            padding-left: 1.35rem;
-            font-size: .89rem;
-        }
-
-        .acc-inner li::before {
-            content: "▸";
-            position: absolute;
-            left: .2rem;
-            color: var(--blue-electric);
-        }
-
-        .acc-kw {
-            font-family: var(--font-mono);
-            font-size: .78rem;
-            color: var(--violet-light);
-            background: rgba(139, 92, 246, .1);
-            border: 1px solid rgba(168, 85, 247, .3);
-            padding: .05rem .5rem;
-            border-radius: var(--radius-pill);
-        }
-
-        /* Иерархия: легенда уровней (swatch + g-label) */
-        .swatch {
-            display: inline-block;
-            width: .65em;
-            height: .65em;
-            border-radius: 3px;
-            margin-right: .4rem;
-            vertical-align: -2px;
-        }
-
-        .tier-s .swatch,
-        .swatch.s {
-            background: #ffd76a;
-            box-shadow: 0 0 .45rem rgba(255, 215, 106, .3);
-        }
-
-        .tier-a .swatch,
-        .swatch.a {
-            background: #9db8ff;
-        }
-
-        .tier-b .swatch,
-        .swatch.b {
-            background: #6fdcb2;
-        }
-
-        .tier-c .swatch,
-        .swatch.c {
-            background: #7a8aa8;
-        }
-
-        .g-label {
-            font-size: .78rem;
-            color: var(--text-muted);
-            margin-left: .55rem;
-            white-space: nowrap;
-        }
-
-        .swatch-stand {
-            background: #ffd76a;
-            box-shadow: 0 0 .45rem rgba(255, 215, 106, .3);
-        }
-
-        .swatch-reach {
-            background: #9db8ff;
-        }
-
-        .swatch-stack {
-            background: #6fdcb2;
-        }
-
-        /* ============================ Tier-листы и гид по выбору ============================ */
-        .guide-card {
-            margin-bottom: var(--sp-lg);
-            padding: var(--sp-md) var(--sp-lg) var(--sp-md);
-        }
-
-        .guide-card h3 {
-            font-size: 1.05rem;
-            color: var(--text-white);
-            margin-bottom: .4rem;
-        }
-
-        .guide-btns {
-            display: flex;
-            gap: .6rem;
-            flex-wrap: wrap;
-            margin-top: .2rem;
-        }
-
-        .guide-btn {
-            padding: .6rem 1.15rem;
-            border-radius: var(--radius-pill);
-            font-size: .87rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            background: linear-gradient(145deg, rgba(147, 197, 253, .1), rgba(10, 20, 44, .58));
-            border: 1px solid var(--border-glass);
-            backdrop-filter: blur(12px) saturate(160%);
-            -webkit-backdrop-filter: blur(12px) saturate(160%);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
-            transition: all var(--trans-fast);
-        }
-
-        .guide-btn small {
-            display: block;
-            margin-top: .1rem;
-            font-size: .72rem;
-            font-weight: 500;
-            color: var(--text-dim);
-        }
-
-        .guide-btn:hover {
-            border-color: var(--border-glass-hover);
-            color: var(--text-white);
-            transform: translateY(-1px);
-        }
-
-        .guide-btn.is-on {
-            color: var(--text-white);
-            background: linear-gradient(135deg, rgba(29, 78, 216, .4), rgba(139, 92, 246, .3));
-            border-color: rgba(96, 165, 250, .6);
-            box-shadow: var(--shadow-neon-blue);
-        }
-
-        .guide-btn.is-on small {
-            color: var(--blue-light);
-        }
-
-        .guide-hint {
-            margin-top: var(--sp-sm);
-            font-size: .87rem;
-            color: var(--text-muted);
-            min-height: 1.3em;
-        }
-
-        .tier-card h4 {
-            margin: .9rem 0 .45rem;
-            font-size: .78rem;
-            letter-spacing: .16em;
-            text-transform: uppercase;
-            color: var(--violet-light);
-        }
-
-        #tierTables {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .tbl.tiers td:first-child,
-        .tbl.tiers th:first-child {
-            min-width: 210px;
-        }
-
-        .tier-name {
-            display: flex;
-            align-items: center;
-            gap: .55rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .tier-badge {
-            font-family: var(--font-mono);
-            font-size: .68rem;
-            padding: .12rem .5rem;
-            border-radius: var(--radius-pill);
-            background: rgba(96, 165, 250, .14);
-            color: var(--blue-light);
-            border: 1px solid rgba(96, 165, 250, .3);
-        }
-
-        .tier-badge.top {
-            background: rgba(139, 92, 246, .18);
-            color: var(--violet-light);
-            border-color: rgba(168, 85, 247, .42);
-            box-shadow: 0 0 12px rgba(139, 92, 246, .35);
-        }
-
-        .tier-badge.mid {
-            background: rgba(56, 189, 248, .14);
-            color: var(--blue-electric);
-            border-color: rgba(56, 189, 248, .38);
-        }
-
-        #hierarchy .tbl tr.hl-row td {
-            background: linear-gradient(90deg, rgba(52, 211, 153, .12), rgba(52, 211, 153, .03));
-            box-shadow: inset 3px 0 0 #34d399;
-        }
-
-        #hierarchy .tbl tr.hl-row td:first-child {
-            color: #6ee7b7;
-            font-weight: 700;
-        }
-
-        /* ============================ Калькулятор: прозрачность математики ============================ */
-        .formula-box {
-            margin-top: var(--sp-md);
-            padding: .9rem 1.15rem;
-            border-radius: var(--radius-md);
-            background: rgba(2, 6, 23, .45);
-            border: 1px solid rgba(96, 165, 250, .2);
-            font-family: var(--font-mono);
-            font-size: .8rem;
-            line-height: 1.85;
-            color: var(--text-muted);
-        }
-
-        .formula-box h4 {
-            margin-bottom: .35rem;
-            font-family: var(--font-body);
-            font-size: .9rem;
-            letter-spacing: .04em;
-            text-transform: none;
-            color: var(--blue-light);
-        }
-
-        .f-line b {
-            color: var(--blue-electric);
-            font-weight: 700;
-        }
-
-        .f-note {
-            margin-top: .3rem;
-            font-family: var(--font-body);
-            font-size: .82rem;
-            color: #7d90b3;
-            line-height: 1.5;
-        }
-
-        /* Схема Standover / Reach / Stack — без рамки: SVG по центру + легенда под ним */
-        .geom-wrap {
-            display: grid;
-            gap: var(--sp-md);
-            margin-top: var(--sp-lg);
-        }
-
-        .geom-wrap svg {
-            width: 100%;
-            height: auto;
-            max-width: 460px;
-            margin-inline: auto;
-            display: block;
-        }
-
-        .g-legend {
-            list-style: none;
-            display: grid;
-            gap: .35rem;
-            font-size: .84rem;
-            color: var(--text-muted);
-        }
-
-        .g-legend li b {
-            color: var(--blue-electric);
-            font-family: var(--font-mono);
-            font-weight: 700;
-            margin-right: .4rem;
-        }
-
-        /* Анализ пропорций */
-        .ratio-grid {
-            display: grid;
-            gap: var(--sp-sm);
-            list-style: none;
-            margin-top: .3rem;
-        }
-
-        .ratio-card {
-            padding: .65rem .9rem;
-            border-radius: var(--radius-md);
-            background: rgba(139, 92, 246, .08);
-            border-left: 3px solid var(--violet-primary);
-            font-size: .87rem;
-            color: var(--text-muted);
-        }
-
-        .ratio-card b {
-            color: var(--blue-light);
-            display: block;
-            margin-bottom: .15rem;
-        }
-
-        /* ============================ Адаптивность новых блоков ============================ */
-        @media (max-width: 980px) {
-
-            #hierarchy.ref-grid-2,
-            #tierTables {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 680px) {
-            .ref-grid-2,
-            .ref-grid-3 {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            #standards .ref-grid-3 {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            #tierTables {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            #tierTables .tbl {
-                min-width: 34rem;
-            }
-
-            .acc-head {
-                padding: .85rem 1rem;
-                font-size: .93rem;
-            }
-
-            .acc-item.open .acc-inner {
-                padding: .95rem 1.05rem 1.1rem;
-            }
-
-            .guide-btn {
-                flex: 1 1 auto;
-                text-align: center;
-            }
-        }
-
-        .scroll-top {
-            position: fixed;
-            right: var(--sp-md);
-            bottom: var(--sp-md);
-            z-index: 50;
-            display: grid;
-            place-items: center;
-            width: 3rem;
-            height: 3rem;
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-pill);
-            background:
-                radial-gradient(circle at 30% 20%, rgba(191, 219, 254, .2), transparent 48%),
-                linear-gradient(145deg, rgba(37, 99, 235, .34), rgba(30, 41, 90, .42) 58%, rgba(91, 33, 182, .32));
-            color: var(--text-white);
-            box-shadow: var(--shadow-glass), var(--rim-top);
-            backdrop-filter: blur(24px) saturate(190%) brightness(1.12);
-            -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.12);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transform: translateY(12px);
-            transition: opacity var(--trans-normal), transform var(--trans-normal),
-                visibility 0s linear .32s, border-color var(--trans-normal), box-shadow var(--trans-normal);
-        }
-
-        .scroll-top.is-visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: none;
-            transition: opacity var(--trans-normal), transform var(--trans-normal),
-                visibility 0s, border-color var(--trans-normal), box-shadow var(--trans-normal);
-        }
-
-        .scroll-top:hover {
-            border-color: var(--border-glass-hover);
-            box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- Старый SVG-фон сохранён для возможного возврата:
     <svg class="bike-wallpaper" aria-hidden="true" focusable="false">
         <defs>
             <linearGradient id="bike-wallpaper-wash" x1="0" y1="0" x2="1" y2="1">
@@ -1725,6 +87,7 @@
         </defs>
         <rect width="100%" height="100%" fill="url(#bike-wallpaper-pattern)" />
     </svg>
+    -->
     <header class="site-header">
         <div class="header-inner">
             <a class="logo" href="#top">
@@ -1734,7 +97,7 @@
                     <path d="M17 44L30 22h11l6 22M30 22l-4 22m15-22L26 44" fill="none" stroke="#8b5cf6"
                         stroke-width="4" />
                 </svg>
-                Bicycle&nbsp;<b>World</b><span class="brand-tag">ref · compat</span>
+                Bicycle&nbsp;<b>World</b>
             </a>
             <nav class="site-nav" id="siteNav" aria-label="Основная навигация">
                 <ul>
@@ -1768,12 +131,14 @@
     </section>
 
     <section class="section" id="encyclopedia">
-        <div class="section-head">
-            <h2>Энциклопедия и Эволюция</h2>
-        </div>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Энциклопедия и Эволюция</h2>
+            </div>
 
-        <p class="lede">Четыре ключевые дисциплины — у каждой свои колёса, геометрия рамы и стандарты оборудования. В
-            карточках — определяющие черты и типичное применение.</p>
+            <p class="lede">Четыре ключевые дисциплины — у каждой свои колёса, геометрия рамы и стандарты оборудования. В
+                карточках — определяющие черты и типичное применение.</p>
+        </div>
 
         <div class="ref-grid ref-grid-2">
             <article class="card glass">
@@ -1819,8 +184,8 @@
             </article>
         </div>
 
-        <h3 class="subhead">Эволюция рам и стандартов</h3>
-        <div class="card glass">
+        <div class="evolution-panel section-frost">
+            <h3 class="subhead">Эволюция рам и стандартов</h3>
             <ul class="evo-list">
                 <li class="evo-item"><b>1970–80-е</b> — развитие массовых многоскоростных приводов; кассетные втулки
                     со свободным ходом (freehub) постепенно дополняют, а затем во многих сегментах вытесняют резьбовые
@@ -1837,11 +202,12 @@
             </ul>
         </div>
 
-        <h3 class="subhead">История и технический разбор дисциплин</h3>
-        <p class="lede">Глубже карточек: откуда взялась каждая дисциплина, какие технологии
-            её определили и на что смотреть при выборе. Клик по заголовку раскрывает раздел.</p>
+        <div class="content-panel section-frost">
+            <h3 class="subhead">История и технический разбор дисциплин</h3>
+            <p class="lede">Глубже карточек: откуда взялась каждая дисциплина, какие технологии
+                её определили и на что смотреть при выборе. Клик по заголовку раскрывает раздел.</p>
 
-        <div class="acc">
+            <div class="acc">
             <div class="acc-item" id="acc-mtb">
                 <button type="button" class="acc-head" id="head-mtb" aria-expanded="false" aria-controls="panel-mtb">
                     <span class="acc-ico" aria-hidden="true">🚵</span>
@@ -1992,16 +358,30 @@
                     </div>
                 </div>
             </div>
-        </div><!-- /.acc -->
+            </div><!-- /.acc -->
+        </div>
     </section>
 
     <section class="section" id="hierarchy">
-        <div class="section-head">
-            <h2>Иерархия компонентов и гид по уровням</h2>
-            <p class="lede">Таблицы — ориентир по сегментам и типичным задачам, а не официальная классификация:
-                буквенные уровни условны, поколения групп отличаются, а дорогая группа не гарантирует лучшую посадку
-                или совместимость. Кнопки подсвечивают примерные варианты по стилю езды.</p>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Иерархия компонентов и гид по уровням</h2>
+                <p class="lede">Таблицы — ориентир по сегментам и типичным задачам, а не официальная классификация:
+                    буквенные уровни условны, поколения групп отличаются, а дорогая группа не гарантирует лучшую посадку
+                    или совместимость. Кнопки подсвечивают примерные варианты по стилю езды.</p>
+            </div>
         </div>
+        <nav class="brand-jumps glass" aria-label="Быстрый переход к таблицам компонентов по бренду">
+            <span class="brand-jumps-label">Быстрый переход</span>
+            <div class="brand-jump-links">
+                <a href="#tier-shi-mtb">Shimano MTB</a>
+                <a href="#tier-sram-mtb">SRAM MTB</a>
+                <a href="#tier-shi-road">Shimano Road / Gravel</a>
+                <a href="#tier-sram-road">SRAM Road / Gravel</a>
+                <a href="#tier-campy">Campagnolo</a>
+                <a href="#tier-microshift">MicroSHIFT</a>
+            </div>
+        </nav>
             <div class="card glass" style="margin:0 0 1.4rem">
                 <h3 class="subhead">Гид по задачам</h3>
                 <div class="guide-btns">
@@ -2252,13 +632,14 @@
     </section>
 
     <section class="section" id="sizing">
-        <div class="section-head">
-            <h2>Калькулятор ростовки рамы</h2>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Калькулятор ростовки рамы</h2>
+            </div>
+            <p class="lede">Inseam помогает получить только грубый стартовый ориентир. Выберите дисциплину и укажите рост и
+                длину ног: калькулятор покажет примерный традиционный размер рамы, но не заменит геометрию конкретной модели,
+                примерку и тестовую поездку.</p>
         </div>
-
-        <p class="lede">Inseam помогает получить только грубый стартовый ориентир. Выберите дисциплину и укажите рост и
-            длину ног: калькулятор покажет примерный традиционный размер рамы, но не заменит геометрию конкретной модели,
-            примерку и тестовую поездку.</p>
 
         <form class="card glass" id="sizingForm" novalidate>
             <div class="field">
@@ -2353,14 +734,15 @@
     </section>
 
     <section class="section" id="compat">
-        <div class="section-head">
-            <h2>Конструктор совместимости трансмиссий (Shimano / SRAM / Campagnolo / MicroSHIFT)</h2>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Конструктор совместимости трансмиссий (Shimano / SRAM / Campagnolo / MicroSHIFT)</h2>
+            </div>
+            <p class="lede">Это предварительная проверка по семейству и числу скоростей, а не гарантия совместимости.
+                Перед покупкой сверяйте точные индексы и поколения манетки, переключателя, кассеты, цепи и барабана:
+                таблица не учитывает все модели, диапазон и ёмкость переключателя, длину лапки, chainline и электронные
+                протоколы.</p>
         </div>
-
-        <p class="lede">Это предварительная проверка по семейству и числу скоростей, а не гарантия совместимости.
-        Перед покупкой сверяйте точные индексы и поколения манетки, переключателя, кассеты, цепи и барабана:
-        таблица не учитывает все модели, диапазон и ёмкость переключателя, длину лапки, chainline и электронные
-        протоколы.</p>
 
         <form class="card glass" id="compatForm" novalidate>
             <div class="field">
@@ -2386,36 +768,68 @@
             <div class="callout glass" id="compatCallout" aria-live="polite"></div>
         </form>
 
-        <form class="card glass" id="gearForm" novalidate>
+        <form class="card glass" id="gearCalculatorForm" novalidate>
             <div class="card-head">
-                <span class="card-icon" aria-hidden="true">⚙️</span>
-                <h3>Диапазон кассеты</h3>
+                <span class="card-icon" aria-hidden="true">🚴</span>
+                <h3>Калькулятор передач и диапазона кассеты</h3>
             </div>
-            <p class="lede" id="gearRangeHelp">Диапазон кассеты = большая звезда ÷ малая звезда × 100%. Это не полный
-                диапазон привода: передние звёзды и размер колеса также влияют на передаточные отношения.</p>
-            <div class="ref-grid ref-grid-2">
+            <p class="lede" id="gearCalculatorHelp">Введите фактический набор задних звёзд: калькулятор рассчитает
+                диапазон кассеты и каждую передачу для выбранной передней звезды.
+                Окружность измерьте по центру накачанной покрышки, когда велосипед нагружен райдером; номинальный
+                размер колеса даёт лишь приближение.</p>
+            <div class="gear-calculator-fields">
                 <div class="field">
-                    <label for="gearSmall">Малая звезда кассеты, зубьев</label>
-                    <input id="gearSmall" type="number" min="1" max="80" step="1" value="10"
-                        aria-describedby="gearRangeHelp">
+                    <label for="gearChainring">Передняя звезда, зубьев</label>
+                    <input id="gearChainring" type="number" min="1" max="80" step="1" value="32"
+                        aria-describedby="gearCalculatorHelp">
                 </div>
                 <div class="field">
-                    <label for="gearLarge">Большая звезда кассеты, зубьев</label>
-                    <input id="gearLarge" type="number" min="1" max="80" step="1" value="52"
-                        aria-describedby="gearRangeHelp">
+                    <label for="gearCircumference">Окружность колеса, мм</label>
+                    <input id="gearCircumference" type="number" min="500" max="4000" step="1" value="2300"
+                        aria-describedby="gearCalculatorHelp">
                 </div>
             </div>
-            <p class="size-big">Диапазон: <output id="gearRange" aria-live="polite">520%</output></p>
+            <div class="field gear-cassette-input">
+                <label for="gearCassetteTeeth">Зубья кассеты от большой к малой</label>
+                <input id="gearCassetteTeeth" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"
+                    value="52, 42, 36, 32, 28, 24, 21, 18, 16, 14, 12, 10"
+                    aria-describedby="gearCalculatorHelp gearCassetteError">
+                <p class="f-note">Пример: 10–52T. Введите зубья от большой звезды к малой через запятую
+                    (от 2 до 16 разных звёзд, каждая от 1 до 60T).</p>
+                <p class="gear-cassette-error" id="gearCassetteError" role="status"></p>
+            </div>
+            <div class="gear-results" aria-live="polite" aria-atomic="false">
+                <div class="gear-result"><span>Лёгкая передача · большая звезда</span><output id="gearLowRatio">0,62 : 1</output></div>
+                <div class="gear-result"><span>Тяжёлая передача · малая звезда</span><output id="gearHighRatio">3,20 : 1</output></div>
+                <div class="gear-result"><span>Диапазон кассеты</span><output id="gearCassetteRange" aria-label="Диапазон кассеты">520%</output></div>
+            </div>
+            <div class="tbl-wrap" style="margin-top:var(--sp-md)">
+                <table class="tbl" aria-describedby="gearCalculatorHelp">
+                    <caption>Расчёт для каждой задней звезды при выбранных передней звезде и окружности колеса</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Задняя звезда</th>
+                            <th scope="col">Отношение</th>
+                            <th scope="col">Gear inches</th>
+                            <th scope="col">Путь за оборот</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gearCassetteRows"></tbody>
+                </table>
+            </div>
+            <p class="f-note">Gear inches — сравнительная величина, а путь за оборот — расчётное расстояние без учёта
+                деформации шины, проскальзывания и потерь трансмиссии; это не скорость велосипеда.</p>
         </form>
     </section>
 
     <section class="section" id="standards">
-        <div class="section-head">
-            <h2>Матрица стандартов оборудования</h2>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Матрица стандартов оборудования</h2>
+            </div>
+            <p class="lede">Справочные примеры распространённых стандартов. Название семейства или близкие размеры не
+                гарантируют совместимость: при замене сверяйте точную спецификацию рамы, втулки, колеса и компонентов.</p>
         </div>
-
-        <p class="lede">Справочные примеры распространённых стандартов. Название семейства или близкие размеры не
-            гарантируют совместимость: при замене сверяйте точную спецификацию рамы, втулки, колеса и компонентов.</p>
 
         <div class="ref-grid ref-grid-3">
             <article class="card glass">
@@ -2463,6 +877,9 @@
                         </tbody>
                     </table>
                 </div>
+                <p class="f-note"><b>Оговорка:</b> 26″ здесь — типичный MTB-размер с BSD 559 мм, а не универсальный
+                    стандарт. Под обозначением 26″ встречаются и другие посадочные диаметры; при подборе покрышки
+                    или колеса сверяйте точный BSD/ETRTO, а не только дюймовую маркировку.</p>
                 <p><b>Mullet:</b> сочетание ободов 29″ (BSD 622 мм) спереди и 27.5″ (BSD 584 мм) сзади; выбор зависит
                     от совместимости рамы, вилки и колёс.</p>
             </article>
@@ -2606,10 +1023,12 @@
     </section>
 
     <section class="section" id="workshop">
-        <div class="section-head">
-            <h2>Практика: подбор, настройка и проверка</h2>
-            <p class="lede">Короткий чек-лист для обслуживания и апгрейда. Точные значения всегда берите из
-                руководства именно к вашей раме и компонентам.</p>
+        <div class="section-intro section-frost">
+            <div class="section-head">
+                <h2>Практика: подбор, настройка и проверка</h2>
+                <p class="lede">Короткий чек-лист для обслуживания и апгрейда. Точные значения всегда берите из
+                    руководства именно к вашей раме и компонентам.</p>
+            </div>
         </div>
 
         <div class="ref-grid ref-grid-2">
@@ -2671,11 +1090,206 @@
             </article>
         </div>
 
-        <div class="card glass" style="margin-top:var(--sp-md)">
-            <h3 class="subhead">Источники для проверки спецификаций</h3>
-            <p>Таблицы на этой странице — образовательная выжимка, не полный каталог совместимости. Перед покупкой
-                и обслуживанием сверяйте артикул, поколение и ограничения в документации конкретного производителя.</p>
-            <ul class="fit-list">
+        <div class="content-panel section-frost">
+            <h3 class="subhead">Повседневное обслуживание и диагностика</h3>
+            <p class="lede">Эти ориентиры помогают заметить проблему, но не заменяют руководство конкретной модели.
+                После ремонта тормозов, колеса или рулевого узла сначала проверьте работу велосипеда на безопасной
+                площадке; при сомнении обратитесь в мастерскую.</p>
+
+            <div class="ref-grid ref-grid-2">
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🧼</span>
+                    <h3>Обслуживание и признаки износа</h3>
+                </div>
+                <ul class="fit-list">
+                    <li><b>После грязной или мокрой поездки:</b> очистите велосипед щадящим способом, высушите цепь
+                        и нанесите подходящую смазку. Излишек снаружи вытрите: смазка на роторе или колодках ухудшает
+                        торможение.</li>
+                    <li><b>Цепь:</b> периодически проверяйте износ специальным калибром. Допустимый предел зависит
+                        от цепи и трансмиссии; используйте спецификацию её производителя. Сильно изношенная цепь
+                        ускоряет износ кассеты и звёзд.</li>
+                    <li><b>Тормоза и шины:</b> следите за толщиной колодок и ротора по индикаторам/минимумам
+                        производителя, а также за порезами, вздутиями и оголённым кордом покрышки.</li>
+                    <li><b>Периодичность:</b> календарного интервала для всех велосипедов нет — частота проверок
+                        зависит от погоды, пробега, хранения и нагрузки. Сверяйтесь с руководством и проверяйте
+                        чаще после тяжёлых поездок.</li>
+                </ul>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🧳</span>
+                    <h3>Ремонт в дороге: что взять</h3>
+                </div>
+                <ul class="fit-list">
+                    <li>Минимальный набор: запасная камера правильного размера и типа ниппеля (или совместимые
+                        средства для tubeless), монтажки, насос и мультитул под крепёж вашего велосипеда.</li>
+                    <li>Быстрое звено берите только под конкретную цепь и число скоростей; проверьте, допускает ли
+                        производитель повторное использование. Для некоторых цепей нужна совместимая соединительная
+                        заклёпка.</li>
+                    <li>При проколе остановитесь в безопасном месте, найдите причину и осмотрите покрышку изнутри,
+                        прежде чем ставить камеру. После установки колеса проверьте фиксацию, свободное вращение и
+                        работу тормоза.</li>
+                    <li>Порез боковины, повреждённый корд, не садящийся борт или повторная потеря давления —
+                        повод не продолжать обычную поездку; временный ремонт не всегда безопасен.</li>
+                </ul>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🔎</span>
+                    <h3>Проверка велосипеда перед покупкой</h3>
+                </div>
+                <ul class="fit-list">
+                    <li>Сверьте серийный номер и документы, проверьте, что продавец вправе продать велосипед.
+                        Уточните точную модель, год, размер и комплектацию: название серии не гарантирует одинаковые
+                        детали между годами.</li>
+                    <li>Осмотрите раму, вилку и точки соединений на трещины, вмятины, расслоение, следы удара или
+                        кустарного ремонта. При подозрении на повреждение не катайтесь до оценки специалистом.</li>
+                    <li>Проверьте люфты в рулевой, колёсах, каретке и подвеске; состояние ободов, покрышек, тормозов,
+                        цепи и звёзд. На двухподвесе уточните состояние шарниров и амортизатора.</li>
+                    <li>Попросите проверить велосипед в независимой мастерской, особенно после аварии или при
+                        неизвестной истории. Стоимость скрытого ремонта может изменить целесообразность покупки.</li>
+                </ul>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🧍</span>
+                    <h3>Посадка: если немеют руки или болят колени</h3>
+                </div>
+                <ul class="fit-list">
+                    <li>Дискомфорт может быть связан с размером рамы, положением седла, досягаемостью руля, обувью,
+                        техникой педалирования или общей нагрузкой — одного универсального «правильного» положения нет.</li>
+                    <li>Проверьте, не смещено ли седло, не наклонено ли оно чрезмерно, удобно ли расположены ручки и
+                        тормозные рычаги. Меняйте по одному параметру небольшими шагами и записывайте результат.</li>
+                    <li>Не пытайтесь лечить постоянную боль радикальным изменением высоты седла или выноса. При
+                        онемении, острой или повторяющейся боли прекратите нагрузку и обратитесь к специалисту по
+                        байк-фиту или медицинскому специалисту.</li>
+                    <li>Начните с рекомендаций производителя рамы и компонентов; калькулятор на этой странице —
+                        только предварительный ориентир, не индивидуальная настройка.</li>
+                </ul>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🛠️</span>
+                    <h3>Быстрая диагностика: когда остановиться</h3>
+                </div>
+                <ul class="fit-list">
+                    <li><b>Тормоза:</b> рычаг внезапно стал мягким, тормозная сила резко упала, видна утечка или
+                        колодки/ротор загрязнены — не продолжайте поездку, пока причина не устранена и тормоз не
+                        проверен.</li>
+                    <li><b>Переключение:</b> пропуски цепи могут быть связаны с износом, настройкой, повреждённым
+                        петухом или компонентами. Не вращайте ограничительные винты наугад; при погнутом петухе или
+                        цепи, попадающей в спицы, нужна проверка в мастерской.</li>
+                    <li><b>Люфт, трещина или сильный стук:</b> если проблема в рулевом узле, креплении колеса,
+                        шатуне, раме или подвеске — остановитесь и не пытайтесь «дотянуть на глаз» критичный крепёж.</li>
+                    <li>После любого ремонта проверьте фиксацию снятых деталей и работу соответствующей системы
+                        сначала без нагрузки, затем на малой скорости в безопасном месте.</li>
+                </ul>
+            </article>
+            </div>
+        </div>
+
+        <div class="content-panel section-frost">
+            <h3 class="subhead">Покрышки: камера или tubeless?</h3>
+            <p class="lede">Ни один вариант не лучше во всех условиях. Совместимость обода, покрышки и давления
+                проверяйте по документации их производителей; для hookless особенно важен список разрешённых комбинаций.</p>
+            <div class="ref-grid ref-grid-2">
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🫧</span>
+                    <h3>Tubeless</h3>
+                </div>
+                <ul class="fit-list">
+                    <li><b>Плюсы:</b> герметик может закрывать небольшие проколы, а отсутствие камеры исключает
+                        её защемление ободом. Некоторые райдеры используют более низкое давление, но оно должно
+                        оставаться безопасным для покрышки, обода и условий езды.</li>
+                    <li><b>Что потребуется:</b> совместимые обод и покрышка, ободная лента и вентиль правильного
+                        типа, герметик и насос/компрессор, подходящий для посадки борта.</li>
+                    <li><b>Уход:</b> герметик со временем высыхает; периодичность проверки и доливки зависит от
+                        состава, температуры и условий. Проверяйте инструкции изготовителя.</li>
+                    <li><b>Ограничения:</b> крупный порез, повреждение борта или неплотная посадка могут не
+                        герметизироваться. Возите камеру как запас и не превышайте лимиты обода и покрышки.</li>
+                </ul>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">⭕</span>
+                    <h3>Камера</h3>
+                </div>
+                <ul class="fit-list">
+                    <li><b>Плюсы:</b> простой и распространённый вариант; прокол обычно можно устранить заменой или
+                        ремонтом камеры подходящего размера и типа ниппеля.</li>
+                    <li><b>Что потребуется:</b> совместимая камера, монтажки и насос. Камера должна подходить к
+                        диаметру и ширине покрышки, а ниппель — к отверстию обода.</li>
+                    <li><b>Ограничения:</b> камера не устраняет причину прокола — перед установкой осмотрите
+                        покрышку и ободную ленту. На низком давлении остаётся риск пробоя камеры ободом.</li>
+                    <li><b>Выбор:</b> учитывайте тип поездок, доступность расходников, готовность обслуживать
+                        герметик и подтверждённую совместимость колёс. Не переделывайте систему вопреки инструкции.</li>
+                </ul>
+            </article>
+            </div>
+        </div>
+
+        <div class="content-panel section-frost">
+            <h3 class="subhead">Базовая настройка подвески по шагам</h3>
+            <p class="lede">Это последовательность для начала настройки, а не универсальные значения давления или сэга.
+                Используйте руководство именно к вилке и амортизатору.</p>
+            <article class="card glass">
+            <ol class="setup-steps">
+                <li><b>Найдите руководство и исходные настройки.</b> Проверьте модель подвески, допустимое давление,
+                    настройки и рекомендации производителя рамы. Начните с его таблицы или калькулятора.</li>
+                <li><b>Подготовьте велосипед.</b> Проверьте давление в шинах и исправность подвески; наденьте обычную
+                    экипировку и возьмите привычный груз. Зафиксируйте исходные настройки.</li>
+                <li><b>Настройте пружину и измерьте сэг.</b> С установленным O-ring сядьте на велосипед в обычной
+                    позе без резких движений. Сравните ход под райдером с диапазоном из руководства рамы и подвески;
+                    единого процента для всех конструкций нет.</li>
+                <li><b>Настройте отскок.</b> Начните с рекомендованной производителем точки и меняйте по одному
+                    щелчку, оценивая поведение на знакомом безопасном участке. Слишком быстрый отскок может раскачивать
+                    велосипед, слишком медленный — не успевать восстановить ход между ударами.</li>
+                <li><b>Проверьте компрессию и поддержку.</b> Настройте низкоскоростную компрессию и платформу только
+                    если они предусмотрены, следуя руководству. Не разбирайте воздушную камеру или демпфер без
+                    соответствующей инструкции и инструмента.</li>
+                <li><b>Повторите тест и запишите результат.</b> Меняйте только один параметр за раз. При утечке,
+                    повреждении, необычном шуме или потере контроля прекратите настройку и обратитесь в сервис.</li>
+            </ol>
+            </article>
+        </div>
+
+        <div class="content-panel section-frost">
+            <h3 class="subhead">Мини-глоссарий</h3>
+            <dl class="term-list">
+            <div class="term-item card glass">
+                <dt>Chainline — линия цепи</dt>
+                <dd>Положение передней звезды относительно плоскости кассеты. Влияет на угол цепи и совместимость
+                    компонентов; сверяйте рекомендуемое значение для рамы, шатунов и трансмиссии.</dd>
+            </div>
+            <div class="term-item card glass">
+                <dt>Sag — просадка подвески под райдером</dt>
+                <dd>Ход, на который подвеска сжимается под райдером и экипировкой в заданной производителем позе.
+                    Используется как отправная точка настройки, но целевой диапазон зависит от системы и модели.</dd>
+            </div>
+            <div class="term-item card glass">
+                <dt>Trail — механический след вилки</dt>
+                <dd>Горизонтальное расстояние на уровне земли между пятном контакта передней шины и точкой пересечения
+                    оси руления с землёй. На него влияют угол рулевой, вынос вилки и радиус колеса; это один из
+                    параметров геометрии, а не самостоятельная оценка управляемости.</dd>
+            </div>
+            <div class="term-item card glass">
+                <dt>Gear inches — дюймы передачи</dt>
+                <dd>Сравнительная величина: диаметр колеса в дюймах, умноженный на отношение зубьев передней звезды
+                    к задней. Чем число больше, тем дальше велосипед проходит за оборот шатунов при той же окружности
+                    колеса; фактическая скорость зависит от каденса и условий.</dd>
+            </div>
+            <div class="term-item card glass">
+                <dt>Rollout — путь за оборот шатунов</dt>
+                <dd>Приблизительное расстояние за один полный оборот шатунов: окружность колеса × передаточное
+                    отношение. Калькулятор выше использует это соотношение без учёта проскальзывания и деформации шины.</dd>
+            </div>
+            </dl>
+
+            <div class="card glass" style="margin-top:var(--sp-md)">
+                <h3 class="subhead">Источники для проверки спецификаций</h3>
+                <p>Таблицы на этой странице — образовательная выжимка, не полный каталог совместимости. Перед покупкой
+                    и обслуживанием сверяйте артикул, поколение и ограничения в документации конкретного производителя.</p>
+                <ul class="fit-list">
                 <li><a href="https://www.schwalbe.com/en/technology-faq/tire-dimensions/" target="_blank"
                         rel="noopener noreferrer">Schwalbe: размеры покрышек, ETRTO и сочетания с ободами</a></li>
                 <li><a href="https://www.schwalbe.com/en/tubeless-racing-bike-requirement/" target="_blank"
@@ -2684,14 +1298,23 @@
                         rel="noopener noreferrer">SRAM: Universal Derailleur Hanger (UDH)</a></li>
                 <li><a href="https://www.parktool.com/en-us/blog/repair-help/bottom-bracket-standards-and-terminology"
                         target="_blank" rel="noopener noreferrer">Park Tool: стандарты и размеры кареточных стаканов</a></li>
-                <li><a href="https://si.shimano.com/en/" target="_blank" rel="noopener noreferrer">Shimano: техническая
-                        документация и инструкции</a></li>
+                <li><a href="https://www.parktool.com/en-us/blog/repair-help/chain-wear-indicator"
+                        target="_blank" rel="noopener noreferrer">Park Tool: проверка износа цепи</a></li>
+                <li><a href="https://www.parktool.com/en-us/blog/repair-help/flat-tire-repair"
+                        target="_blank" rel="noopener noreferrer">Park Tool: ремонт прокола камеры</a></li>
+                <li><a href="https://productinfo.shimano.com/en" target="_blank"
+                        rel="noopener noreferrer">Shimano: каталог спецификаций и технических документов</a></li>
+                <li><a href="https://www.sram.com/en/service/manuals--documents" target="_blank"
+                        rel="noopener noreferrer">SRAM: сервисные руководства и документы по компонентам</a></li>
+                <li><a href="https://www.ridefox.com/fox17/help.php?m=bike" target="_blank"
+                        rel="noopener noreferrer">FOX: руководства по обслуживанию велосипедной подвески</a></li>
                 <li><a href="https://www.campagnolo.com/" target="_blank" rel="noopener noreferrer">Campagnolo:
                         официальный сайт производителя и каталог</a></li>
                 <li><a href="https://www.sheldonbrown.com/frame-sizing.html" target="_blank"
                         rel="noopener noreferrer">Sheldon Brown: почему размер рамы нельзя определить только по
                         длине подседельной трубы</a></li>
-            </ul>
+                </ul>
+            </div>
         </div>
     </section>
 
@@ -2711,339 +1334,7 @@
 
     <button id="scrollTop" class="scroll-top" aria-label="Вернуться наверх">↑</button>
 
-    <script id="app-script">
-        "use strict";
-        /* Bicycle World — приложение (нативный ES6, без фреймворков). Модули: Burger, SizingCalc, GearRange, CompatBuilder, Accordion, TierGuide, ScrollSpy. */
-
-        const $ = (sel, root = document) => root.querySelector(sel);
-        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-        /* ============================ Мобильное меню (бургер) ============================ */
-        (() => {
-            const btn = $('#burgerBtn'), nav = $('#siteNav');
-            if (!btn || !nav) return;
-            const close = () => {
-                btn.classList.remove('is-active');
-                nav.classList.remove('is-active');
-                btn.setAttribute('aria-expanded', 'false');
-                btn.setAttribute('aria-label', 'Открыть меню');
-            };
-            btn.addEventListener('click', () => {
-                const open = !nav.classList.contains('is-active');
-                btn.classList.toggle('is-active', open);
-                nav.classList.toggle('is-active', open);
-                btn.setAttribute('aria-expanded', String(open));
-                btn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-            });
-            btn.addEventListener('keydown', event => {
-                if (event.key === 'Escape') close();
-            });
-            $$('.site-nav .nav-link, .footer-nav a').forEach(a => a.addEventListener('click', close));
-        })();
-
-        /* ============================ SizingCalc — калькулятор ростовки ============================ */
-        (() => {
-            const form = $('#sizingForm');
-            if (!form) return;
-            const typeSel = $('#bikeType'), heightIn = $('#height'), inseamIn = $('#inseam');
-            const heightOut = $('#heightOut'), inseamOut = $('#inseamOut'), resultBox = $('#sizingResult');
-
-            const setFill = el => {
-                const min = +el.min, max = +el.max;
-                el.style.setProperty('--fill', (((+el.value - min) / (max - min)) * 100).toFixed(1) + '%');
-            };
-
-            function render() {
-                const type = typeSel.value;
-                const height = +heightIn.value, inseam = +inseamIn.value;
-                heightOut.textContent = height + ' см';
-                inseamOut.textContent = inseam + ' см';
-                setFill(heightIn); setFill(inseamIn);
-
-                let html = '';
-                if (type === 'mtb') {
-                    const estimateIn = (inseam * 0.57) / 2.54;
-                    html += '<h3>Результат: горный MTB</h3>';
-                    html += `<p class="size-big">≈ ${estimateIn.toFixed(1)}<small>" — грубый традиционный ориентир длины рамы</small></p>`;
-                    html += '<div class="formula-box"><h4>Как читать результат</h4>' +
-                        `<p>Inseam ${inseam} см × 0,57 ÷ 2,54 ≈ ${estimateIn.toFixed(1)}″. Это не размерная рекомендация производителя: современные MTB подбирают по таблице конкретной модели и геометрии, а не только по дюймам.</p>` +
-                        `<p class="f-note">Рост ${height} см вместе с inseam задаёт только отправную точку. Standover, Reach и Stack нужно брать из геометрии выбранной рамы. Проверьте зазор над верхней трубой, длину посадки и высоту руля; буквенные размеры S/M/L между брендами не стандартизованы.</p></div>`;
-                } else {
-                    const estimateCm = inseam * 0.67;
-                    html += '<h3>Результат: шоссе / грэвел</h3>';
-                    html += `<p class="size-big">≈ ${estimateCm.toFixed(1)}<small> см — грубый традиционный ориентир длины подседельной трубы</small></p>`;
-                    html += '<div class="formula-box"><h4>Как читать результат</h4>' +
-                        `<p>Inseam ${inseam} см × 0,67 ≈ ${estimateCm.toFixed(1)} см. Современные производители по-разному измеряют и маркируют рамы, поэтому это не точный размер велосипеда.</p>` +
-                        `<p class="f-note">Рост ${height} см вместе с inseam задаёт только отправную точку. Сверьте размерную таблицу модели, затем сравните Reach, Stack и Standover. На посадку также влияют длина торса и рук, вынос, руль, седло и его положение.</p></div>`;
-                }
-
-                resultBox.innerHTML = html;
-            }
-
-            typeSel.addEventListener('change', render);
-            heightIn.addEventListener('input', render);
-            inseamIn.addEventListener('input', render);
-            render();
-        })();
-
-        /* ============================ GearRange — диапазон кассеты ============================ */
-        (() => {
-            const form = $('#gearForm');
-            if (!form) return;
-            const smallIn = $('#gearSmall'), largeIn = $('#gearLarge'), result = $('#gearRange');
-
-            function render() {
-                const small = smallIn.valueAsNumber, large = largeIn.valueAsNumber;
-                if (!smallIn.value || !largeIn.value || !smallIn.validity.valid || !largeIn.validity.valid || large < small) {
-                    result.textContent = '—';
-                    return;
-                }
-                result.textContent = `${Math.round((large / small) * 100)}%`;
-            }
-
-            form.addEventListener('submit', event => event.preventDefault());
-            smallIn.addEventListener('input', render);
-            largeIn.addEventListener('input', render);
-            render();
-        })();
-
-        /* ============================ CompatBuilder — совместимость трансмиссий ============================ */
-        (() => {
-            const form = $('#compatForm');
-            if (!form) return;
-            const shifterSel = $('#shifterOpt'), derailleurSel = $('#derailleurOpt'), freehubSel = $('#freehubOpt');
-            const callout = $('#compatCallout');
-
-            /* Cable Pull проверяется по семейству: численные значения зависят от поколения и модели. */
-            const ACT = {
-                'shi-mtb': { label: 'Shimano MTB (Dyna-Sys)' },
-                'sram-mtb': { label: 'SRAM X-Actuation / Eagle' },
-                'shi-road': { label: 'Shimano Road (SLR-EV)' },
-                'sram-road': { label: 'SRAM Road' },
-                'campy-road': { label: 'Campagnolo Road 12s' },
-                'campy-ekar': { label: 'Campagnolo Ekar 13s' },
-                'microshift-adventx': { label: 'MicroSHIFT Advent X' }
-            };
-
-            const famOf = d => d.family;
-            const mk = (id, brand, disc, spd, family, series) => ({
-                id,
-                label: `${brand} · ${series} · ${spd} spd`,
-                brand,
-                disc,
-                spd,
-                family
-            });
-
-            /* База приводов: манетки/переключатели */
-            const DRIVES = [
-                mk('shi-mtb-9', 'Shimano', 'mtb', 9, 'shi-mtb', 'MTB'),
-                mk('shi-mtb-10', 'Shimano', 'mtb', 10, 'shi-mtb', 'MTB'),
-                mk('shi-mtb-11', 'Shimano', 'mtb', 11, 'shi-mtb', 'MTB'),
-                mk('shi-mtb-12', 'Shimano', 'mtb', 12, 'shi-mtb', 'MTB'),
-                mk('sram-mtb-10', 'SRAM', 'mtb', 10, 'sram-mtb', 'MTB'),
-                mk('sram-mtb-11', 'SRAM', 'mtb', 11, 'sram-mtb', 'MTB'),
-                mk('sram-mtb-12', 'SRAM', 'mtb', 12, 'sram-mtb', 'Eagle'),
-                mk('shi-road-10', 'Shimano', 'road', 10, 'shi-road', 'Road'),
-                mk('shi-road-11', 'Shimano', 'road', 11, 'shi-road', 'Road'),
-                mk('shi-road-12', 'Shimano', 'road', 12, 'shi-road', 'Road'),
-                mk('sram-road-11', 'SRAM', 'road', 11, 'sram-road', 'Road'),
-                mk('sram-road-12', 'SRAM', 'road', 12, 'sram-road', 'AXS Road/Gravel'),
-                mk('campy-road-12', 'Campagnolo', 'road', 12, 'campy-road', 'Road'),
-                mk('campy-ekar-13', 'Campagnolo', 'gravel', 13, 'campy-ekar', 'Ekar Gravel'),
-                mk('microshift-adventx-10', 'MicroSHIFT', 'mtb', 10, 'microshift-adventx', 'Advent X MTB')
-            ];
-
-            const HUBS = [
-                { id: 'hg', label: 'HG — распространённые кассеты Shimano/SRAM/MicroSHIFT' },
-                { id: 'xd', label: 'SRAM XD — кассеты с 10T для XD' },
-                { id: 'xdr', label: 'SRAM XDR — кассеты с посадкой XDR' },
-                { id: 'ms', label: 'Shimano MicroSpline — MTB 12s' },
-                { id: 'campy', label: 'Campagnolo — стандартные кассеты ряда поколений' },
-                { id: 'n3w', label: 'Campagnolo N3W — Ekar 13s' }
-            ];
-
-            /* Предварительная проверка типичного барабана для выбранной категории; кассета не задаётся отдельно. */
-            function hubCheck(sh, hubId) {
-                const fam = famOf(sh);
-                if (fam === 'sram-mtb' && sh.spd === 12) {
-                    if (hubId === 'xd') return { s: 'warn', t: 'Распространённые кассеты Eagle с 10T используют XD; конкретные звёзды и модель кассеты необходимо сверить.' };
-                    if (hubId === 'hg') return { s: 'warn', t: 'Некоторые 12s Eagle кассеты, например NX с 11T малой звездой, используют HG; проверьте точную модель.' };
-                    return { s: 'bad', t: `Для типичных SRAM Eagle 12s нужен XD или HG в зависимости от кассеты; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'shi-mtb' && sh.spd === 12) {
-                    if (hubId === 'ms') return { s: 'ok', t: 'Кассета Shimano MTB 12s устанавливается на MicroSpline.' };
-                    return { s: 'bad', t: `Для Shimano MTB 12s нужен MicroSpline; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'shi-mtb' && sh.spd <= 11) {
-                    if (hubId === 'hg') return { s: 'ok', t: `Для многих Shimano MTB ${sh.spd}s кассет подходит HG; подтвердите стандарт выбранной кассеты.` };
-                    return { s: 'bad', t: `Для типичных Shimano MTB ${sh.spd}s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-                }
-                if (fam === 'microshift-adventx') {
-                    if (hubId === 'hg') return { s: 'ok', t: 'Кассета MicroSHIFT Advent X 10s устанавливается на HG.' };
-                    return { s: 'bad', t: `Для MicroSHIFT Advent X 10s нужен HG; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-mtb' && sh.spd < 12) {
-                    if (hubId === 'hg') return { s: 'warn', t: 'Многие кассеты SRAM MTB 10/11s совместимы с HG; для некоторых моделей нужен XD — проверьте кассету.' };
-                    if (hubId === 'xd') return { s: 'warn', t: 'XD применяется с совместимыми кассетами SRAM MTB; проверьте конкретную модель и число скоростей.' };
-                    return { s: 'bad', t: `Для этой кассеты SRAM MTB 10/11s не подходит ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-road' && sh.spd === 12) {
-                    if (hubId === 'xdr') return { s: 'ok', t: 'Кассета SRAM AXS Road/Gravel 12s устанавливается на XDR.' };
-                    return { s: 'bad', t: `Для SRAM AXS Road/Gravel 12s нужен XDR; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-road' && sh.spd === 11) {
-                    if (hubId === 'hg') return { s: 'ok', t: 'Многие SRAM Road 11s кассеты используют HG; проверьте артикул.' };
-                    return { s: 'bad', t: `Для типичных SRAM Road 11s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-                }
-                if (fam === 'campy-ekar') {
-                    if (hubId === 'n3w') return { s: 'ok', t: 'Кассета Campagnolo Ekar 13s устанавливается на N3W.' };
-                    return { s: 'bad', t: `Для Campagnolo Ekar 13s нужен N3W; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'campy-road') {
-                    if (hubId === 'n3w') return { s: 'warn', t: 'Кассета Campagnolo Road 12s может устанавливаться на N3W с 4,4-мм адаптером; проверьте исполнение кассеты.' };
-                    if (hubId === 'campy') return { s: 'warn', t: 'Ряд Campagnolo кассет подходит к стандартному Campagnolo freehub; поколение и конкретную кассету проверьте.' };
-                    return { s: 'bad', t: `Для Campagnolo Road нужен совместимый Campagnolo freehub или подходящий N3W с адаптером; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (hubId === 'hg') return { s: 'ok', t: `Многие Shimano Road ${sh.spd}s кассеты используют HG; проверьте поколение и артикул.` };
-                return { s: 'bad', t: `Для типичных Shimano Road ${sh.spd}s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-            }
-
-            /* Проверка рычажности троса манетка ↔ переключатель */
-            function chainCheck(sh, d) {
-                const aS = ACT[famOf(sh)], aD = ACT[famOf(d)];
-                if (famOf(sh) === famOf(d)) {
-                        if (sh.spd === d.spd) return { s: 'ok', t: `Общее семейство и число скоростей совпадают (${aS.label}, ${sh.spd} spd); точную совместимость моделей и поколения всё равно проверьте.` };
-                        return { s: 'warn', t: `Общее семейство, но разное число скоростей (${sh.spd} vs ${d.spd}): совместимость по одной категории определить нельзя.` };
-                }
-                    return { s: 'bad', t: `Эта общая таблица не подтверждает сочетание семейств ${aS.label} и ${aD.label}; проверьте руководство к точным моделям. Для электронных систем отдельно проверьте протокол и поколение.` };
-            }
-
-            const fill = (sel, list) => { sel.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.label)}</option>`).join(''); };
-            fill(shifterSel, DRIVES);
-            fill(derailleurSel, DRIVES);
-            fill(freehubSel, HUBS);
-
-            /* Кросс-брендовые пресеты (манетка → переключатель) */
-            const CROSSES = [
-                { id: 'x-shi12-sram12-mtb',   sh: 'shi-mtb-12', d: 'sram-mtb-12' },
-                { id: 'x-sram12-shi12-mtb',   sh: 'sram-mtb-12', d: 'shi-mtb-12' },
-                { id: 'x-shi-road-sram-road', sh: 'shi-road-11', d: 'sram-road-11' }
-            ];
-            const crossSel = $('#crossBrandOpt');
-            if (crossSel) {
-                const lbl = id => DRIVES.find(x => x.id === id).label;
-                crossSel.innerHTML = '<option value="">— без кросс-брендовой пары —</option>' +
-                    CROSSES.map(o => `<option value="${o.id}">${esc(lbl(o.sh))} → ${esc(lbl(o.d))}</option>`).join('');
-            }
-
-            function syncCross() {
-                if (!crossSel) return;
-                const hit = CROSSES.find(o => o.sh === shifterSel.value && o.d === derailleurSel.value);
-                crossSel.value = hit ? hit.id : '';
-            }
-
-            function evaluate() {
-                const sh = DRIVES.find(o => o.id === shifterSel.value) || DRIVES[0];
-                const d = DRIVES.find(o => o.id === derailleurSel.value) || DRIVES[0];
-                const hub = HUBS.find(o => o.id === freehubSel.value) || HUBS[0];
-
-                const checks = [
-                    { name: 'Ход троса (Cable Pull Ratio)', ...chainCheck(sh, d) },
-                    { name: 'Барабан и кассета', ...hubCheck(sh, hub.id) }
-                ];
-                const worst = ['ok', 'warn', 'bad'].reduce((w, c) => checks.some(x => x.s === c) && ['ok', 'warn', 'bad'].indexOf(c) > ['ok', 'warn', 'bad'].indexOf(w) ? c : w, 'ok');
-                const title = { ok: 'Базовые признаки совпадают', warn: 'Нужна проверка моделей', bad: 'Не подтверждено' }[worst];
-
-                callout.className = `callout glass is-${worst}`;
-                callout.innerHTML =
-                    `<h3><span class="status-dot"></span>${title}</h3>` +
-                    `<p>Пара: ${esc(sh.label)} → ${esc(d.label)} · барабан: ${esc(hub.label)}</p>` +
-                    `<ul class="check-grid">${checks.map(c => `<li class="check-item"><b>${c.name}:</b> ${esc(c.t)}</li>`).join('')}</ul>` +
-                    (crossSel && crossSel.value ? '<p style="margin-top:.6rem; font-size:.82rem; color:var(--text-dim)">Выбрана известная кросс-брендовая комбинация для дальнейшей проверки; это не подтверждение совместимости конкретных деталей.</p>' : '');
-            }
-
-            [shifterSel, derailleurSel, freehubSel].forEach(sel => sel.addEventListener('change', () => { syncCross(); evaluate(); }));
-            if (crossSel) crossSel.addEventListener('change', () => {
-                const p = CROSSES.find(o => o.id === crossSel.value);
-                if (p) { shifterSel.value = p.sh; derailleurSel.value = p.d; }
-                syncCross(); evaluate();
-            });
-            shifterSel.value = 'shi-mtb-12';
-            derailleurSel.value = 'shi-mtb-12';
-            freehubSel.value = 'ms';
-            evaluate();
-        })();
-
-        /* ============================ Accordion — аккордеон в энциклопедии ============================ */
-        (() => {
-            const heads = $$('.acc .acc-head');
-            if (!heads.length) return;
-            heads.forEach(head => head.addEventListener('click', () => {
-                const item = head.closest('.acc-item');
-                if (!item) return;
-                const open = !item.classList.contains('open');
-                item.classList.toggle('open', open);
-                head.setAttribute('aria-expanded', String(open));
-                const panel = document.getElementById(head.getAttribute('aria-controls'));
-                if (panel) panel.setAttribute('aria-hidden', String(!open));
-            }));
-        })();
-
-        /* ============================ TierGuide — гид по уровням ============================ */
-        (() => {
-            const btns = $$('#hierarchy .guide-btn[data-cat]');
-            if (!btns.length) return;
-            const rows = $$('#hierarchy .tbl tbody tr[data-cat]');
-            const hint = $('#tierHint');
-
-            const HINTS = {
-                all: 'Выберите задачу, чтобы подсветить примеры. Уровни условны, а поколения групп различаются; перед подбором проверяйте артикулы и официальную таблицу совместимости.',
-                casual: 'Для повседневной езды важны подходящий диапазон, доступность расходников и удобство обслуживания. Дорогая группа не обязательна, а низкий ценовой сегмент сам по себе не означает непригодность.',
-                touring: 'Для туризма проверьте широкий диапазон передач, наличие запасных частей, устойчивость колёс к нагрузке и возможность установить багаж и защиту. Учитывайте массу райдера и багажа.',
-                intense: 'Для интенсивной езды подбирайте компоненты по дисциплине, совместимости и условиям обслуживания; уровень в таблице не заменяет оценку тормозов, колёс, подвески и состояния деталей.',
-                racing: 'Для соревнований учитывайте регламент, посадку, массу и надёжность всей сборки. Флагманские группы не являются обязательным условием для гонок.'
-            };
-
-            function apply(cat) {
-                btns.forEach(b => {
-                    const on = b.dataset.cat === cat;
-                    b.classList.toggle('is-on', on);
-                    b.setAttribute('aria-pressed', String(on));
-                });
-                rows.forEach(r => r.classList.toggle('hl-row', cat !== 'all' && (r.dataset.cat || '').split(' ').includes(cat)));
-                if (hint) hint.textContent = HINTS[cat] || HINTS.all;
-            }
-
-            btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.cat)));
-        })();
-
-        /* ============================ ScrollSpy / Smooth Scroll ============================ */
-        (() => {
-            const links = $$('.site-nav .nav-link');
-            const topBtn = $('#scrollTop');
-            const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
-            const sections = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
-
-            let ticking = false;
-            const update = () => {
-                ticking = false;
-                const scrollY = window.scrollY;
-                if (topBtn) topBtn.classList.toggle('is-visible', scrollY > 500);
-                if (!links.length) return;
-                const y = scrollY + 140; /* зона срабатывания под липкой шапкой */
-                let current = null;
-                for (const s of sections) if (s.offsetTop <= y) current = s.id;
-                links.forEach(a => a.classList.toggle('is-active', a === byId.get(current)));
-            };
-            addEventListener('scroll', () => {
-                if (!ticking) { ticking = true; requestAnimationFrame(update); }
-            }, { passive: true });
-            if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-            update();
-        })();
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
