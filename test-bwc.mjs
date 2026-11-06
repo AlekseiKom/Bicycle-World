@@ -46,6 +46,25 @@ ok('4 sections present', await ev(`['encyclopedia','sizing','compat','standards'
 ok('footer fineprint', await ev(`/торгов.*марк/i.test(document.querySelector('.site-footer .fineprint').textContent)`));
 ok('encyclopedia 5 cards (4 types + timeline)', await ev(`document.querySelectorAll('#encyclopedia .card').length === 5`));
 ok('standards 3 tables', await ev(`document.querySelectorAll('#standards table.tbl').length === 3`));
+ok('standards: six cards include ETRTO, brakes, and derailleur hangers', await ev(`(() => {
+  const cards = Array.from(document.querySelectorAll('#standards .card'));
+  return cards.length === 6 && ['ETRTO', 'Post Mount', 'SRAM UDH', 'T-Type'].every(term =>
+    cards.some(card => card.textContent.includes(term)));
+})()`));
+ok('standards: T47 and cartridge-splined legacy bottom brackets documented', await ev(`(() => {
+  const text = document.querySelector('#standards').textContent;
+  return text.includes('T47') && text.includes('Octalink') && text.includes('ISIS') &&
+    text.includes('73×118 мм') && text.includes('сверхнадёжное легаси');
+})()`));
+ok('gear range default is 520%', await ev(`document.querySelector('#gearRange').textContent === '520%'`));
+await ev(`(() => { const i = document.querySelector('#gearLarge'); i.value = 50; i.dispatchEvent(new Event('input')); return 1; })()`);
+ok('gear range recalculates on input', await ev(`document.querySelector('#gearRange').textContent === '500%'`));
+await ev(`(() => { const i = document.querySelector('#gearLarge'); i.value = 52; i.dispatchEvent(new Event('input')); return 1; })()`);
+ok('scroll-to-top button starts hidden and has accessible label', await ev(`(() => {
+  const b = document.querySelector('#scrollTop');
+  return !!b && b.getAttribute('aria-label') === 'Вернуться наверх' &&
+    getComputedStyle(b).visibility === 'hidden' && getComputedStyle(b).position === 'fixed';
+})()`));
 
 // S2 — SizingCalc: MTB по умолчанию (inseam 80 → 17.95" ≈ 18", M)
 const mtbText = await ev(`document.querySelector('#sizingResult').textContent`);
@@ -97,6 +116,10 @@ const target = await ev(`(() => { const t = document.getElementById('standards')
 for (let i = 0; i < 20 && Math.abs((await ev(`window.scrollY`)) - target) > 4; i++) await sleep(100);
 await sleep(300);
 ok('scrollspy highlights standards link', await ev(`document.querySelector('.site-nav a[href="#standards"]').classList.contains('is-active')`));
+ok('scroll-to-top appears after 500px', await ev(`window.scrollY > 500 && document.querySelector('#scrollTop').classList.contains('is-visible')`));
+await ev(`document.querySelector('#scrollTop').click(); 1`);
+for (let i = 0; i < 50 && (await ev(`window.scrollY`)) > 2; i++) await sleep(100);
+ok('scroll-to-top button returns to page start', await ev(`window.scrollY <= 2`));
 
 // S10 — smooth scroll включён в CSS (html { scroll-behavior: smooth })
 ok('css scroll-behavior: smooth', await ev(`getComputedStyle(document.documentElement).scrollBehavior === 'smooth'`));

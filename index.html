@@ -63,6 +63,8 @@
             --border-glass-hover: rgba(96, 165, 250, .5);
             --glass-blur: blur(22px) saturate(180%);
             --shadow-glass: 0 18px 42px -16px rgba(2, 6, 23, .7), 0 5px 14px -6px rgba(2, 6, 23, .45);
+            --glass-highlight: rgba(219, 234, 254, .22);
+            --glass-blue-sheen: rgba(59, 130, 246, .1);
             --shadow-neon-blue: 0 0 28px rgba(59, 130, 246, .32);
             --shadow-neon-violet: 0 0 28px rgba(139, 92, 246, .3);
             --rim-top: inset 0 1px 0 rgba(255, 255, 255, .28);
@@ -180,12 +182,15 @@
         /* ============================ Стеклянная карточка ============================ */
         .glass {
             position: relative;
-            background: linear-gradient(155deg, rgba(147, 197, 253, .08), var(--surface-1) 38%);
+            background:
+                radial-gradient(120% 90% at 0% 0%, rgba(147, 197, 253, .14), transparent 58%),
+                radial-gradient(90% 80% at 100% 100%, var(--glass-blue-sheen), transparent 62%),
+                linear-gradient(155deg, rgba(147, 197, 253, .07), var(--surface-1) 44%);
             border: 1px solid var(--border-glass);
             border-radius: var(--radius-lg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow-glass), var(--rim-top);
+            box-shadow: var(--shadow-glass), var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .12);
         }
 
         /* ============================ Шапка ============================ */
@@ -193,10 +198,13 @@
             position: sticky;
             top: 0;
             z-index: 60;
-            background: rgba(4, 9, 21, .72);
+            background:
+                linear-gradient(110deg, rgba(147, 197, 253, .08), transparent 38%),
+                rgba(4, 9, 21, .78);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--border-glass);
+            border-bottom: 1px solid rgba(191, 219, 254, .24);
+            box-shadow: 0 8px 28px rgba(2, 6, 23, .22), inset 0 1px 0 rgba(255, 255, 255, .08);
         }
 
         .header-inner {
@@ -355,10 +363,13 @@
         .stat {
             padding: .7rem 1.25rem;
             border-radius: var(--radius-md);
-            background: var(--surface-2);
+            background:
+                radial-gradient(120% 100% at 0% 0%, rgba(147, 197, 253, .14), transparent 65%),
+                linear-gradient(145deg, rgba(18, 34, 72, .68), rgba(10, 20, 44, .7));
             border: 1px solid var(--border-glass);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .1);
             display: flex;
             align-items: baseline;
             gap: .5rem;
@@ -411,7 +422,10 @@
         .btn-ghost {
             color: var(--blue-light);
             border: 1px solid var(--border-glass);
-            background: var(--surface-subtle);
+            background: linear-gradient(145deg, rgba(147, 197, 253, .12), var(--surface-subtle) 76%);
+            backdrop-filter: blur(14px) saturate(170%);
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            box-shadow: var(--rim-top), inset 0 -1px 0 rgba(59, 130, 246, .1);
         }
 
         .btn-ghost:hover {
@@ -512,6 +526,8 @@
         }
 
         .card-icon {
+            display: grid;
+            place-items: center;
             width: 2.1rem;
             height: 2.1rem;
             flex-shrink: 0;
@@ -519,6 +535,7 @@
             background: rgba(59, 130, 246, .14);
             border: 1px solid rgba(96, 165, 250, .3);
             font-size: 1.05rem;
+            line-height: 1;
         }
 
         .card-head h3 {
@@ -684,6 +701,17 @@
 
         .field select:focus-visible {
             outline-offset: 0;
+        }
+
+        .field input[type="number"] {
+            width: 100%;
+            background-color: var(--surface-2);
+            color: var(--text-white);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: .65rem .9rem;
+            font: inherit;
+            font-size: .92rem;
         }
 
         /* Range */
@@ -1030,23 +1058,30 @@
         }
 
         /* Мобильное меню (бургер + drawer) */
-        @media (max-width: 680px) {
+        @media (max-width: 840px) {
             .burger {
                 display: flex;
+                margin-left: auto;
+                flex-shrink: 0;
             }
 
             .site-nav {
                 position: absolute;
-                top: calc(var(--header-h, 54px));
+                top: calc(100% + .4rem);
                 right: .75rem;
                 left: .75rem;
-                z-index: 55;
-                background: linear-gradient(160deg, rgba(147, 197, 253, .08), var(--surface-1) 40%);
-                border: 1px solid var(--border-glass);
+                z-index: 65;
+                background-color: var(--bg-primary);
+                background-image:
+                    radial-gradient(130% 90% at 0% 0%, rgba(147, 197, 253, .18), transparent 58%),
+                    radial-gradient(100% 100% at 100% 100%, rgba(59, 130, 246, .12), transparent 62%),
+                    linear-gradient(160deg, rgba(18, 34, 72, .97), rgba(4, 9, 21, .97));
+                border: 1px solid rgba(191, 219, 254, .34);
                 border-radius: var(--radius-lg);
-                backdrop-filter: var(--glass-blur);
-                -webkit-backdrop-filter: var(--glass-blur);
-                box-shadow: var(--shadow-glass), var(--rim-top);
+                backdrop-filter: blur(30px) saturate(200%);
+                -webkit-backdrop-filter: blur(30px) saturate(200%);
+                box-shadow: 0 24px 64px rgba(2, 6, 23, .62), var(--rim-top),
+                    inset 0 -1px 0 rgba(59, 130, 246, .16);
                 padding: .5rem .9rem;
                 display: none;
             }
@@ -1182,12 +1217,17 @@
         .acc-inner {
             min-height: 0;
             overflow: hidden;
-            padding: 1.1rem 1.4rem 1.3rem;
+            padding: 0 1.4rem;
             display: grid;
             gap: var(--sp-md);
             font-size: .92rem;
             color: var(--text-muted);
             line-height: 1.65;
+            transition: padding var(--trans-normal);
+        }
+
+        .acc-item.open .acc-inner {
+            padding: 1.1rem 1.4rem 1.3rem;
         }
 
         .acc-inner h4 {
@@ -1318,8 +1358,11 @@
             font-size: .87rem;
             font-weight: 700;
             color: var(--text-muted);
-            background: var(--surface-subtle);
+            background: linear-gradient(145deg, rgba(147, 197, 253, .1), rgba(10, 20, 44, .58));
             border: 1px solid var(--border-glass);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
             transition: all var(--trans-fast);
         }
 
@@ -1512,7 +1555,7 @@
                 font-size: .93rem;
             }
 
-            .acc-inner {
+            .acc-item.open .acc-inner {
                 padding: .95rem 1.05rem 1.1rem;
             }
 
@@ -1520,6 +1563,43 @@
                 flex: 1 1 auto;
                 text-align: center;
             }
+        }
+
+        .scroll-top {
+            position: fixed;
+            right: var(--sp-md);
+            bottom: var(--sp-md);
+            z-index: 50;
+            display: grid;
+            place-items: center;
+            width: 3rem;
+            height: 3rem;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-pill);
+            background: linear-gradient(155deg, rgba(147, 197, 253, .16), var(--surface-1));
+            color: var(--text-white);
+            box-shadow: var(--shadow-glass), var(--rim-top);
+            backdrop-filter: var(--glass-blur);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity var(--trans-normal), transform var(--trans-normal),
+                visibility 0s linear .32s, border-color var(--trans-normal), box-shadow var(--trans-normal);
+        }
+
+        .scroll-top.is-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: none;
+            transition: opacity var(--trans-normal), transform var(--trans-normal),
+                visibility 0s, border-color var(--trans-normal), box-shadow var(--trans-normal);
+        }
+
+        .scroll-top:hover {
+            border-color: var(--border-glass-hover);
+            box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
         }
     </style>
 </head>
@@ -1580,9 +1660,10 @@
                 <div class="card-head"><span class="card-icon" aria-hidden="true">🚵</span>
                     <h3>МТБ / Хардтейл</h3>
                 </div>
-                <p>Колёса 29″ (накат, сцепление) и 27.5″ (манёвренность). Прогрессивная геометрия: низкий BB, короткий
-                    задний треугольник. Вилка с ходом 100–140&nbsp;мм, жёсткая рама.</p>
-                <p><span class="chip">XC</span> <span class="chip">Trail</span></p>
+                <p>Колёса 29″ (накат, сцепление) и 27.5″ (манёвренность). В сетапе <b>Mullet</b> ставят 29″ спереди
+                    и 27.5″ сзади. Прогрессивная геометрия: низкий BB, короткий задний треугольник. Вилка с ходом
+                    100–140&nbsp;мм, жёсткая рама.</p>
+                <p><span class="chip">XC</span> <span class="chip">Trail</span> <span class="chip">Mullet</span></p>
             </article>
 
             <article class="card glass">
@@ -1590,8 +1671,9 @@
                     <h3>Двухподвес (Full-Suspension)</h3>
                 </div>
                 <p>Задняя подвеска с кинематикой — FSR, VPP или DW-Link: держит контакт колеса и эффективность педалирования.
-                    Линки задают траекторию перемещения заднего колеса.</p>
-                <p><span class="chip">Enduro</span> <span class="chip">DH</span></p>
+                    Линки задают траекторию перемещения заднего колеса. В эндуро и DH часто выбирают Mullet: 29″
+                    спереди и 27.5″ сзади.</p>
+                <p><span class="chip">Enduro</span> <span class="chip">DH</span> <span class="chip">Mullet</span></p>
             </article>
 
             <article class="card glass">
@@ -1599,8 +1681,9 @@
                     <h3>Грэвел (Gravel)</h3>
                 </div>
                 <p>Drops, зазоры под широкую резину 35–47&nbsp;мм, бонки под байкпакинг и багажник. Рамная геометрия —
-                    компромисс между жёсткостью МТБ и посадкой шоссе.</p>
-                <p><span class="chip chip-violet">Adventure</span></p>
+                    компромисс между жёсткостью МТБ и посадкой шоссе. В Mullet-трансмиссии шоссейные дуалы сочетают
+                    с MTB-переключателем и широкой кассетой только при подтверждённой совместимости компонентов.</p>
+                <p><span class="chip chip-violet">Adventure</span> <span class="chip chip-violet">Mullet drivetrain</span></p>
             </article>
 
             <article class="card glass">
@@ -1624,7 +1707,8 @@
                 <li class="evo-item"><b>2000-е</b> — получают распространение каретки PressFit (BB86/PF30), оси
                     Thru-Axle и 29″ колёса; резьбовая BSA при этом не исчезает.</li>
                 <li class="evo-item"><b>2015–наши дни</b> — эпоха 1×: SRAM XX1 → Eagle (12 скоростей, XD для кассет 10–52T);
-                    Shimano MTB 12s использует MicroSpline, SRAM AXS Road/Gravel — XDR; Boost-расстояния — 15×110 / 12×148.</li>
+                    Shimano MTB 12s использует MicroSpline, SRAM AXS Road/Gravel — XDR; Boost-расстояния — 15×110 / 12×148.
+                    Появились UDH-совместимые рамы для прямого крепления SRAM T-Type и резьбовые каретки T47.</li>
             </ul>
         </div>
 
@@ -2056,7 +2140,7 @@
         </form>
 
         <div class="geom-wrap">
-            <svg viewBox="0 0 560 320" role="img"
+            <svg id="bikeSvg" viewBox="0 0 560 320" role="img"
                 aria-label="Схема параметров посадки: standover, reach и stack на боковом профиле рамы">
                 <!-- земля -->
                 <line x1="40" y1="283" x2="520" y2="283" stroke="rgba(147,197,253,.25)" stroke-width="2" />
@@ -2084,16 +2168,16 @@
                     <path d="M154 112 L160 105 L166 112" stroke-width="2" />
                     <path d="M154 276 L160 283 L166 276" stroke-width="2" />
                 </g>
-                <text x="148" y="198" text-anchor="end" class="g-label" fill="#7aa2ff">STANDOVER</text>
+                <text id="txtStandover" x="148" y="198" text-anchor="end" class="g-label" fill="#7aa2ff">STANDOVER</text>
                 <!-- REACH -->
                 <g stroke="#6fe8b0" fill="none">
-                    <line x1="265" y1="40" x2="385" y2="40" stroke-width="2.5" />
+                    <line id="lineReach" x1="265" y1="40" x2="385" y2="40" stroke-width="2.5" />
                     <path d="M272 36 L265 40 L272 44" stroke-width="2" />
                     <path d="M378 36 L385 40 L378 44" stroke-width="2" />
                     <line x1="265" y1="42" x2="265" y2="238" stroke-dasharray="4 4" opacity=".5" />
                     <line x1="386" y1="42" x2="387" y2="103" stroke-dasharray="4 4" opacity=".5" />
                 </g>
-                <text x="325" y="28" text-anchor="middle" class="g-label" fill="#6fe8b0">REACH</text>
+                <text id="txtReach" x="325" y="28" text-anchor="middle" class="g-label" fill="#6fe8b0">REACH</text>
                 <!-- STACK -->
                 <g stroke="#ffd479" fill="none">
                     <line x1="500" y1="105" x2="500" y2="240" stroke-width="2.5" />
@@ -2102,7 +2186,7 @@
                     <line x1="390" y1="105" x2="498" y2="105" stroke-dasharray="4 4" opacity=".5" />
                     <line x1="272" y1="240" x2="498" y2="240" stroke-dasharray="4 4" opacity=".5" />
                 </g>
-                <text x="508" y="176" class="g-label" fill="#ffd479">STACK</text>
+                <text id="txtStack" x="510" y="176" text-anchor="end" class="g-label" fill="#ffd479">STACK</text>
             </svg>
             <ul class="g-legend">
                 <li><span class="swatch swatch-stand"></span><b>Standover</b> — вертикальный запас от верхней трубы до
@@ -2114,6 +2198,10 @@
                 <li><span class="swatch swatch-stack"></span><b>Stack</b> — вертикальное расстояние от каретки до
                     верхней части рулевой трубы; определяет высоту посадки. Соотношение stack/reach показывает,
                     насколько геометрия «высокая» или «растянутая».</li>
+                <li><b>HTA</b> (Head Tube Angle) — угол рулевой трубы: более пологий обычно добавляет стабильности
+                    на спусках, более крутой — отзывчивости руления. Сравнивайте велосипеды одного назначения.</li>
+                <li><b>STA</b> (Seat Tube Angle) — угол подседельной трубы; вместе с длиной шатунов и положением
+                    седла влияет на посадку относительно педалей. Одного значения угла недостаточно для оценки посадки.</li>
             </ul>
         </div>
     </section>
@@ -2150,6 +2238,27 @@
 
             <div class="callout glass" id="compatCallout" aria-live="polite"></div>
         </form>
+
+        <form class="card glass" id="gearForm" novalidate>
+            <div class="card-head">
+                <span class="card-icon" aria-hidden="true">⚙️</span>
+                <h3>Диапазон кассеты</h3>
+            </div>
+            <p class="lede" id="gearRangeHelp">Диапазон = большая звезда ÷ малая звезда × 100%.</p>
+            <div class="ref-grid ref-grid-2">
+                <div class="field">
+                    <label for="gearSmall">Малая звезда кассеты, зубьев</label>
+                    <input id="gearSmall" type="number" min="1" max="80" step="1" value="10"
+                        aria-describedby="gearRangeHelp">
+                </div>
+                <div class="field">
+                    <label for="gearLarge">Большая звезда кассеты, зубьев</label>
+                    <input id="gearLarge" type="number" min="1" max="80" step="1" value="52"
+                        aria-describedby="gearRangeHelp">
+                </div>
+            </div>
+            <p class="size-big">Диапазон: <output id="gearRange" aria-live="polite">520%</output></p>
+        </form>
     </section>
 
     <section class="section" id="standards">
@@ -2180,7 +2289,7 @@
                                 <td>Диаметр обода</td>
                                 <td>559 мм</td>
                                 <td>584 мм</td>
-                                <td>609 мм</td>
+                                <td>622 мм</td>
                             </tr>
                             <tr>
                                 <td>Угол атаки (преодоление)</td>
@@ -2209,6 +2318,8 @@
                         </tbody>
                     </table>
                 </div>
+                <p><b>Mullet:</b> сочетание ободов 29″ (BSD 622 мм) спереди и 27.5″ (BSD 584 мм) сзади; выбор зависит
+                    от совместимости рамы, вилки и колёс.</p>
             </article>
 
             <article class="card glass">
@@ -2220,7 +2331,7 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Резьбовая (BSA)</th>
+                                <th>Резьбовая (BSA / T47)</th>
                                 <th>PressFit</th>
                             </tr>
                         </thead>
@@ -2229,6 +2340,16 @@
                                 <td>Стакан</td>
                                 <td>68 мм (MTB) / 73 мм (Road)</td>
                                 <td>BB86 (68 мм, MTB) / PF30 (65 мм)</td>
+                            </tr>
+                            <tr>
+                                <td>T47</td>
+                                <td>резьба Ø47 мм, шаг 1 мм; ширина стакана зависит от версии</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>Картриджные шлицевые</td>
+                                <td>Octalink (например, Shimano BB-ES25) / ISIS; встречаются типоразмеры вроде 73×118 мм — сверхнадёжное легаси для рам прошлых поколений</td>
+                                <td>—</td>
                             </tr>
                             <tr>
                                 <td>Монтаж</td>
@@ -2287,6 +2408,50 @@
                     </table>
                 </div>
             </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🛞</span>
+                    <h3>ETRTO: обод и покрышка</h3>
+                </div>
+                <p>Маркировка ETRTO задаёт ширину покрышки и посадочный диаметр борта (BSD), например
+                    <b>40-622</b>: номинальная ширина 40 мм, BSD 622 мм. При подборе учитывайте внутреннюю ширину
+                    обода и таблицу совместимости производителя покрышки.</p>
+                <p>Для первичной оценки часто встречаются пары: обод 19–21 мм — покрышки 25–32 мм; 23–25 мм —
+                    35–50 мм; 28–30 мм и шире — MTB-покрышки примерно 2.2–2.6″. Это ориентиры, а не универсальная
+                    таблица совместимости: фактическая ширина и допустимое давление зависят от обода и покрышки.</p>
+                <p><b>Hookless:</b> используйте только покрышки, явно одобренные для hookless-ободов, и соблюдайте
+                    ограничения по ширине и максимальному давлению для конкретной пары «обод — покрышка». Совпадения
+                    диаметра BSD недостаточно.</p>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🛑</span>
+                    <h3>Крепления тормозов: PM vs FM</h3>
+                </div>
+                <ul>
+                    <li><b>Post Mount (PM):</b> два резьбовых бонка на вилке или раме; калипер обычно крепится
+                        непосредственно либо через адаптер под диаметр ротора.</li>
+                    <li><b>Flat Mount (FM):</b> низкопрофильное крепление, распространённое на шоссейных и
+                        гравийных велосипедах; схема болтов и адаптеры отличаются от PM.</li>
+                </ul>
+                <p>Тип крепления должен совпадать с рамой/вилкой и калипером. Для смены диаметра ротора используйте
+                    предназначенный для конкретного стандарта адаптер.</p>
+            </article>
+
+            <article class="card glass">
+                <div class="card-head"><span class="card-icon" aria-hidden="true">🔗</span>
+                    <h3>Петухи: Standard, UDH и T-Type</h3>
+                </div>
+                <ul>
+                    <li><b>Standard:</b> сменный петух уникальной формы, подбирается под конкретную раму.</li>
+                    <li><b>SRAM UDH:</b> унифицированный сменный петух; совместимость рамы с UDH нужно подтвердить
+                        по спецификации производителя.</li>
+                    <li><b>SRAM T-Type:</b> прямое крепление переключателя без обычного петуха; требуется
+                        совместимая рама с интерфейсом UDH и трансмиссия Eagle Transmission.</li>
+                </ul>
+                <p>UDH и T-Type — не взаимозаменяемые переключатели: рама и весь привод должны поддерживать
+                    соответствующий интерфейс.</p>
+            </article>
         </div>
     </section>
 
@@ -2303,9 +2468,11 @@
             логотипы являются зарегистрированными торговыми марками их правообладателей.</p>
     </footer>
 
+    <button id="scrollTop" class="scroll-top" aria-label="Вернуться наверх">↑</button>
+
     <script id="app-script">
         "use strict";
-        /* Bicycle World — приложение (нативный ES6, без фреймворков). Модули: Burger, SizingCalc, CompatBuilder, Accordion, TierGuide, ScrollSpy. */
+        /* Bicycle World — приложение (нативный ES6, без фреймворков). Модули: Burger, SizingCalc, GearRange, CompatBuilder, Accordion, TierGuide, ScrollSpy. */
 
         const $ = (sel, root = document) => root.querySelector(sel);
         const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -2340,6 +2507,8 @@
             if (!form) return;
             const typeSel = $('#bikeType'), heightIn = $('#height'), inseamIn = $('#inseam');
             const heightOut = $('#heightOut'), inseamOut = $('#inseamOut'), resultBox = $('#sizingResult');
+            const svgStandover = $('#txtStandover'), svgReach = $('#txtReach'), svgStack = $('#txtStack');
+            const svgReachLine = $('#lineReach');
 
             /* Ориентиры шоссе: size → {reach, stack}, мм (стандартная геометрия) */
             const ROAD_TABLE = [50, 378, 526]; // базовая точка; step по 1 см: reach +3 мм, stack +4 мм
@@ -2359,7 +2528,7 @@
                 inseamOut.textContent = inseam + ' см';
                 setFill(heightIn); setFill(inseamIn);
 
-                let html = '';
+                let html = '', reachMm, stackMm, standoverCm;
                 if (type === 'mtb') {
                     const rawIn = (inseam * 0.57) / 2.54;            /* дюймы */
                     const sizeIn = Math.round(rawIn);                /* округление к целому дюйму */
@@ -2367,11 +2536,15 @@
                     /* высота верхней трубы над землёй (при горизонтальном велосипеде): BB ≈ 32 см + вертикальный подъём ШТ (~cos 19°) */
                     const topTubeH = 32 + frameCm * Math.cos(19 * Math.PI / 180);
                     const standover = inseam - topTubeH;            /* запас стендовера, см */
+                    standoverCm = standover;
+                    reachMm = Math.round(390 + (sizeIn - 15) * 12);
+                    stackMm = Math.round(570 + (sizeIn - 15) * 10);
                     html += '<h3>Результат: горный MTB</h3>';
                     html += `<p class="size-big">${rawIn.toFixed(1)}<small>" → ${sizeIn}" · ${mtbLetter(sizeIn)}</small></p>`;
                     html += '<ul class="size-list">';
                     html += `<li class="size-row"><b>Размер рамы ≈ ${sizeIn}" (${mtbLetter(sizeIn)})</b><span>формула: Inseam × 0.57 / 2.54</span></li>`;
                     html += `<li class="size-row"><b>Запас стендовера ≈ ${standover > 0 ? standover.toFixed(1) + ' см' : 'отрицательный!'}</b><span>высота верхней трубы над пахом при полном откидании ног</span></li>`;
+                    html += `<li class="size-row"><b>Reach ≈ ${reachMm} мм · Stack ≈ ${stackMm} мм</b><span>грубые ориентиры по размеру; сверяйтесь с геометрией конкретной рамы</span></li>`;
                     html += '</ul>';
                     html += '<div class="formula-box"><h4>Формула — шаг за шагом</h4>' +
                         `<ol style="margin:0 0 .2rem; padding-left:1.15rem">` +
@@ -2384,6 +2557,8 @@
                     const rawCm = inseam * 0.67;                     /* сантиметры */
                     const sizeCm = Math.round(rawCm);
                     const rs = roadRS(sizeCm);
+                    reachMm = rs.reach;
+                    stackMm = rs.stack;
                     html += '<h3>Результат: шоссе / грэвел</h3>';
                     html += `<p class="size-big">${rawCm.toFixed(1)}<small>см → ${sizeCm} см</small></p>`;
                     html += '<ul class="size-list">';
@@ -2413,11 +2588,41 @@
                 html += '<h3 style="margin-top:.9rem">Рекомендации по посадке</h3><ul class="fit-list">' + tips.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>';
 
                 resultBox.innerHTML = html;
+                if (svgStandover) svgStandover.textContent = type === 'mtb'
+                    ? `STANDOVER: ${standoverCm.toFixed(1)} см`
+                    : 'STANDOVER: см. геометрию рамы';
+                if (svgReach) svgReach.textContent = `REACH: ${reachMm} мм`;
+                if (svgStack) svgStack.textContent = `STACK: ${stackMm} мм`;
+                if (svgReachLine) {
+                    const length = Math.min(Math.max(120 + (reachMm - 400) * .8, 40), 160);
+                    svgReachLine.setAttribute('x2', String(265 + length));
+                }
             }
 
             typeSel.addEventListener('change', render);
             heightIn.addEventListener('input', render);
             inseamIn.addEventListener('input', render);
+            render();
+        })();
+
+        /* ============================ GearRange — диапазон кассеты ============================ */
+        (() => {
+            const form = $('#gearForm');
+            if (!form) return;
+            const smallIn = $('#gearSmall'), largeIn = $('#gearLarge'), result = $('#gearRange');
+
+            function render() {
+                const small = smallIn.valueAsNumber, large = largeIn.valueAsNumber;
+                if (!smallIn.value || !largeIn.value || !smallIn.validity.valid || !largeIn.validity.valid || large < small) {
+                    result.textContent = '—';
+                    return;
+                }
+                result.textContent = `${Math.round((large / small) * 100)}%`;
+            }
+
+            form.addEventListener('submit', event => event.preventDefault());
+            smallIn.addEventListener('input', render);
+            largeIn.addEventListener('input', render);
             render();
         })();
 
@@ -2632,14 +2837,17 @@
         /* ============================ ScrollSpy / Smooth Scroll ============================ */
         (() => {
             const links = $$('.site-nav .nav-link');
-            if (!links.length) return;
+            const topBtn = $('#scrollTop');
             const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
             const sections = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
 
             let ticking = false;
             const update = () => {
                 ticking = false;
-                const y = window.scrollY + 140; /* зона срабатывания под липкой шапкой */
+                const scrollY = window.scrollY;
+                if (topBtn) topBtn.classList.toggle('is-visible', scrollY > 500);
+                if (!links.length) return;
+                const y = scrollY + 140; /* зона срабатывания под липкой шапкой */
                 let current = null;
                 for (const s of sections) if (s.offsetTop <= y) current = s.id;
                 links.forEach(a => a.classList.toggle('is-active', a === byId.get(current)));
@@ -2647,6 +2855,7 @@
             addEventListener('scroll', () => {
                 if (!ticking) { ticking = true; requestAnimationFrame(update); }
             }, { passive: true });
+            if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
             update();
         })();
     </script>
