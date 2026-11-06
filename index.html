@@ -1625,10 +1625,13 @@
             height: 3rem;
             border: 1px solid var(--border-glass);
             border-radius: var(--radius-pill);
-            background: linear-gradient(155deg, rgba(147, 197, 253, .16), var(--surface-1));
+            background:
+                radial-gradient(circle at 30% 20%, rgba(191, 219, 254, .2), transparent 48%),
+                linear-gradient(145deg, rgba(37, 99, 235, .34), rgba(30, 41, 90, .42) 58%, rgba(91, 33, 182, .32));
             color: var(--text-white);
             box-shadow: var(--shadow-glass), var(--rim-top);
-            backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(24px) saturate(190%) brightness(1.12);
+            -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.12);
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
