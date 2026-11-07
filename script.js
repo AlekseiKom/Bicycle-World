@@ -5,6 +5,57 @@
         const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
         const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+        /* ============================ Фоновое изображение ============================ */
+        (() => {
+            const image = $('#pageBackgroundImage');
+            const stage = image?.closest('.page-background');
+            if (!image || !stage) return;
+
+            const sourceForViewport = () => {
+                if (matchMedia('(min-width: 1280px)').matches) return 'img/Desctop.jpeg';
+                if (matchMedia('(min-width: 681px) and (orientation: landscape)').matches) return 'img/Tab-horisontal.jpeg';
+                if (matchMedia('(min-width: 681px) and (orientation: portrait)').matches) return 'img/Tab-vertical.jpeg';
+                return 'img/Mobile.jpeg';
+            };
+            const expectedUrl = () => new URL(sourceForViewport(), document.baseURI).href;
+            let activeSource = sourceForViewport();
+            const reveal = () => {
+                const source = sourceForViewport();
+                if (!image.complete || !image.naturalWidth || image.currentSrc !== expectedUrl()) return;
+
+                if (source !== activeSource) {
+                    stage.classList.remove('is-loaded');
+                    stage.classList.add('is-loading');
+                    activeSource = source;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            if (image.currentSrc === expectedUrl() && image.complete) {
+                                stage.classList.remove('is-loading');
+                                stage.classList.add('is-loaded');
+                            }
+                        });
+                    });
+                    return;
+                }
+
+                stage.classList.add('is-loaded');
+            };
+            const hideWhileSourceChanges = () => {
+                if (sourceForViewport() !== activeSource) {
+                    stage.classList.remove('is-loaded');
+                    stage.classList.add('is-loading');
+                }
+            };
+
+            image.addEventListener('load', reveal);
+            image.addEventListener('error', () => {
+                console.error(`Не удалось загрузить фоновое изображение: ${image.currentSrc}`);
+            });
+            window.addEventListener('resize', hideWhileSourceChanges, { passive: true });
+            window.addEventListener('orientationchange', hideWhileSourceChanges, { passive: true });
+            if (image.complete && image.naturalWidth) reveal();
+        })();
+
         /* ============================ Мобильное меню (бургер) ============================ */
         (() => {
             const btn = $('#burgerBtn'), nav = $('#siteNav');

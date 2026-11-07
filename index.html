@@ -18,6 +18,14 @@
 </head>
 
 <body>
+    <div class="page-background" aria-hidden="true">
+        <picture>
+            <source media="(min-width: 1280px)" srcset="img/Desctop.jpeg">
+            <source media="(min-width: 681px) and (orientation: landscape)" srcset="img/Tab-horisontal.jpeg">
+            <source media="(min-width: 681px) and (orientation: portrait)" srcset="img/Tab-vertical.jpeg">
+            <img id="pageBackgroundImage" src="img/Mobile.jpeg" alt="" fetchpriority="high" decoding="async">
+        </picture>
+    </div>
     <!-- Старый SVG-фон сохранён для возможного возврата:
     <svg class="bike-wallpaper" aria-hidden="true" focusable="false">
         <defs>
@@ -382,7 +390,7 @@
                 <a href="#tier-microshift">MicroSHIFT</a>
             </div>
         </nav>
-            <div class="card glass" style="margin:0 0 1.4rem">
+            <div class="card glass hierarchy-guide">
                 <h3 class="subhead">Гид по задачам</h3>
                 <div class="guide-btns">
                     <button type="button" class="guide-btn is-on" data-cat="all" aria-pressed="true" aria-controls="tierTables">Все
@@ -626,7 +634,7 @@
                     </div>
                 </div>
             </div>
-            <p class="hint-text" style="margin-top:.9rem">Буквы S/A/B/C служат только для навигации по таблице — это
+            <p class="hint-text hierarchy-note section-frost">Буквы S/A/B/C служат только для навигации по таблице — это
                 не эквиваленты цены, массы или качества между брендами. Campagnolo Ekar — отдельная механическая
                 гравийная группа 1×13; сравнивайте совместимость и назначение компонентов конкретного поколения.</p>
     </section>
