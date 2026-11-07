@@ -109,14 +109,22 @@
             min-height: 100vh;
             isolation: isolate;
             background-color: var(--bg-primary);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-color: var(--bg-primary);
             background-image:
                 radial-gradient(90rem 60rem at 12% -10%, var(--bg-glow-blue), transparent 60%),
                 radial-gradient(80rem 55rem at 108% 115%, var(--bg-glow-violet), transparent 55%);
-            background-attachment: fixed;
         }
 
         @media (min-width: 1280px) and (max-width: 1919px) {
-            body {
+            body::before {
                 background-image:
                     linear-gradient(rgba(4, 9, 21, .3), rgba(4, 9, 21, .42)),
                     url("img/Desctop.jpeg");
@@ -127,7 +135,7 @@
         }
 
         @media (min-width: 681px) and (max-width: 1279px) and (orientation: landscape) {
-            body {
+            body::before {
                 background-image:
                     linear-gradient(rgba(4, 9, 21, .34), rgba(4, 9, 21, .46)),
                     url("img/Tab-horisontal.jpeg");
@@ -138,7 +146,7 @@
         }
 
         @media (min-width: 681px) and (max-width: 1279px) and (orientation: portrait) {
-            body {
+            body::before {
                 background-image:
                     linear-gradient(rgba(4, 9, 21, .34), rgba(4, 9, 21, .46)),
                     url("img/Tab-vertical.jpeg");
@@ -149,7 +157,7 @@
         }
 
         @media (max-width: 680px) {
-            body {
+            body::before {
                 background-image:
                     linear-gradient(rgba(4, 9, 21, .38), rgba(4, 9, 21, .5)),
                     url("img/Mobile.jpeg");
@@ -1961,8 +1969,8 @@
             border: 1px solid var(--border-glass);
             border-radius: var(--radius-pill);
             background:
-                radial-gradient(circle at 30% 20%, rgba(191, 219, 254, .2), transparent 48%),
-                linear-gradient(145deg, rgba(37, 99, 235, .34), rgba(30, 41, 90, .42) 58%, rgba(91, 33, 182, .32));
+                radial-gradient(circle at 30% 20%, rgba(191, 219, 254, .16), transparent 48%),
+                linear-gradient(145deg, rgba(37, 99, 235, .28), rgba(30, 41, 90, .36) 58%, rgba(91, 33, 182, .26));
             color: var(--text-white);
             box-shadow: var(--shadow-glass), var(--rim-top);
             backdrop-filter: blur(24px) saturate(190%) brightness(1.12);
@@ -1972,7 +1980,8 @@
             pointer-events: none;
             transform: translateY(12px);
             transition: opacity var(--trans-normal), transform var(--trans-normal),
-                visibility 0s linear .32s, border-color var(--trans-normal), box-shadow var(--trans-normal);
+                visibility 0s linear .32s, border-color var(--trans-normal), box-shadow var(--trans-normal),
+                filter var(--trans-fast);
         }
 
         .scroll-top.is-visible {
@@ -1981,10 +1990,23 @@
             pointer-events: auto;
             transform: none;
             transition: opacity var(--trans-normal), transform var(--trans-normal),
-                visibility 0s, border-color var(--trans-normal), box-shadow var(--trans-normal);
+                visibility 0s, border-color var(--trans-normal), box-shadow var(--trans-normal),
+                filter var(--trans-fast);
         }
 
         .scroll-top:hover {
             border-color: var(--border-glass-hover);
-            box-shadow: var(--shadow-neon-blue), var(--shadow-glass), var(--rim-top);
+            filter: brightness(1.12);
+        }
+
+        .scroll-top:active {
+            transform: scale(.92);
+            filter: brightness(.92);
+            box-shadow: inset 0 2px 6px rgba(2, 6, 23, .42), var(--shadow-glass);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .scroll-top {
+                transition: none;
+            }
         }

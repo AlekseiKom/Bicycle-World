@@ -376,6 +376,12 @@
             addEventListener('scroll', () => {
                 if (!ticking) { ticking = true; requestAnimationFrame(update); }
             }, { passive: true });
-            if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            if (topBtn) topBtn.addEventListener('click', () => {
+                if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    window.scrollTo(0, 0);
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
             update();
         })();
