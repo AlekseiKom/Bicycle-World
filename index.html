@@ -150,7 +150,7 @@
 
         <div class="ref-grid ref-grid-2">
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🚵</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M5.5 17L10 9h4l4.5 8M10 9l2.5 8M14 9l1.5-3h2.5"/></svg></span>
                     <h3>МТБ / Хардтейл</h3>
                 </div>
                 <p>Встречаются колёса 27.5″ и 29″: больший диаметр легче перекатывается через препятствия, а итоговая
@@ -161,7 +161,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🏔️</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10M12 4v3M9 7h6l-1.5 2.5h-3L9 7zM8 10.5l8 2-8 2 8 2-8 2M12 18.5V21M7 21h10"/></svg></span>
                     <h3>Двухподвес (Full-Suspension)</h3>
                 </div>
                 <p>Задняя подвеска использует рычажную схему и амортизатор; примеры кинематик — FSR, VPP и DW-Link.
@@ -171,7 +171,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🛤️</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l6-8 4 5 3-4 5 7H3z"/><circle cx="17" cy="6" r="2"/></svg></span>
                     <h3>Грэвел (Gravel)</h3>
                 </div>
                 <p>Руль-баран, дисковые тормоза и зазоры под более широкие покрышки; распространённые размеры не
@@ -182,7 +182,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🏁</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h11c2.5 0 4.5 1.8 4.5 4.2 0 1.6-1.1 2.8-2.7 2.8H15"/><path d="M4 12l2-4h4"/><path d="M3 16h5M2 20h7"/></svg></span>
                     <h3>Шоссе (Road)</h3>
                 </div>
                 <p>Шоссейные велосипеды выпускают из разных материалов и с разными профилями колёс. Ширина покрышек
@@ -675,50 +675,90 @@
             <svg id="bikeSvg" viewBox="0 0 560 320" role="img"
                 aria-label="Схема параметров посадки: standover, reach и stack на боковом профиле рамы">
                 <!-- земля -->
-                <line x1="40" y1="283" x2="520" y2="283" stroke="rgba(147,197,253,.25)" stroke-width="2" />
-                <!-- колёса -->
-                <g fill="none" stroke="rgba(216,227,255,.45)" stroke-width="2.5">
-                    <circle cx="120" cy="235" r="48" />
-                    <circle cx="440" cy="235" r="48" />
+                <line x1="36" y1="286" x2="524" y2="286" stroke="rgba(147,197,253,.28)" stroke-width="2" stroke-linecap="round" />
+
+                <!-- колёса: покрышка, обод, втулка, спицы -->
+                <g fill="none">
+                    <!-- заднее колесо -->
+                    <circle cx="125" cy="234" r="52" stroke="rgba(216,227,255,.55)" stroke-width="4" />
+                    <circle cx="125" cy="234" r="44" stroke="rgba(147,197,253,.35)" stroke-width="1.5" />
+                    <g stroke="rgba(216,227,255,.22)" stroke-width="1">
+                        <line x1="125" y1="190" x2="125" y2="278" />
+                        <line x1="81" y1="234" x2="169" y2="234" />
+                        <line x1="94" y1="203" x2="156" y2="265" />
+                        <line x1="156" y1="203" x2="94" y2="265" />
+                    </g>
+                    <circle cx="125" cy="234" r="5" fill="#93c5fd" stroke="#0b132b" stroke-width="1.5" />
+
+                    <!-- переднее колесо -->
+                    <circle cx="435" cy="234" r="52" stroke="rgba(216,227,255,.55)" stroke-width="4" />
+                    <circle cx="435" cy="234" r="44" stroke="rgba(147,197,253,.35)" stroke-width="1.5" />
+                    <g stroke="rgba(216,227,255,.22)" stroke-width="1">
+                        <line x1="435" y1="190" x2="435" y2="278" />
+                        <line x1="391" y1="234" x2="479" y2="234" />
+                        <line x1="404" y1="203" x2="466" y2="265" />
+                        <line x1="466" y1="203" x2="404" y2="265" />
+                    </g>
+                    <circle cx="435" cy="234" r="5" fill="#93c5fd" stroke="#0b132b" stroke-width="1.5" />
                 </g>
-                <!-- рама -->
-                <g fill="none" stroke="#d8e3ff" stroke-width="3.5" stroke-linecap="round">
-                    <path d="M120 235 L265 240" />
-                    <path d="M120 235 L215 95" />
-                    <path d="M265 240 L215 95" />
-                    <path d="M225 105 L385 105" />
-                    <path d="M385 105 L392 142" />
-                    <path d="M265 240 L392 142" />
-                    <path d="M392 142 L440 235" />
+
+                <!-- рама и вилка -->
+                <g fill="none" stroke="#e2ecff" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- задние перья -->
+                    <path d="M125 234 L258 240" stroke-width="3.2" />
+                    <path d="M125 234 L216 118" stroke-width="2.8" />
+                    <!-- подседельная труба -->
+                    <path d="M258 240 L212 112" stroke-width="4" />
+                    <!-- верхняя труба -->
+                    <path d="M216 118 L380 108" stroke-width="4" />
+                    <!-- нижняя труба -->
+                    <path d="M258 240 L386 138" stroke-width="4.5" />
+                    <!-- рулевой стакан -->
+                    <path d="M378 104 L386 138" stroke-width="5" />
+                    <!-- вилка -->
+                    <path d="M386 138 L435 234" stroke-width="3.5" />
+                    <!-- подседельный штырь -->
+                    <path d="M212 112 L204 88" stroke-width="3" stroke="#93c5fd" />
+                    <!-- вынос и руль -->
+                    <path d="M378 104 L375 90 L404 88" stroke-width="3.2" stroke="#93c5fd" />
+                    <path d="M404 88 C416 88, 418 104, 405 107" stroke-width="3" />
                 </g>
-                <!-- седло и каретка -->
-                <line x1="185" y1="92" x2="250" y2="92" stroke="#d8e3ff" stroke-width="6" stroke-linecap="round" />
-                <circle cx="265" cy="240" r="5" fill="#ffd479" />
+
+                <!-- седло -->
+                <path d="M184 88 Q204 83 226 88 Q212 93 184 88 Z" fill="#e2ecff" />
+
+                <!-- каретка и система -->
+                <circle cx="258" cy="240" r="13" fill="none" stroke="rgba(216,227,255,.45)" stroke-width="2" />
+                <line x1="258" y1="240" x2="274" y2="262" stroke="#93c5fd" stroke-width="3" stroke-linecap="round" />
+                <circle cx="258" cy="240" r="5" fill="#ffd479" />
+
                 <!-- STANDOVER -->
                 <g stroke="#7aa2ff" fill="none">
-                    <line x1="160" y1="105" x2="160" y2="283" stroke-width="2.5" />
-                    <path d="M154 112 L160 105 L166 112" stroke-width="2" />
-                    <path d="M154 276 L160 283 L166 276" stroke-width="2" />
+                    <line x1="298" y1="113" x2="298" y2="286" stroke-width="2.2" />
+                    <path d="M293 120 L298 113 L303 120" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M293 279 L298 286 L303 279" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </g>
-                <text id="txtStandover" x="148" y="198" text-anchor="end" class="g-label" fill="#7aa2ff">STANDOVER</text>
+                <text id="txtStandover" x="288" y="205" text-anchor="end" class="g-label" fill="#7aa2ff">STANDOVER</text>
+
                 <!-- REACH -->
                 <g stroke="#6fe8b0" fill="none">
-                    <line id="lineReach" x1="265" y1="40" x2="385" y2="40" stroke-width="2.5" />
-                    <path d="M272 36 L265 40 L272 44" stroke-width="2" />
-                    <path d="M378 36 L385 40 L378 44" stroke-width="2" />
-                    <line x1="265" y1="42" x2="265" y2="238" stroke-dasharray="4 4" opacity=".5" />
-                    <line x1="386" y1="42" x2="387" y2="103" stroke-dasharray="4 4" opacity=".5" />
+                    <line id="lineReach" x1="258" y1="42" x2="378" y2="42" stroke-width="2.2" />
+                    <path d="M265 38 L258 42 L265 46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M371 38 L378 42 L371 46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="258" y1="44" x2="258" y2="236" stroke-dasharray="4 4" opacity=".45" />
+                    <line x1="378" y1="44" x2="378" y2="102" stroke-dasharray="4 4" opacity=".45" />
                 </g>
-                <text id="txtReach" x="325" y="28" text-anchor="middle" class="g-label" fill="#6fe8b0">REACH</text>
+                <text id="txtReach" x="318" y="30" text-anchor="middle" class="g-label" fill="#6fe8b0">REACH</text>
+
                 <!-- STACK -->
                 <g stroke="#ffd479" fill="none">
-                    <line x1="500" y1="105" x2="500" y2="240" stroke-width="2.5" />
-                    <path d="M494 112 L500 105 L506 112" stroke-width="2" />
-                    <path d="M494 233 L500 240 L506 233" stroke-width="2" />
-                    <line x1="390" y1="105" x2="498" y2="105" stroke-dasharray="4 4" opacity=".5" />
-                    <line x1="272" y1="240" x2="498" y2="240" stroke-dasharray="4 4" opacity=".5" />
+                    <line x1="505" y1="104" x2="505" y2="240" stroke-width="2.2" />
+                    <path d="M500 111 L505 104 L510 111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M500 233 L505 240 L510 233" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="382" y1="104" x2="503" y2="104" stroke-dasharray="4 4" opacity=".45" />
+                    <line x1="272" y1="240" x2="503" y2="240" stroke-dasharray="4 4" opacity=".45" />
                 </g>
-                <text id="txtStack" x="510" y="176" text-anchor="end" class="g-label" fill="#ffd479">STACK</text>
+                <text id="txtStack" x="495" y="177" text-anchor="end" class="g-label" fill="#ffd479">STACK</text>
             </svg>
             <ul class="g-legend">
                 <li><span class="swatch swatch-stand"></span><b>Standover</b> — высота верхней трубы над землёй в
@@ -1000,7 +1040,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🛑</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v5M18.9 16l-4.3-2.5M5.1 16l4.3-2.5"/></svg></span>
                     <h3>Крепления тормозов: PM vs FM</h3>
                 </div>
                 <ul>
@@ -1014,7 +1054,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🔗</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l2 5-3 3v6a2 2 0 1 1-4 0v-4l-2-3 1-7z"/><circle cx="12" cy="7.5" r="1"/><circle cx="12" cy="18" r="1"/></svg></span>
                     <h3>Петухи: Standard, UDH и T-Type</h3>
                 </div>
                 <ul>
@@ -1041,7 +1081,7 @@
 
         <div class="ref-grid ref-grid-2">
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🧰</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
                     <h3>Перед выездом: быстрый осмотр</h3>
                 </div>
                 <ul class="fit-list">
@@ -1057,7 +1097,7 @@
             </article>
 
             <article class="card glass">
-                <div class="card-head"><span class="card-icon" aria-hidden="true">🛞</span>
+                <div class="card-head"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg></span>
                     <h3>Покрышки и давление</h3>
                 </div>
                 <p>Универсального давления для размера покрышки нет. На выбор влияют масса райдера и багажа,

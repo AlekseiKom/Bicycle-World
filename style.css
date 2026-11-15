@@ -1738,16 +1738,16 @@
         }
 
         .swatch-stand {
-            background: #ffd76a;
-            box-shadow: 0 0 .45rem rgba(255, 215, 106, .3);
+            background: #7aa2ff;
+            box-shadow: 0 0 .45rem rgba(122, 162, 255, .35);
         }
 
         .swatch-reach {
-            background: #9db8ff;
+            background: #6fe8b0;
         }
 
         .swatch-stack {
-            background: #6fdcb2;
+            background: #ffd479;
         }
 
         /* ============================ Tier-листы и гид по выбору ============================ */
@@ -1930,6 +1930,14 @@
             max-width: 460px;
             margin-inline: auto;
             display: block;
+        }
+
+        #bikeSvg .g-label {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            letter-spacing: .04em;
+            margin-left: 0;
         }
 
         .g-legend {
