@@ -5,6 +5,32 @@
         const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
         const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+        /* ============================ Тема оформления ============================ */
+        (() => {
+            const toggle = $('#themeToggle');
+            const root = document.documentElement;
+            let savedTheme = '';
+            try { savedTheme = localStorage.getItem('bicycle-world-theme') || ''; } catch (_) { /* storage может быть недоступен */ }
+
+            const setTheme = theme => {
+                const isLight = theme === 'light';
+                root.dataset.theme = isLight ? 'light' : 'dark';
+                if (toggle) {
+                    const label = isLight ? 'Включить тёмную тему' : 'Включить светлую тему';
+                    toggle.setAttribute('aria-label', label);
+                    toggle.setAttribute('aria-pressed', String(isLight));
+                    toggle.title = label;
+                }
+            };
+
+            setTheme(savedTheme === 'light' ? 'light' : 'dark');
+            toggle?.addEventListener('click', () => {
+                const nextTheme = root.dataset.theme === 'light' ? 'dark' : 'light';
+                setTheme(nextTheme);
+                try { localStorage.setItem('bicycle-world-theme', nextTheme); } catch (_) { /* тема действует до закрытия вкладки */ }
+            });
+        })();
+
         /* ============================ Фоновое изображение ============================ */
         (() => {
             const image = $('#pageBackgroundImage');
@@ -101,15 +127,23 @@
                 let html = '';
                 if (type === 'mtb') {
                     const estimateIn = (inseam * 0.57) / 2.54;
+                    const centerSize = Math.round(estimateIn);
+                    const rangeStart = Math.max(1, centerSize - 1);
+                    const rangeEnd = centerSize + 1;
                     html += '<h3>Результат: горный MTB</h3>';
                     html += `<p class="size-big">≈ ${estimateIn.toFixed(1)}<small>" — грубый традиционный ориентир длины рамы</small></p>`;
+                    html += `<p class="size-range"><b>Диапазон для сверки: ${rangeStart}–${rangeEnd}"</b><span>Соседние размерные метки вокруг результата формулы.</span></p>`;
                     html += '<div class="formula-box"><h4>Как читать результат</h4>' +
                         `<p>Inseam ${inseam} см × 0,57 ÷ 2,54 ≈ ${estimateIn.toFixed(1)}″. Это не размерная рекомендация производителя: современные MTB подбирают по таблице конкретной модели и геометрии, а не только по дюймам.</p>` +
                         `<p class="f-note">Рост ${height} см вместе с inseam задаёт только отправную точку. Standover, Reach и Stack нужно брать из геометрии выбранной рамы. Проверьте зазор над верхней трубой, длину посадки и высоту руля; буквенные размеры S/M/L между брендами не стандартизованы.</p></div>`;
                 } else {
                     const estimateCm = inseam * 0.67;
+                    const centerSize = Math.round(estimateCm);
+                    const rangeStart = Math.max(1, centerSize - 2);
+                    const rangeEnd = centerSize + 2;
                     html += '<h3>Результат: шоссе / грэвел</h3>';
                     html += `<p class="size-big">≈ ${estimateCm.toFixed(1)}<small> см — грубый традиционный ориентир длины подседельной трубы</small></p>`;
+                    html += `<p class="size-range"><b>Диапазон для сверки: ${rangeStart}–${rangeEnd} см</b><span>Соседние размерные метки вокруг результата формулы.</span></p>`;
                     html += '<div class="formula-box"><h4>Как читать результат</h4>' +
                         `<p>Inseam ${inseam} см × 0,67 ≈ ${estimateCm.toFixed(1)} см. Современные производители по-разному измеряют и маркируют рамы, поэтому это не точный размер велосипеда.</p>` +
                         `<p class="f-note">Рост ${height} см вместе с inseam задаёт только отправную точку. Сверьте размерную таблицу модели, затем сравните Reach, Stack и Standover. На посадку также влияют длина торса и рук, вынос, руль, седло и его положение.</p></div>`;
@@ -199,7 +233,9 @@
         (() => {
             const form = $('#compatForm');
             if (!form) return;
-            const shifterSel = $('#shifterOpt'), derailleurSel = $('#derailleurOpt'), freehubSel = $('#freehubOpt');
+            const shifterSel = $('#shifterOpt'), derailleurSel = $('#derailleurOpt'),
+                cassetteSel = $('#cassetteOpt'), cassetteSpeedSel = $('#cassetteSpeedOpt'),
+                chainSpeedSel = $('#chainSpeedOpt'), freehubSel = $('#freehubOpt');
             const callout = $('#compatCallout');
 
             /* Cable Pull проверяется по семейству: численные значения зависят от поколения и модели. */
@@ -251,51 +287,16 @@
                 { id: 'n3w', label: 'Campagnolo N3W — Ekar 13s' }
             ];
 
-            /* Предварительная проверка типичного барабана для выбранной категории; кассета не задаётся отдельно. */
-            function hubCheck(sh, hubId) {
-                const fam = famOf(sh);
-                if (fam === 'sram-mtb' && sh.spd === 12) {
-                    if (hubId === 'xd') return { s: 'warn', t: 'Распространённые кассеты Eagle с 10T используют XD; конкретные звёзды и модель кассеты необходимо сверить.' };
-                    if (hubId === 'hg') return { s: 'warn', t: 'Некоторые 12s Eagle кассеты, например NX с 11T малой звездой, используют HG; проверьте точную модель.' };
-                    return { s: 'bad', t: `Для типичных SRAM Eagle 12s нужен XD или HG в зависимости от кассеты; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'shi-mtb' && sh.spd === 12) {
-                    if (hubId === 'ms') return { s: 'ok', t: 'Кассета Shimano MTB 12s устанавливается на MicroSpline.' };
-                    return { s: 'bad', t: `Для Shimano MTB 12s нужен MicroSpline; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'shi-mtb' && sh.spd <= 11) {
-                    if (hubId === 'hg') return { s: 'ok', t: `Для многих Shimano MTB ${sh.spd}s кассет подходит HG; подтвердите стандарт выбранной кассеты.` };
-                    return { s: 'bad', t: `Для типичных Shimano MTB ${sh.spd}s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-                }
-                if (fam === 'microshift-adventx') {
-                    if (hubId === 'hg') return { s: 'ok', t: 'Кассета MicroSHIFT Advent X 10s устанавливается на HG.' };
-                    return { s: 'bad', t: `Для MicroSHIFT Advent X 10s нужен HG; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-mtb' && sh.spd < 12) {
-                    if (hubId === 'hg') return { s: 'warn', t: 'Многие кассеты SRAM MTB 10/11s совместимы с HG; для некоторых моделей нужен XD — проверьте кассету.' };
-                    if (hubId === 'xd') return { s: 'warn', t: 'XD применяется с совместимыми кассетами SRAM MTB; проверьте конкретную модель и число скоростей.' };
-                    return { s: 'bad', t: `Для этой кассеты SRAM MTB 10/11s не подходит ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-road' && sh.spd === 12) {
-                    if (hubId === 'xdr') return { s: 'ok', t: 'Кассета SRAM AXS Road/Gravel 12s устанавливается на XDR.' };
-                    return { s: 'bad', t: `Для SRAM AXS Road/Gravel 12s нужен XDR; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'sram-road' && sh.spd === 11) {
-                    if (hubId === 'hg') return { s: 'ok', t: 'Многие SRAM Road 11s кассеты используют HG; проверьте артикул.' };
-                    return { s: 'bad', t: `Для типичных SRAM Road 11s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-                }
-                if (fam === 'campy-ekar') {
-                    if (hubId === 'n3w') return { s: 'ok', t: 'Кассета Campagnolo Ekar 13s устанавливается на N3W.' };
-                    return { s: 'bad', t: `Для Campagnolo Ekar 13s нужен N3W; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (fam === 'campy-road') {
-                    if (hubId === 'n3w') return { s: 'warn', t: 'Кассета Campagnolo Road 12s может устанавливаться на N3W с 4,4-мм адаптером; проверьте исполнение кассеты.' };
-                    if (hubId === 'campy') return { s: 'warn', t: 'Ряд Campagnolo кассет подходит к стандартному Campagnolo freehub; поколение и конкретную кассету проверьте.' };
-                    return { s: 'bad', t: `Для Campagnolo Road нужен совместимый Campagnolo freehub или подходящий N3W с адаптером; выбран ${hubId.toUpperCase()}.` };
-                }
-                if (hubId === 'hg') return { s: 'ok', t: `Многие Shimano Road ${sh.spd}s кассеты используют HG; проверьте поколение и артикул.` };
-                return { s: 'bad', t: `Для типичных Shimano Road ${sh.spd}s кассет нужен HG; выбран ${hubId.toUpperCase()}. Проверьте конкретную модель.` };
-            }
+            const CASSETTES = [
+                { id: 'hg-9-11', label: 'HG — Shimano / SRAM / MicroSHIFT, 9–11 скоростей', speeds: [9, 10, 11], hubs: ['hg'], families: null },
+                { id: 'hg-eagle-nx', label: 'SRAM Eagle NX 12s — HG, малая звезда 11T', speeds: [12], hubs: ['hg'], families: ['sram-mtb'] },
+                { id: 'shimano-ms-12', label: 'Shimano MTB 12s — MicroSpline', speeds: [12], hubs: ['ms'], families: ['shi-mtb'] },
+                { id: 'sram-xd-12', label: 'SRAM Eagle 12s — XD', speeds: [12], hubs: ['xd'], families: ['sram-mtb'] },
+                { id: 'sram-xdr-12', label: 'SRAM Road / Gravel 12s — XDR', speeds: [12], hubs: ['xdr'], families: ['sram-road'] },
+                { id: 'campy-road-12', label: 'Campagnolo Road 12s — Campagnolo / N3W с адаптером', speeds: [12], hubs: ['campy', 'n3w'], families: ['campy-road'] },
+                { id: 'campy-ekar-13', label: 'Campagnolo Ekar 13s — N3W', speeds: [13], hubs: ['n3w'], families: ['campy-ekar'] }
+            ];
+            const SPEED_OPTIONS = [9, 10, 11, 12, 13].map(speed => ({ id: String(speed), label: `${speed} скоростей` }));
 
             /* Проверка рычажности троса манетка ↔ переключатель */
             function chainCheck(sh, d) {
@@ -307,9 +308,54 @@
                     return { s: 'bad', t: `Эта общая таблица не подтверждает сочетание семейств ${aS.label} и ${aD.label}; проверьте руководство к точным моделям. Для электронных систем отдельно проверьте протокол и поколение.` };
             }
 
+            function speedCheck(sh, derailleur, cassetteSpeed) {
+                const parts = [sh.spd, derailleur.spd, cassetteSpeed];
+                if (parts.every(speed => speed === parts[0])) {
+                    return { s: 'warn', t: `У манетки, переключателя и кассеты по ${cassetteSpeed} скоростей. Совпало только число; поколение и точная индексация не проверялись.` };
+                }
+                return { s: 'bad', t: `Скорости не совпадают: манетка ${sh.spd}, переключатель ${derailleur.spd}, кассета ${cassetteSpeed}.` };
+            }
+
+            function cassetteDriveCheck(cassette, sh, derailleur, cassetteSpeed) {
+                if (!cassette.speeds.includes(cassetteSpeed)) {
+                    return { s: 'bad', t: `Профиль кассеты «${cassette.label}» не рассчитан на ${cassetteSpeed} скоростей.` };
+                }
+                if (!cassette.families) {
+                    return { s: 'warn', t: 'Профиль HG охватывает несколько брендов; совпадение числа скоростей не подтверждает индексацию кассеты с конкретной системой.' };
+                }
+                if (cassette.families.includes(sh.family) && cassette.families.includes(derailleur.family) &&
+                    sh.spd === cassetteSpeed && derailleur.spd === cassetteSpeed) {
+                    return { s: 'warn', t: 'Семейство и число скоростей совпадают с профилем кассеты; точные модели, поколение и диапазон не проверялись.' };
+                }
+                return { s: 'bad', t: `Профиль кассеты не совпадает с семейством выбранной манетки и переключателя (${sh.spd}s / ${derailleur.spd}s).` };
+            }
+
+            function cassetteHubCheck(cassette, cassetteSpeed, hubId) {
+                if (!cassette.speeds.includes(cassetteSpeed)) {
+                    return { s: 'bad', t: `Профиль «${cassette.label}» не подходит для кассеты на ${cassetteSpeed} скоростей.` };
+                }
+                if (!cassette.hubs.includes(hubId)) {
+                    return { s: 'bad', t: `Профиль «${cassette.label}» не рассчитан на выбранный барабан ${hubId.toUpperCase()}.` };
+                }
+                if (cassette.id === 'campy-road-12' && hubId === 'n3w') {
+                    return { s: 'warn', t: 'Для Campagnolo Road 12s на N3W может требоваться адаптер 4,4 мм; проверьте исполнение кассеты.' };
+                }
+                return { s: 'ok', t: `Профиль кассеты и барабан ${hubId.toUpperCase()} совпадают по справочной таблице; артикул и поколение не проверялись.` };
+            }
+
+            function chainSpeedCheck(cassetteSpeed, chainSpeed) {
+                if (cassetteSpeed !== chainSpeed) {
+                    return { s: 'bad', t: `Кассета на ${cassetteSpeed} скоростей, цепь — на ${chainSpeed}; число скоростей должно совпадать.` };
+                }
+                return { s: 'warn', t: `Число скоростей совпадает (${chainSpeed}); ширину и совместимость конкретной цепи с кассетой и системой проверьте по документации.` };
+            }
+
             const fill = (sel, list) => { sel.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.label)}</option>`).join(''); };
             fill(shifterSel, DRIVES);
             fill(derailleurSel, DRIVES);
+            fill(cassetteSel, CASSETTES);
+            fill(cassetteSpeedSel, SPEED_OPTIONS);
+            fill(chainSpeedSel, SPEED_OPTIONS);
             fill(freehubSel, HUBS);
 
             /* Кросс-брендовые пресеты (манетка → переключатель) */
@@ -334,11 +380,17 @@
             function evaluate() {
                 const sh = DRIVES.find(o => o.id === shifterSel.value) || DRIVES[0];
                 const d = DRIVES.find(o => o.id === derailleurSel.value) || DRIVES[0];
+                const cassette = CASSETTES.find(o => o.id === cassetteSel.value) || CASSETTES[0];
+                const cassetteSpeed = Number(cassetteSpeedSel.value);
+                const chainSpeed = Number(chainSpeedSel.value);
                 const hub = HUBS.find(o => o.id === freehubSel.value) || HUBS[0];
 
                 const checks = [
                     { name: 'Ход троса (Cable Pull Ratio)', ...chainCheck(sh, d) },
-                    { name: 'Барабан и кассета', ...hubCheck(sh, hub.id) }
+                    { name: 'Совпадение скоростей', ...speedCheck(sh, d, cassetteSpeed) },
+                    { name: 'Кассета и система', ...cassetteDriveCheck(cassette, sh, d, cassetteSpeed) },
+                    { name: 'Кассета и барабан', ...cassetteHubCheck(cassette, cassetteSpeed, hub.id) },
+                    { name: 'Цепь и кассета', ...chainSpeedCheck(cassetteSpeed, chainSpeed) }
                 ];
                 const worst = ['ok', 'warn', 'bad'].reduce((w, c) => checks.some(x => x.s === c) && ['ok', 'warn', 'bad'].indexOf(c) > ['ok', 'warn', 'bad'].indexOf(w) ? c : w, 'ok');
                 const title = { ok: 'Базовые признаки совпадают', warn: 'Нужна проверка моделей', bad: 'Не подтверждено' }[worst];
@@ -346,12 +398,13 @@
                 callout.className = `callout glass is-${worst}`;
                 callout.innerHTML =
                     `<h3><span class="status-dot"></span>${title}</h3>` +
-                    `<p>Пара: ${esc(sh.label)} → ${esc(d.label)} · барабан: ${esc(hub.label)}</p>` +
+                    `<p>Манетка: ${esc(sh.label)} · переключатель: ${esc(d.label)} · кассета: ${esc(cassette.label)} (${cassetteSpeed} скоростей) · цепь: ${chainSpeed} скоростей · барабан: ${esc(hub.label)}</p>` +
                     `<ul class="check-grid">${checks.map(c => `<li class="check-item"><b>${c.name}:</b> ${esc(c.t)}</li>`).join('')}</ul>` +
                     (crossSel && crossSel.value ? '<p style="margin-top:.6rem; font-size:.82rem; color:var(--text-dim)">Выбрана известная кросс-брендовая комбинация для дальнейшей проверки; это не подтверждение совместимости конкретных деталей.</p>' : '');
             }
 
-            [shifterSel, derailleurSel, freehubSel].forEach(sel => sel.addEventListener('change', () => { syncCross(); evaluate(); }));
+            [shifterSel, derailleurSel, cassetteSel, cassetteSpeedSel, chainSpeedSel, freehubSel].forEach(sel =>
+                sel.addEventListener('change', () => { syncCross(); evaluate(); }));
             if (crossSel) crossSel.addEventListener('change', () => {
                 const p = CROSSES.find(o => o.id === crossSel.value);
                 if (p) { shifterSel.value = p.sh; derailleurSel.value = p.d; }
@@ -359,6 +412,9 @@
             });
             shifterSel.value = 'shi-mtb-12';
             derailleurSel.value = 'shi-mtb-12';
+            cassetteSel.value = 'shimano-ms-12';
+            cassetteSpeedSel.value = '12';
+            chainSpeedSel.value = '12';
             freehubSel.value = 'ms';
             evaluate();
         })();
